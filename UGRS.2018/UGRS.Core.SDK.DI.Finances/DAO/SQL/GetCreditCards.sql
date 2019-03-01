@@ -1,0 +1,1 @@
+﻿SELECT CreditCard, CardName, AcctCode, Country FROM OCRC

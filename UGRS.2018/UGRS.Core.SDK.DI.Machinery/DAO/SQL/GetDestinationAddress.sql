@@ -1,0 +1,1 @@
+SELECT Address, Street, CardCode FROM CRD1 WHERE AdresType = 'S'

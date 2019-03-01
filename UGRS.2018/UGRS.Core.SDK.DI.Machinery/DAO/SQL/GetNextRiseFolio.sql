@@ -1,0 +1,1 @@
+SELECT (ISNULL(MAX(Code), 0) + 1) AS NextFolioId FROM [@UG_TBL_MQ_RISE]

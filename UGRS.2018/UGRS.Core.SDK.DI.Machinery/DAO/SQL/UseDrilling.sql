@@ -1,0 +1,1 @@
+SELECT U_UsePerfora FROM [@UG_GLO_EQUIPO] WHERE Code = '{Code}'

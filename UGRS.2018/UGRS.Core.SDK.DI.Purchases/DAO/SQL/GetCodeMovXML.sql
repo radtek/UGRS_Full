@@ -1,0 +1,1 @@
+﻿SELECT U_MQ_OrigenFol FROM OPCH with (Nolock) WHERE DocEntry = '{DocEntry}'

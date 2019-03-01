@@ -1,0 +1,1 @@
+select top 10 U_Folio from [@UG_SU_AUTN] where U_AutAuction = 'N'  and U_Location = '{CostingCode}' order by U_Folio desc

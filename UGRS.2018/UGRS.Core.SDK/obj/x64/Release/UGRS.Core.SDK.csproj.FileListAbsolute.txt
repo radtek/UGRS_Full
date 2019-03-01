@@ -1,0 +1,4 @@
+C:\Users\ssandoval\Documents\UGRS2018\UGRS.2018\UGRS.Core.SDK\bin\x64\Release\UGRS.Core.SDK.dll
+C:\Users\ssandoval\Documents\UGRS2018\UGRS.2018\UGRS.Core.SDK\bin\x64\Release\UGRS.Core.SDK.pdb
+C:\Users\ssandoval\Documents\UGRS2018\UGRS.2018\UGRS.Core.SDK\obj\x64\Release\UGRS.Core.SDK.dll
+C:\Users\ssandoval\Documents\UGRS2018\UGRS.2018\UGRS.Core.SDK\obj\x64\Release\UGRS.Core.SDK.pdb

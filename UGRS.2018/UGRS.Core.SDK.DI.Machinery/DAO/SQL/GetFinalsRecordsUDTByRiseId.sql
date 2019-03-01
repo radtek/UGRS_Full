@@ -1,0 +1,5 @@
+SELECT T1.*, T3.U_TypeEQ EqType 
+FROM [@UG_MQ_RIFR] T1
+INNER JOIN OITM T2 on T2.ItemCode = T1.U_PrcCode
+LEFT JOIN [@UG_GLO_EQUIPO] T3 on T3.Code = T2.U_GLO_Equipo
+WHERE T1.U_IdRise = '{RiseId}'

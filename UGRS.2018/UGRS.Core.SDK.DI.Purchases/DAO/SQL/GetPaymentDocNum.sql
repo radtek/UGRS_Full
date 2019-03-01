@@ -1,0 +1,1 @@
+select DocNum from VPM2 with (Nolock) where InvType = '18' and DocEntry = '{DocEntry}'

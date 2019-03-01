@@ -1,0 +1,1 @@
+SELECT MIN(U_InternalFolio) AS MIN FROM {TableName} 

@@ -1,0 +1,1 @@
+SELECT Code FROM [@UG_TBL_MQ_RIDC] WHERE U_IdRise = '{IdRise}' AND U_DocEntry = '{DocEntry}'

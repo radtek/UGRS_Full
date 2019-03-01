@@ -1,0 +1,16 @@
+C:\Users\ssandoval\Desktop\UGRS.2018\UGRS.Core.SDK.DI.Purchases\bin\x64\Release\UGRS.Core.SDK.DI.Purchases.dll.config
+C:\Users\ssandoval\Desktop\UGRS.2018\UGRS.Core.SDK.DI.Purchases\bin\x64\Release\UGRS.Core.SDK.DI.Purchases.dll
+C:\Users\ssandoval\Desktop\UGRS.2018\UGRS.Core.SDK.DI.Purchases\bin\x64\Release\UGRS.Core.SDK.DI.Purchases.pdb
+C:\Users\ssandoval\Desktop\UGRS.2018\UGRS.Core.SDK.DI.Purchases\bin\x64\Release\UGRS.Core.dll
+C:\Users\ssandoval\Desktop\UGRS.2018\UGRS.Core.SDK.DI.Purchases\bin\x64\Release\UGRS.Core.SDK.DI.dll
+C:\Users\ssandoval\Desktop\UGRS.2018\UGRS.Core.SDK.DI.Purchases\bin\x64\Release\UGRS.Core.SDK.dll
+C:\Users\ssandoval\Desktop\UGRS.2018\UGRS.Core.SDK.DI.Purchases\bin\x64\Release\UGRS.Core.SDK.UI.dll
+C:\Users\ssandoval\Desktop\UGRS.2018\UGRS.Core.SDK.DI.Purchases\bin\x64\Release\Newtonsoft.Json.dll
+C:\Users\ssandoval\Desktop\UGRS.2018\UGRS.Core.SDK.DI.Purchases\bin\x64\Release\UGRS.Core.SDK.DI.pdb
+C:\Users\ssandoval\Desktop\UGRS.2018\UGRS.Core.SDK.DI.Purchases\bin\x64\Release\UGRS.Core.SDK.UI.pdb
+C:\Users\ssandoval\Desktop\UGRS.2018\UGRS.Core.SDK.DI.Purchases\bin\x64\Release\UGRS.Core.SDK.pdb
+C:\Users\ssandoval\Desktop\UGRS.2018\UGRS.Core.SDK.DI.Purchases\bin\x64\Release\UGRS.Core.pdb
+C:\Users\ssandoval\Desktop\UGRS.2018\UGRS.Core.SDK.DI.Purchases\bin\x64\Release\Newtonsoft.Json.xml
+C:\Users\ssandoval\Desktop\UGRS.2018\UGRS.Core.SDK.DI.Purchases\obj\x64\Release\UGRS.Core.SDK.DI.Purchases.csprojResolveAssemblyReference.cache
+C:\Users\ssandoval\Desktop\UGRS.2018\UGRS.Core.SDK.DI.Purchases\obj\x64\Release\UGRS.Core.SDK.DI.Purchases.dll
+C:\Users\ssandoval\Desktop\UGRS.2018\UGRS.Core.SDK.DI.Purchases\obj\x64\Release\UGRS.Core.SDK.DI.Purchases.pdb

@@ -1,0 +1,6 @@
+SELECT 
+	U_GLO_CostCenter 
+FROM 
+	(SELECT U_GLO_CostCenter, USER_CODE FROM OUSR) OUSR
+WHERE 
+	USER_CODE = '{UserCode}'

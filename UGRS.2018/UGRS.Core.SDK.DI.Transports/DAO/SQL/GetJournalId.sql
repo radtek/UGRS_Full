@@ -1,0 +1,1 @@
+SELECT TransId FROM OJDT WHERE ref1 = '{Folio}' and TransCode = 'TR/F'

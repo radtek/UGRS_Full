@@ -1,0 +1,1 @@
+SELECT *FROM [@UG_TBL_MQ_RISE] WHERE U_IdRise = '{Folio}'

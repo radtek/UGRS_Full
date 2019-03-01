@@ -1,0 +1,6 @@
+﻿SELECT U_FZ_ExtFormat, Name
+FROM OACT T0
+LEFT JOIN DSC1 T1 ON T0.AcctCode = T1.GLAccount
+LEFT JOIN ODSC T2 ON T1.BankCode = T2.BankCode
+LEFT JOIN [@UG_FZ_BANKEXTRACTS] T3 ON U_FZ_ExtFormat = T3.Code
+WHERE T0.AcctCode = '{AcctCode}'

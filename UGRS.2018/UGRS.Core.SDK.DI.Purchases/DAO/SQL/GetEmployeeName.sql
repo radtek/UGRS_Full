@@ -1,0 +1,1 @@
+select  ISNULL(lastName, '') + ' '+ ISNULL(firstName, '')+ ' '+ ISNULL(middleName, '') as EmployeeName from OHEM with (Nolock) where empID = '{EmpId}'

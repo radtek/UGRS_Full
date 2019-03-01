@@ -1,0 +1,1 @@
+select CardCode from OCRD with (Nolock) where CardType = 'S' and LicTradNum = '{RFC}'

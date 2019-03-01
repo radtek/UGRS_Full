@@ -1,0 +1,412 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{D3D8AF44-E66F-4A0F-912D-92E2E8CB0228}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>UGRS.Core.SDK.DI.Machinery</RootNamespace>
+    <AssemblyName>UGRS.Core.SDK.DI.Machinery</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == '64|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\64\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == '64|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\64\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == '64|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\64\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="SAPBusinessOneSDK, Version=1.0.0.1, Culture=neutral, PublicKeyToken=c7c3cb60e45d119f, processorArchitecture=MSIL" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DAO\AddressDAO.cs" />
+    <Compile Include="DAO\ArticlesDAO.cs" />
+    <Compile Include="DAO\AuthorizationDAO.cs" />
+    <Compile Include="DAO\ClientsDAO.cs" />
+    <Compile Include="DAO\CommissionsDAO.cs" />
+    <Compile Include="DAO\CommitteesDAO.cs" />
+    <Compile Include="DAO\ConfigurationsDAO.cs" />
+    <Compile Include="DAO\ConstructionTypeDAO.cs" />
+    <Compile Include="DAO\ConsumablesDAO.cs" />
+    <Compile Include="DAO\ContractsDAO.cs" />
+    <Compile Include="DAO\EmployeesDAO.cs" />
+    <Compile Include="DAO\EquipmentDAO.cs" />
+    <Compile Include="DAO\FinalsRecordsDAO.cs" />
+    <Compile Include="DAO\GoodIssuesDAO.cs" />
+    <Compile Include="DAO\HoursRecordsDAO.cs" />
+    <Compile Include="DAO\InitialRecordsDAO.cs" />
+    <Compile Include="DAO\MunicipalitiesDAO.cs" />
+    <Compile Include="DAO\RiseDAO.cs" />
+    <Compile Include="DAO\SectionsDAO.cs" />
+    <Compile Include="DAO\TransitHoursRecordsDAO.cs" />
+    <Compile Include="DAO\TravelExpensesDAO.cs" />
+    <Compile Include="DAO\UsersDAO.cs" />
+    <Compile Include="DTO\ArticlesDTO.cs" />
+    <Compile Include="DTO\ClientsDTO.cs" />
+    <Compile Include="DTO\CommissionDetailsDTO.cs" />
+    <Compile Include="DTO\CommissionDTO.cs" />
+    <Compile Include="DTO\CommitteesDTO.cs" />
+    <Compile Include="DTO\ConfigurationsDTO.cs" />
+    <Compile Include="DTO\ConstructionTypeDTO.cs" />
+    <Compile Include="DTO\ConsumablesDTO.cs" />
+    <Compile Include="DTO\ContractsDTO.cs" />
+    <Compile Include="DTO\ContractsFiltersDTO.cs" />
+    <Compile Include="DTO\ContractsTypesDTO.cs" />
+    <Compile Include="DTO\DestinationAddressDTO.cs" />
+    <Compile Include="DTO\EmployeesDTO.cs" />
+    <Compile Include="DTO\EquipmentDTO.cs" />
+    <Compile Include="DTO\ConsumablesDocumentsDTO.cs" />
+    <Compile Include="DTO\InventoryItemsLinesDTO.cs" />
+    <Compile Include="DTO\HoursRecordsDTO.cs" />
+    <Compile Include="DTO\MunicipalitiesDTO.cs" />
+    <Compile Include="DTO\PerformanceDTO.cs" />
+    <Compile Include="DTO\RiseFiltersDTO.cs" />
+    <Compile Include="DTO\SupervisorDebitDTO.cs" />
+    <Compile Include="DTO\TransitHoursRecordsDTO.cs" />
+    <Compile Include="DTO\TravelExpensesDTO.cs" />
+    <Compile Include="DTO\RiseDTO.cs" />
+    <Compile Include="DTO\SectionsDTO.cs" />
+    <Compile Include="Enums\ConfigurationsEnum.cs" />
+    <Compile Include="Enums\ContractsStatusEnum.cs" />
+    <Compile Include="Enums\ContractsTypeEnum.cs" />
+    <Compile Include="Enums\FunctionsEnum.cs" />
+    <Compile Include="Enums\InventoryPropsEnum.cs" />
+    <Compile Include="Enums\RiseStatusEnum.cs" />
+    <Compile Include="Enums\TravelExpStatusEnum.cs" />
+    <Compile Include="MachinerySeviceFactory.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\AddressService.cs" />
+    <Compile Include="Services\ArticlesService.cs" />
+    <Compile Include="Services\AuthorizationService.cs" />
+    <Compile Include="Services\ClientsService.cs" />
+    <Compile Include="Services\CommissionsService.cs" />
+    <Compile Include="Services\CommitteesServices.cs" />
+    <Compile Include="Services\ConfigurationsService.cs" />
+    <Compile Include="Services\ConstructionService.cs" />
+    <Compile Include="Services\ConsumablesService.cs" />
+    <Compile Include="Services\ContractsService.cs" />
+    <Compile Include="Services\EmployeesService.cs" />
+    <Compile Include="Services\EquipmentsService.cs" />
+    <Compile Include="Services\FinalsRecordsService.cs" />
+    <Compile Include="Services\GoodIssuesService.cs" />
+    <Compile Include="Services\HoursRecordsService.cs" />
+    <Compile Include="Services\InitialRecordsService.cs" />
+    <Compile Include="Services\MunicipalitiesService.cs" />
+    <Compile Include="Services\PerformanceService.cs" />
+    <Compile Include="Services\PurchasesOrdersService.cs" />
+    <Compile Include="Services\RiseService.cs" />
+    <Compile Include="Services\SectionsService.cs" />
+    <Compile Include="Services\SetupService.cs" />
+    <Compile Include="Services\TotalsRecordsService.cs" />
+    <Compile Include="Services\TransitHoursRecordsService.cs" />
+    <Compile Include="Services\TravelExpensesService.cs" />
+    <Compile Include="Services\UsersService.cs" />
+    <Compile Include="Tables\Authorizations.cs" />
+    <Compile Include="Tables\Commissions.cs" />
+    <Compile Include="Tables\DocumentsHistory.cs" />
+    <Compile Include="Tables\FinalsRecords.cs" />
+    <Compile Include="Tables\HoursRecords.cs" />
+    <Compile Include="Tables\InitialRecords.cs" />
+    <Compile Include="Tables\Performance.cs" />
+    <Compile Include="Tables\PurchaseOrders.cs" />
+    <Compile Include="Tables\Rise.cs" />
+    <Compile Include="Tables\Consumables.cs" />
+    <Compile Include="Tables\Contracts.cs" />
+    <Compile Include="Tables\Employees.cs" />
+    <Compile Include="Tables\TotalRecords.cs" />
+    <Compile Include="Tables\TransitHoursRecords.cs" />
+    <Compile Include="Tables\TravelExpenses.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\GetUserId.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\UGRS.Core.SDK.DI\UGRS.Core.SDK.DI.csproj">
+      <Project>{909b9975-2b24-41ef-abb0-d90b904d75dd}</Project>
+      <Name>UGRS.Core.SDK.DI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UGRS.Core.SDK\UGRS.Core.SDK.csproj">
+      <Project>{19131849-410b-4c79-9c46-6fe46915e315}</Project>
+      <Name>UGRS.Core.SDK</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UGRS.Core\UGRS.Core.csproj">
+      <Project>{94ecc66f-57e7-4637-902d-2873cc636320}</Project>
+      <Name>UGRS.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\GetNextRiseFolio.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\IsUserOperations.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\GetRelationsFolios.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\GetInventoryRequestById.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\GetSalesOrders.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\ExistsRise.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\GetContractsType.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\GetConstructionType.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\GetMunicipalities.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\GetCommitteesByCode.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\GetEquipmentTypes.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\GetArticlesByEquipmentType.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\GetArticlePrice.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\GetClients.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\GetSectionsByMun.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\GetConfigByName.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\GetSalesOrdersByDocEntry.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\GetDestinationAddress.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\GetNextTEFolio.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\GetUserCenterCost.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\GetAccountCode.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\GetPaymentByDocEntry.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\-GetInitialRecordsByInvRequest.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\-GetPurchasesByRiseId.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\--GetInventoryRequestByRiseId.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\GetEmployeesByRiseId.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\GetContractsByRiseId.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\UseDrilling.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\GetContractCode.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\GetRiseById.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\GetConsubamleRequestDocByRiseId.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\GetConsubamleRequestUDTByRiseId.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\GetDraftPaymentsByRiseId.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\GetPaymentsByRiseId.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\GetDraftTravelExpensesByRiseId.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\GetTravelExpensesByRiseId.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\IsOperationsUser.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\GetHoursUDTByRiseId.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\--GetInitialRecordsByRiseId.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\--GetPurchasesByRiseId.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\GetSectionsBySalesOrder.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\GetItemsForGoodIssue.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\GetGoodIssueItemsTotalsByRiseId.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\GetInitialRecordsUDTByRiseId.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\GetPurchasesUDTByRiseId.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\GetFinalsRecordsUDTByRiseId.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\GetTotalsRecordsUDTByRiseId.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\SearchRiseContracts.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\GetRisesByContractId.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\GetNoCommissionsRises.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\GetRiseDetailsForCommissions.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\GetRiseSupervisorAdeudo.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\GetCurrentTEFolio.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\GetNoStockTransferRises.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\GetRiseItemsForStockTransfer.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\GetCurrentRiseSupervisorAdeudo.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\IsContractClosed.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\GetInitialRecordsByRiseId.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\GetPurchasesByRiseId.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\GetTransitHoursUDTByRiseId.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAO\SQL\GetFinalsRecordsByRiseId.sql" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,1 @@
+select U_IdRise from [@UG_TBL_MQ_RISE] with (Nolock) where U_DocStatus ='1' 

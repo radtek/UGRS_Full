@@ -1,0 +1,1 @@
+﻿SELECT DocEntry FROM OIGE WHERE DocNum = '{DocNum}'

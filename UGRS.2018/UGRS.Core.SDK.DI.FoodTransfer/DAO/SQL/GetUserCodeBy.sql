@@ -1,0 +1,1 @@
+﻿SELECT USER_CODE FROM OUSR where USERID = '{UserID}'

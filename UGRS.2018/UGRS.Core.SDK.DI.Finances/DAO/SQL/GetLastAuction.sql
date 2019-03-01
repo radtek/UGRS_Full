@@ -1,0 +1,4 @@
+﻿SELECT Top 10 U_Folio
+FROM [@UG_SU_AUTN] 
+WHERE U_AutFz = 'N' AND U_AutCyC = 'Y'
+ORDER BY Code DESC

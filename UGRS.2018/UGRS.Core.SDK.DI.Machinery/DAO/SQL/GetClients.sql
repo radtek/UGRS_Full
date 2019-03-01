@@ -1,0 +1,1 @@
+SELECT CardCode, CardName FROM OCRD WHERE CardType= 'C' AND validFor = 'Y' ORDER BY CardCode

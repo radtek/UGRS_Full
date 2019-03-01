@@ -1,0 +1,1 @@
+SELECT Code, Name FROM [@UG_MQ_OBTY]

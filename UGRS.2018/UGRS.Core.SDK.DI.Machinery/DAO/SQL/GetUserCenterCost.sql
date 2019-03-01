@@ -1,0 +1,1 @@
+SELECT U_GLO_CostCenter AS CenterCost FROM OUSR WHERE USER_CODE = '{UserCode}' 

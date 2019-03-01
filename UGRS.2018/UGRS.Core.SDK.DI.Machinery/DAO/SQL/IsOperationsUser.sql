@@ -1,0 +1,1 @@
+SELECT ISNULL(U_MQ_BtnOpen, 'N') AS ReOpen FROM OUSR WHERE UserId = '{UserId}' 

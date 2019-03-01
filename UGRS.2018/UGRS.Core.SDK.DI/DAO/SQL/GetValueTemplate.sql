@@ -1,0 +1,1 @@
+SELECT {SelectFieldName} FROM {TableName} with (Nolock) WHERE {WhereFieldName} = '{WhereFieldValue}'

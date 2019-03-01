@@ -1,0 +1,1 @@
+select U_Value from [@UG_CONFIG] where Name = '{ConfigName}'

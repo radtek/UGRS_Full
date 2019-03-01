@@ -1,0 +1,1 @@
+select DocEntry, DocNum, DocDate, DocTotal  from ORCT where U_FZ_FolioAuction = '{Folio}' and Canceled = 'N'

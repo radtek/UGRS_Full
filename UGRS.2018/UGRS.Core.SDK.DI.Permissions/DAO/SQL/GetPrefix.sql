@@ -1,0 +1,1 @@
+﻿select top 1 U_Prefix from [@UG_PE_PRFX] where U_Active = '1'

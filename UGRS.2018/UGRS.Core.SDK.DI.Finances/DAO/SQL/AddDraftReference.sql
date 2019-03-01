@@ -1,0 +1,2 @@
+﻿INSERT INTO DRF21(DocEntry, ObjectType, LineNum, RefDocEntr, RefDocNum, RefObjType, LinkRefTyp, IssueDate)
+VALUES ('{DocEntry}', '{ObjectType}', '{LineNum}', '{RefDocEntr}', '{RefDocNum}', '{RefObjType}', '{LinkRefTyp}', '{IssueDate}')

@@ -1,0 +1,4 @@
+SELECT T2.CashAcct FROM OUSR T1
+INNER JOIN OUDG T2
+	ON T1.DfltsGroup = T2.Code 
+WHERE USER_CODE = '{UserCode}'

@@ -1,0 +1,1 @@
+﻿SELECT U_Value FROM "@UG_CONFIG" WHERE "Name" = 'GLO_ACC_REVAL'

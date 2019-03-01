@@ -1,0 +1,1 @@
+select U_Total from [@UG_GLO_VOUC] with (Nolock) where U_Area ='{Area}' and U_Employee = '{Emp}' and U_TypeVoucher = '{Type}' and U_Total = 0

@@ -1,0 +1,1 @@
+SELECT *FROM [@UG_Config] WHERE Name = '{ParameterName}'

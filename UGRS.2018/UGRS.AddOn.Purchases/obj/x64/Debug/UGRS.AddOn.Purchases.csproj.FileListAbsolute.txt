@@ -1,0 +1,2 @@
+C:\Users\ssandoval\Documents\UGRS2018\UGRS.2018\UGRS.AddOn.Purchases\bin\x64\Debug\UGRS.AddOn.Purchases.exe.config
+C:\Users\ssandoval\Desktop\UGRS.2018\UGRS.AddOn.Purchases\bin\x64\Debug\UGRS.AddOn.Purchases.exe.config

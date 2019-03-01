@@ -1,0 +1,1 @@
+SELECT Series, SeriesName FROM NNM1 with (Nolock) WHERE ObjectCode = '{ObjectCode}'

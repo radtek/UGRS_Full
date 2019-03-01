@@ -1,0 +1,1 @@
+select U_USERID, U_MSG from [@UG_GLO_NOTI] with (Nolock) where  U_Clave = '{Clave}'
