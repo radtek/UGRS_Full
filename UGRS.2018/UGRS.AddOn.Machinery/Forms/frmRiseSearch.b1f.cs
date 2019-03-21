@@ -51,6 +51,8 @@ namespace UGRS.AddOn.Machinery.Forms
             this.mtxRise = ((SAPbouiCOM.Matrix)(this.GetItem("mtxRise").Specific));
             this.mtxRise.LinkPressedBefore += new SAPbouiCOM._IMatrixEvents_LinkPressedBeforeEventHandler(this.mtxRise_LinkPressedBefore);
             this.cboStatus = ((SAPbouiCOM.ComboBox)(this.GetItem("cboStatus").Specific));
+            this.lblMunicipality = ((SAPbouiCOM.StaticText)(this.GetItem("lblMunp").Specific));
+            this.cboMunicipality = ((SAPbouiCOM.ComboBox)(this.GetItem("cboMunp").Specific));
             this.OnCustomInitialize();
 
         }
@@ -275,6 +277,7 @@ namespace UGRS.AddOn.Machinery.Forms
                 CreateContractsDatatable();
                 CreateRiseDataTable();
                 LoadStatus();
+                LoadMunicipalities();
             }
             catch (Exception lObjException)
             {
@@ -312,6 +315,28 @@ namespace UGRS.AddOn.Machinery.Forms
             }
         }
 
+        private void LoadMunicipalities()
+        {
+            try
+            {
+                List<MunicipalitiesDTO> lLstMunicipalities = mObjMachineryServiceFactory.GetMunicipalitiesService().GetMunicipalities().Distinct().ToList();
+
+                foreach (var lObjMunicipality in lLstMunicipalities)
+                {
+                    cboMunicipality.ValidValues.Add(lObjMunicipality.Code.ToString(), lObjMunicipality.Name);
+                }
+
+                cboMunicipality.ValidValues.Add(string.Empty, "Seleccione");
+
+                cboMunicipality.Item.DisplayDesc = true;
+            }
+            catch (Exception lObjException)
+            {
+                LogUtility.WriteError(string.Format("[frmRiseSearch - LoadMunicipalities] Error al obtener el listado de municipios: {0}", lObjException.Message));
+                throw new Exception(string.Format("Error al obtener el listado de estatus de municipios: {0}", lObjException.Message));
+            }
+        }
+
         private void InitSearch()
         {
             try
@@ -338,6 +363,7 @@ namespace UGRS.AddOn.Machinery.Forms
 
                 string lStrContract = txtContracts.Value.Trim();
                 string lStrStatus = cboStatus.Selected.Value.Trim();
+                string lStrMunicipality = cboMunicipality.Selected.Value.Trim();
                 string lStrStartDate = string.IsNullOrEmpty(txtStartDate.Value) ? string.Empty : DateTimeUtility.StringToDateTime(txtStartDate.Value).ToString("yyyy/MM/dd");
                 string lStrEndDate = string.IsNullOrEmpty(txtEndDate.Value) ? string.Empty : DateTimeUtility.StringToDateTime(txtEndDate.Value).ToString("yyyy/MM/dd");
 
@@ -346,7 +372,7 @@ namespace UGRS.AddOn.Machinery.Forms
                     mStrClientCode = string.Empty;
                 }
 
-                List<ContractsFiltersDTO> lLstContracts = mObjMachineryServiceFactory.GetContractsService().GetContracts(lStrContract, mStrClientCode, lStrStatus, lStrStartDate, lStrEndDate);
+                List<ContractsFiltersDTO> lLstContracts = mObjMachineryServiceFactory.GetContractsService().GetContracts(lStrContract, mStrClientCode, lStrStatus, lStrStartDate, lStrEndDate, lStrMunicipality);
 
                 foreach (var lObjContract in lLstContracts)
                 {
@@ -406,6 +432,8 @@ namespace UGRS.AddOn.Machinery.Forms
                 dtContracts.SetValue("RealHrs", dtContracts.Rows.Count - 1, pObjContract.RealHrs);
                 dtContracts.SetValue("Dif", dtContracts.Rows.Count - 1, pObjContract.Difference);
                 dtContracts.SetValue("Status", dtContracts.Rows.Count - 1, pObjContract.StatusDescription);
+                dtContracts.SetValue("MuncpId", dtContracts.Rows.Count - 1, pObjContract.MunicipalityCode);
+                dtContracts.SetValue("Muncp", dtContracts.Rows.Count - 1, pObjContract.Municipality);
 
                 mtxContracts.LoadFromDataSource();
                 mtxContracts.AutoResizeColumns();
@@ -523,6 +551,8 @@ namespace UGRS.AddOn.Machinery.Forms
             dtContracts.Columns.Add("RealHrs", SAPbouiCOM.BoFieldsType.ft_Quantity);
             dtContracts.Columns.Add("Dif", SAPbouiCOM.BoFieldsType.ft_Quantity);
             dtContracts.Columns.Add("Status", SAPbouiCOM.BoFieldsType.ft_AlphaNumeric);
+            dtContracts.Columns.Add("MuncpId", SAPbouiCOM.BoFieldsType.ft_AlphaNumeric);
+            dtContracts.Columns.Add("Muncp", SAPbouiCOM.BoFieldsType.ft_AlphaNumeric);
 
             FillContractsMatrix();
         }
@@ -561,6 +591,7 @@ namespace UGRS.AddOn.Machinery.Forms
             mtxContracts.Columns.Item("ColRHrs").DataBind.Bind("DTCont", "RealHrs");
             mtxContracts.Columns.Item("ColDif").DataBind.Bind("DTCont", "Dif");
             mtxContracts.Columns.Item("ColStatus").DataBind.Bind("DTCont", "Status");
+            mtxContracts.Columns.Item("ColMunp").DataBind.Bind("DTCont", "Muncp");
 
             SAPbouiCOM.LinkedButton oLink = (SAPbouiCOM.LinkedButton)mtxContracts.Columns.Item("ColCont").ExtendedObject;
             //oLink.LinkedObject = SAPbouiCOM.BoLinkedObject.lf_Order;
@@ -613,6 +644,8 @@ namespace UGRS.AddOn.Machinery.Forms
         private SAPbouiCOM.ComboBox cboStatus;
         private SAPbouiCOM.DataTable dtContracts;
         private SAPbouiCOM.DataTable dtRise;
+        private SAPbouiCOM.StaticText lblMunicipality;
+        private SAPbouiCOM.ComboBox cboMunicipality;
         #endregion
     }
 }

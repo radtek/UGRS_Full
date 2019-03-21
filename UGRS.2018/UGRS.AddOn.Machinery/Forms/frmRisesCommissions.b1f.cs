@@ -146,7 +146,7 @@ namespace UGRS.AddOn.Machinery.Forms
             catch (Exception ex)
             {
                 LogUtility.WriteError(String.Format("[frmRisesCommissions - SBO_Application_ItemEvent] Error: {0}", ex.Message));
-                
+
                 if (!ex.Message.Contains("Form - Invalid Form"))
                     SAPbouiCOM.Framework.Application.SBO_Application.MessageBox(ex.Message);
             }
@@ -394,8 +394,8 @@ namespace UGRS.AddOn.Machinery.Forms
                 string lStrCashRegisterAccount = mObjMachineryServiceFactory.GetConfigurationsService().GetAccountCode(ConfigurationsEnum.CashRegisterAccount);
                 string lStrUserId = mObjMachineryServiceFactory.GetUsersService().GetUserId(Application.SBO_Application.Company.UserName).ToString();
                 double lDblTotalTot = double.Parse(txtTotal.Value);
-                double lDblTotalCommissions = CalculateCommissionTotal();
-                double lDblDifference = CalculateDifference(lDblTotalCommissions, lDblTotalTot);
+                //double lDblTotalCommissions = CalculateCommissionTotal();
+                //double lDblDifference = CalculateDifference(lDblTotalCommissions, lDblTotalTot);
                 string lStrTravelExpFolio = mObjMachineryServiceFactory.GetTravelExpensesService().GetCurrentFolio(txtFolioRise.Value);
                 string lStrSupId = string.Empty;
 
@@ -432,31 +432,25 @@ namespace UGRS.AddOn.Machinery.Forms
 
                 for (int i = 0; i < dtCommissions.Rows.Count; i++)
                 {
-                    double lDblImportFS = double.Parse(dtCommissions.GetValue("ImpFS", i).ToString());
-                    double lDblAdeudo = double.Parse(dtCommissions.GetValue("Adeudo", i).ToString());
+                    double lDblImportFSU = double.Parse(dtCommissions.GetValue("ImpFS", i).ToString());
+                    double lDblDeudaU = double.Parse(dtCommissions.GetValue("Adeudo", i).ToString());
                     double lDblTotalCommission = double.Parse(dtCommissions.GetValue("Cmson", i).ToString());
                     double lDblTotalLine = double.Parse(dtCommissions.GetValue("Total", i).ToString());
                     string lStrEmpId = dtCommissions.GetValue("EmpId", i).ToString();
                     string lStrIsSup = dtCommissions.GetValue("IsSup", i).ToString();
                     string lStrPosition = dtCommissions.GetValue("PstoId", i).ToString();
                     string lStrHours = dtCommissions.GetValue("Hrs", i).ToString();
-                    double lDblOriginalAduedo = double.Parse(dtCommissions.GetValue("OrigAdudo", i).ToString());
-                    double lDblOriginalImportFS = double.Parse(dtCommissions.GetValue("OrigImpFS", i).ToString());
+                    double lDblDeudaR = double.Parse(dtCommissions.GetValue("OrigAdudo", i).ToString());
+                    double lDblImportFSR = double.Parse(dtCommissions.GetValue("OrigImpFS", i).ToString());
                     string lStrLastCodeMov = dtCommissions.GetValue("CodeMov", i).ToString();
                     //"OrigImpFS", dtCommissions.Rows.Count - 1, pObjCommissionDetail.ImportFS);
-                    //dtCommissions.SetValue("OrigAdudo"
-
-                    //if (lDblTotalLine < 0)
-                    //{
-                    //    UIApplication.ShowError("No se permiten valores negativos para la columna total");
-                    //    return;
-                    //}
 
                     lObjJournalEntry.Lines.SetCurrentLine(lObjJournalEntry.Lines.Count - 1);
                     lObjJournalEntry.Lines.TaxDate = DateTime.Now;
                     lObjJournalEntry.Lines.AccountCode = lStrCommissionAccount;
                     lObjJournalEntry.Lines.Debit = lDblTotalCommission;
                     lObjJournalEntry.Lines.Credit = 0;
+                    lObjJournalEntry.Lines.CostingCode = "MQ_MAQUI";
                     lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_TypeAux").Value = "2";
                     lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_Auxiliar").Value = lStrEmpId; //code empleado
                     lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_CodeMov").Value = txtFolioRise.Value;
@@ -472,135 +466,124 @@ namespace UGRS.AddOn.Machinery.Forms
 
                     if (lStrIsSup == "Y")
                     {
-                        lStrSupId = lStrEmpId;
-
-                        if (lDblImportFS < 0)
+                        if (lDblTotalLine > 0)
                         {
-                            lObjJournalEntry.Lines.SetCurrentLine(lObjJournalEntry.Lines.Count - 1);
-                            lObjJournalEntry.Lines.TaxDate = DateTime.Now;
-                            lObjJournalEntry.Lines.AccountCode = lStrFuncEmpAcct;
-                            lObjJournalEntry.Lines.Debit = lDblImportFS * -1;
-                            lObjJournalEntry.Lines.Credit = 0;
-                            lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_TypeAux").Value = "2";
-                            lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_Auxiliar").Value = lStrEmpId; //code empleado
-                            lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_CodeMov").Value = lStrTravelExpFolio; //lStrLastCodeMov;
-                            lObjJournalEntry.Lines.Add();
+                            double lDblDeudaF = lDblDeudaR - lDblDeudaU;
+                            double lDblImpFSF = lDblImportFSR - lDblImportFSU;
+
+                            if (lDblDeudaR > 0)
+                            {
+                                lObjJournalEntry.Lines.SetCurrentLine(lObjJournalEntry.Lines.Count - 1);
+                                lObjJournalEntry.Lines.TaxDate = DateTime.Now;
+                                lObjJournalEntry.Lines.AccountCode = lStrFuncEmpAcct;
+                                lObjJournalEntry.Lines.Debit = 0;
+                                lObjJournalEntry.Lines.Credit = lDblDeudaR;
+                                lObjJournalEntry.Lines.CostingCode = "MQ_MAQUI";
+                                lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_TypeAux").Value = "2";
+                                lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_Auxiliar").Value = lStrEmpId; //code empleado
+                                lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_CodeMov").Value = lStrLastCodeMov;
+                                lObjJournalEntry.Lines.Add();
+                            }
+
+                            if (lDblDeudaF > 0)
+                            {
+                                lObjJournalEntry.Lines.SetCurrentLine(lObjJournalEntry.Lines.Count - 1);
+                                lObjJournalEntry.Lines.TaxDate = DateTime.Now;
+                                lObjJournalEntry.Lines.AccountCode = lStrFuncEmpAcct;
+                                lObjJournalEntry.Lines.Debit = lDblDeudaF;
+                                lObjJournalEntry.Lines.Credit = 0;
+                                lObjJournalEntry.Lines.CostingCode = "MQ_MAQUI";
+                                lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_TypeAux").Value = "2";
+                                lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_Auxiliar").Value = lStrEmpId; //code empleado
+                                lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_CodeMov").Value = lStrTravelExpFolio;
+                                lObjJournalEntry.Lines.Add();
+                            }
+
+                            if (lDblImportFSR > 0 && lDblImportFSU > 0)
+                            {
+                                lObjJournalEntry.Lines.SetCurrentLine(lObjJournalEntry.Lines.Count - 1);
+                                lObjJournalEntry.Lines.TaxDate = DateTime.Now;
+                                lObjJournalEntry.Lines.AccountCode = lStrFuncEmpAcct;
+                                lObjJournalEntry.Lines.Debit = 0;
+                                lObjJournalEntry.Lines.Credit = lDblImportFSU;
+                                lObjJournalEntry.Lines.CostingCode = "MQ_MAQUI";
+                                lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_TypeAux").Value = "2";
+                                lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_Auxiliar").Value = lStrEmpId; //code empleado
+                                lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_CodeMov").Value = lStrTravelExpFolio;
+                                lObjJournalEntry.Lines.Add();
+                            }
+                            else if (lDblImportFSR < 0)
+                            {
+                                lObjJournalEntry.Lines.SetCurrentLine(lObjJournalEntry.Lines.Count - 1);
+                                lObjJournalEntry.Lines.TaxDate = DateTime.Now;
+                                lObjJournalEntry.Lines.AccountCode = lStrFuncEmpAcct;
+                                lObjJournalEntry.Lines.Debit = lDblImportFSU * -1;
+                                lObjJournalEntry.Lines.Credit = 0;
+                                lObjJournalEntry.Lines.CostingCode = "MQ_MAQUI";
+                                lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_TypeAux").Value = "2";
+                                lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_Auxiliar").Value = lStrEmpId; //code empleado
+                                lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_CodeMov").Value = lStrTravelExpFolio;
+                                lObjJournalEntry.Lines.Add();
+                            }
                         }
                         else
                         {
-                            lObjJournalEntry.Lines.SetCurrentLine(lObjJournalEntry.Lines.Count - 1);
-                            lObjJournalEntry.Lines.TaxDate = DateTime.Now;
-                            lObjJournalEntry.Lines.AccountCode = lStrFuncEmpAcct;
-                            lObjJournalEntry.Lines.Debit = 0;
-                            lObjJournalEntry.Lines.Credit = lDblImportFS;
-                            lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_TypeAux").Value = "2";
-                            lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_Auxiliar").Value = lStrEmpId; //code empleado
-                            lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_CodeMov").Value = lStrTravelExpFolio;
-                            lObjJournalEntry.Lines.Add();
-                        }
+                            double lDblSaldo = lDblDeudaR - lDblTotalCommission;
 
-                        if (lDblOriginalAduedo != 0)
-                        {
-                            //if (lDblTotalLine < 0) //deuda mayor a la comisión y es negativo
-                            //{
-                            lObjJournalEntry.Lines.SetCurrentLine(lObjJournalEntry.Lines.Count - 1);
-                            lObjJournalEntry.Lines.TaxDate = DateTime.Now;
-                            lObjJournalEntry.Lines.AccountCode = lStrFuncEmpAcct;
-                            lObjJournalEntry.Lines.Debit = 0;
-                            lObjJournalEntry.Lines.Credit = lDblOriginalAduedo;
-                            lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_TypeAux").Value = "2";
-                            lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_Auxiliar").Value = lStrEmpId; //code empleado
-                            lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_CodeMov").Value = lStrLastCodeMov;
-                            lObjJournalEntry.Lines.Add();
-
-                            lObjJournalEntry.Lines.SetCurrentLine(lObjJournalEntry.Lines.Count - 1);
-                            lObjJournalEntry.Lines.TaxDate = DateTime.Now;
-                            lObjJournalEntry.Lines.AccountCode = lStrFuncEmpAcct;
-                            lObjJournalEntry.Lines.Debit = lDblOriginalAduedo;
-                            lObjJournalEntry.Lines.Credit = 0;
-                            lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_TypeAux").Value = "2";
-                            lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_Auxiliar").Value = lStrEmpId; //code empleado
-                            lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_CodeMov").Value = lStrTravelExpFolio;
-                            lObjJournalEntry.Lines.Add();
-
-                            //lObjJournalEntry.Lines.SetCurrentLine(lObjJournalEntry.Lines.Count - 1);
-                            //lObjJournalEntry.Lines.TaxDate = DateTime.Now;
-                            //lObjJournalEntry.Lines.AccountCode = lStrFuncEmpAcct;
-                            //lObjJournalEntry.Lines.Debit = 0;
-                            //lObjJournalEntry.Lines.Credit = lDblTotalCommission;
-                            //lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_TypeAux").Value = "2";
-                            //lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_Auxiliar").Value = lStrEmpId; //code empleado
-                            //lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_CodeMov").Value = lStrTravelExpFolio;
-                            //lObjJournalEntry.Lines.Add();
-                            //}
-                            //else
-                            //{
-                            //    lObjJournalEntry.Lines.SetCurrentLine(lObjJournalEntry.Lines.Count - 1);
-                            //    lObjJournalEntry.Lines.TaxDate = DateTime.Now;
-                            //    lObjJournalEntry.Lines.AccountCode = lStrFuncEmpAcct;
-                            //    lObjJournalEntry.Lines.Debit = 0;
-                            //    lObjJournalEntry.Lines.Credit = lDblOriginalAduedo;
-                            //    lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_TypeAux").Value = "2";
-                            //    lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_Auxiliar").Value = lStrEmpId; //code empleado
-                            //    lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_CodeMov").Value = lStrLastCodeMov;
-                            //    lObjJournalEntry.Lines.Add();
-
-                            //    lObjJournalEntry.Lines.SetCurrentLine(lObjJournalEntry.Lines.Count - 1);
-                            //    lObjJournalEntry.Lines.TaxDate = DateTime.Now;
-                            //    lObjJournalEntry.Lines.AccountCode = lStrFuncEmpAcct;
-                            //    lObjJournalEntry.Lines.Debit = lDblOriginalAduedo;
-                            //    lObjJournalEntry.Lines.Credit = 0;
-                            //    lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_TypeAux").Value = "2";
-                            //    lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_Auxiliar").Value = lStrEmpId; //code empleado
-                            //    lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_CodeMov").Value = lStrTravelExpFolio;
-                            //    lObjJournalEntry.Lines.Add();
-
-                            //    if ((lDblImportFS + lDblAdeudo) != 0)
-                            //    {
-                            //        lObjJournalEntry.Lines.SetCurrentLine(lObjJournalEntry.Lines.Count - 1);
-                            //        lObjJournalEntry.Lines.TaxDate = DateTime.Now;
-                            //        lObjJournalEntry.Lines.AccountCode = lStrFuncEmpAcct;
-                            //        lObjJournalEntry.Lines.Debit = 0;
-                            //        lObjJournalEntry.Lines.Credit = lDblImportFS + lDblAdeudo;
-                            //        lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_TypeAux").Value = "2";
-                            //        lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_Auxiliar").Value = lStrEmpId; //code empleado
-                            //        lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_CodeMov").Value = lStrTravelExpFolio;
-                            //        lObjJournalEntry.Lines.Add();
-                            //    }
-                            //}
-                        }
-
-                        if (lDblImportFS < 0 || lDblOriginalAduedo != 0)
-                        {
-                            if (lDblImportFS < 0)
-                                lDblTotalCommissions += lDblImportFS * -1;
-
-                            if ((lDblTotalCommissions - lDblTotalTot) != 0)
+                            if (lDblDeudaR > 0)
                             {
-                                if (lDblTotalCommissions > lDblTotalTot)
-                                {
-                                    lObjJournalEntry.Lines.SetCurrentLine(lObjJournalEntry.Lines.Count - 1);
-                                    lObjJournalEntry.Lines.TaxDate = DateTime.Now;
-                                    lObjJournalEntry.Lines.AccountCode = lStrFuncEmpAcct; //cuenta maquinaria m.c.
-                                    lObjJournalEntry.Lines.Debit = 0;
-                                    lObjJournalEntry.Lines.Credit = lDblTotalCommissions - lDblTotalTot; //lDblDifference;
-                                    lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_TypeAux").Value = "2";
-                                    lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_Auxiliar").Value = lStrEmpId; //lStrSupId; //lStrUserId; //code empleado
-                                    lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_CodeMov").Value = lStrTravelExpFolio; //folio de la solicitud de viáticos de la subida
-                                    lObjJournalEntry.Lines.Add();
-                                }
-                                else
-                                {
-                                    lObjJournalEntry.Lines.SetCurrentLine(lObjJournalEntry.Lines.Count - 1);
-                                    lObjJournalEntry.Lines.TaxDate = DateTime.Now;
-                                    lObjJournalEntry.Lines.AccountCode = lStrFuncEmpAcct; //cuenta maquinaria m.c.
-                                    lObjJournalEntry.Lines.Debit = lDblTotalCommissions - lDblTotalTot; //lDblDifference;
-                                    lObjJournalEntry.Lines.Credit = 0;
-                                    lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_TypeAux").Value = "2";
-                                    lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_Auxiliar").Value = lStrEmpId; //lStrSupId; // lStrUserId; //code empleado
-                                    lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_CodeMov").Value = lStrTravelExpFolio; //folio de la solicitud de viáticos de la subida
-                                    lObjJournalEntry.Lines.Add();
-                                }
+                                lObjJournalEntry.Lines.SetCurrentLine(lObjJournalEntry.Lines.Count - 1);
+                                lObjJournalEntry.Lines.TaxDate = DateTime.Now;
+                                lObjJournalEntry.Lines.AccountCode = lStrFuncEmpAcct;
+                                lObjJournalEntry.Lines.Debit = 0;
+                                lObjJournalEntry.Lines.Credit = lDblDeudaR;
+                                lObjJournalEntry.Lines.CostingCode = "MQ_MAQUI";
+                                lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_TypeAux").Value = "2";
+                                lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_Auxiliar").Value = lStrEmpId; //code empleado
+                                lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_CodeMov").Value = lStrLastCodeMov;
+                                lObjJournalEntry.Lines.Add();
+                            }
+
+                            if (lDblDeudaR > 0 && lDblSaldo > 0)
+                            {
+                                lObjJournalEntry.Lines.SetCurrentLine(lObjJournalEntry.Lines.Count - 1);
+                                lObjJournalEntry.Lines.TaxDate = DateTime.Now;
+                                lObjJournalEntry.Lines.AccountCode = lStrFuncEmpAcct;
+                                lObjJournalEntry.Lines.Debit = lDblSaldo;
+                                lObjJournalEntry.Lines.Credit = 0;
+                                lObjJournalEntry.Lines.CostingCode = "MQ_MAQUI";
+                                lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_TypeAux").Value = "2";
+                                lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_Auxiliar").Value = lStrEmpId; //code empleado
+                                lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_CodeMov").Value = lStrTravelExpFolio;
+                                lObjJournalEntry.Lines.Add();
+                            }
+
+                            if (lDblImportFSR > 0 && lDblSaldo < 0)
+                            {
+                                lObjJournalEntry.Lines.SetCurrentLine(lObjJournalEntry.Lines.Count - 1);
+                                lObjJournalEntry.Lines.TaxDate = DateTime.Now;
+                                lObjJournalEntry.Lines.AccountCode = lStrFuncEmpAcct;
+                                lObjJournalEntry.Lines.Debit = 0;
+                                lObjJournalEntry.Lines.Credit = lDblSaldo * -1;
+                                lObjJournalEntry.Lines.CostingCode = "MQ_MAQUI";
+                                lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_TypeAux").Value = "2";
+                                lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_Auxiliar").Value = lStrEmpId; //code empleado
+                                lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_CodeMov").Value = lStrTravelExpFolio;
+                                lObjJournalEntry.Lines.Add();
+                            }
+
+                            if (lDblImportFSR < 0)
+                            {
+                                lObjJournalEntry.Lines.SetCurrentLine(lObjJournalEntry.Lines.Count - 1);
+                                lObjJournalEntry.Lines.TaxDate = DateTime.Now;
+                                lObjJournalEntry.Lines.AccountCode = lStrFuncEmpAcct;
+                                lObjJournalEntry.Lines.Debit = 0;
+                                lObjJournalEntry.Lines.Credit = lDblImportFSR * -1;
+                                lObjJournalEntry.Lines.CostingCode = "MQ_MAQUI";
+                                lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_TypeAux").Value = "2";
+                                lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_Auxiliar").Value = lStrEmpId; //code empleado
+                                lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_CodeMov").Value = lStrTravelExpFolio;
+                                lObjJournalEntry.Lines.Add();
                             }
                         }
                     }
@@ -614,36 +597,12 @@ namespace UGRS.AddOn.Machinery.Forms
                     lObjJournalEntry.Lines.AccountCode = lStrCashRegisterAccount; //cuenta maquinaria m.c.
                     lObjJournalEntry.Lines.Debit = 0;
                     lObjJournalEntry.Lines.Credit = lDblTotalTot;
+                    lObjJournalEntry.Lines.CostingCode = "MQ_MAQUI";
                     lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_TypeAux").Value = "2";
                     lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_Auxiliar").Value = lStrUserId; //code empleado
                     lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_CodeMov").Value = txtFolioRise.Value; //folio de la solicitud de viáticos de la subida
                     lObjJournalEntry.Lines.Add();
                 }
-
-                //if (lDblTotalCommissions > lDblTotalTot)
-                //{
-                //    lObjJournalEntry.Lines.SetCurrentLine(lObjJournalEntry.Lines.Count - 1);
-                //    lObjJournalEntry.Lines.TaxDate = DateTime.Now;
-                //    lObjJournalEntry.Lines.AccountCode = lStrFuncEmpAcct; //cuenta maquinaria m.c.
-                //    lObjJournalEntry.Lines.Debit = 0;
-                //    lObjJournalEntry.Lines.Credit = lDblDifference;
-                //    lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_TypeAux").Value = "2";
-                //    lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_Auxiliar").Value = lStrSupId; //lStrUserId; //code empleado
-                //    lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_CodeMov").Value = lStrTravelExpFolio; //folio de la solicitud de viáticos de la subida
-                //    lObjJournalEntry.Lines.Add();
-                //}
-                //else
-                //{
-                //    lObjJournalEntry.Lines.SetCurrentLine(lObjJournalEntry.Lines.Count - 1);
-                //    lObjJournalEntry.Lines.TaxDate = DateTime.Now;
-                //    lObjJournalEntry.Lines.AccountCode = lStrFuncEmpAcct; //cuenta maquinaria m.c.
-                //    lObjJournalEntry.Lines.Debit = lDblDifference;
-                //    lObjJournalEntry.Lines.Credit = 0;
-                //    lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_TypeAux").Value = "2";
-                //    lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_Auxiliar").Value = lStrSupId; // lStrUserId; //code empleado
-                //    lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_CodeMov").Value = lStrTravelExpFolio; //folio de la solicitud de viáticos de la subida
-                //    lObjJournalEntry.Lines.Add();
-                //}
 
                 if (lObjJournalEntry.Add() != 0)
                 {
@@ -939,9 +898,11 @@ namespace UGRS.AddOn.Machinery.Forms
                                           (pObjCommissionDetail.Position == "S" && mStrSupervisorId == pObjCommissionDetail.EmployeeId.ToString()) ? "Y" : "N";
                 double lDblImportFS = pLstCommissionsDetails.Where(x => x.IsSupervisor == "S").Count() == 1 && lStrIsSupervisor == "Y" ? pObjCommissionDetail.ImportFS :
                                           (pObjCommissionDetail.Position == "S") ? pObjCommissionDetail.ImportFS : 0;
+                double lDblAdeudo = pLstCommissionsDetails.Where(x => x.IsSupervisor == "S").Count() == 1 && lStrIsSupervisor == "Y" ? pObjCommissionDetail.Adeudo :
+                                          (pObjCommissionDetail.Position == "S") ? pObjCommissionDetail.Adeudo : 0;
 
-                double lDblPendiente = ((lDblImportFS + pObjCommissionDetail.Adeudo) - pObjCommissionDetail.Commission);
-                double lDblTotal = pObjCommissionDetail.Commission - lDblImportFS - pObjCommissionDetail.Adeudo;
+                double lDblPendiente = ((lDblImportFS + lDblAdeudo) - pObjCommissionDetail.Commission);
+                double lDblTotal = pObjCommissionDetail.Commission - lDblImportFS - lDblAdeudo;
                 double lDblOriginalTotal = lDblImportFS < 0 ? (pObjCommissionDetail.Commission - lDblImportFS /*pObjCommissionDetail.ImportFS*/) : pObjCommissionDetail.Commission;
 
                 dtCommissions.Rows.Add();
@@ -954,13 +915,13 @@ namespace UGRS.AddOn.Machinery.Forms
                 dtCommissions.SetValue("Tarifa", dtCommissions.Rows.Count - 1, pObjCommissionDetail.Rate);
                 dtCommissions.SetValue("Cmson", dtCommissions.Rows.Count - 1, pObjCommissionDetail.Commission);
                 dtCommissions.SetValue("ImpFS", dtCommissions.Rows.Count - 1, lDblImportFS /*pObjCommissionDetail.ImportFS*/);
-                dtCommissions.SetValue("Adeudo", dtCommissions.Rows.Count - 1, pObjCommissionDetail.Adeudo);
+                dtCommissions.SetValue("Adeudo", dtCommissions.Rows.Count - 1, lDblAdeudo /*pObjCommissionDetail.Adeudo*/);
                 dtCommissions.SetValue("Total", dtCommissions.Rows.Count - 1, lDblTotal);
-                dtCommissions.SetValue("Pend", dtCommissions.Rows.Count - 1, lDblPendiente > 0 ? lDblPendiente : pObjCommissionDetail.Adeudo);
+                dtCommissions.SetValue("Pend", dtCommissions.Rows.Count - 1, lDblPendiente > 0 ? lDblPendiente : lDblAdeudo /*pObjCommissionDetail.Adeudo*/);
                 dtCommissions.SetValue("IsSup", dtCommissions.Rows.Count - 1, lStrIsSupervisor);
                 dtCommissions.SetValue("OrigTotal", dtCommissions.Rows.Count - 1, lDblOriginalTotal);
                 dtCommissions.SetValue("OrigImpFS", dtCommissions.Rows.Count - 1, lDblImportFS /*pObjCommissionDetail.ImportFS*/);
-                dtCommissions.SetValue("OrigAdudo", dtCommissions.Rows.Count - 1, pObjCommissionDetail.Adeudo);
+                dtCommissions.SetValue("OrigAdudo", dtCommissions.Rows.Count - 1, lDblAdeudo /*pObjCommissionDetail.Adeudo*/);
                 dtCommissions.SetValue("CodeMov", dtCommissions.Rows.Count - 1, pObjCommissionDetail.CodeMov);
 
                 mtxCommissions.LoadFromDataSource();
@@ -976,8 +937,8 @@ namespace UGRS.AddOn.Machinery.Forms
                     }
                     else
                     {*/
-                        lObjCmmnSetting.SetCellEditable(dtCommissions.Rows.Count, 6, false);
-                        lObjCmmnSetting.SetCellEditable(dtCommissions.Rows.Count, 7, false);
+                    lObjCmmnSetting.SetCellEditable(dtCommissions.Rows.Count, 6, false);
+                    lObjCmmnSetting.SetCellEditable(dtCommissions.Rows.Count, 7, false);
                     //}
                 }
                 else
@@ -1022,7 +983,7 @@ namespace UGRS.AddOn.Machinery.Forms
             FillContractsMatrix();
         }
 
-        private void CalculateTotal() 
+        private void CalculateTotal()
         {
             try
             {

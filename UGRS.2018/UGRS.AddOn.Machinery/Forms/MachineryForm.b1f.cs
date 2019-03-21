@@ -14,9 +14,11 @@ using UGRS.Core.SDK.UI;
 using UGRS.Core.Services;
 using UGRS.Core.Utility;
 
-namespace UGRS.AddOn.Machinery.Forms {
+namespace UGRS.AddOn.Machinery.Forms
+{
     [FormAttribute("UGRS.AddOn.Machinery.Forms.MachineryForm", "Forms/MachineryForm.b1f")]
-    class MachineryForm : UserFormBase {
+    class MachineryForm : UserFormBase
+    {
         #region Properties
         private MachinerySeviceFactory mObjMachineryServiceFactory = new MachinerySeviceFactory();
         private Rise mObjRise = null;
@@ -38,8 +40,10 @@ namespace UGRS.AddOn.Machinery.Forms {
         #endregion
 
         #region Constructor
-        public MachineryForm(int pIntRiseId = 0) {
-            try {
+        public MachineryForm(int pIntRiseId = 0)
+        {
+            try
+            {
                 LogService.WriteInfo(string.Format("[MachineryForm]: {0}", "Abriendo forma de subidas"));
 
                 this.UIAPIRawForm.Freeze(true);
@@ -59,17 +63,20 @@ namespace UGRS.AddOn.Machinery.Forms {
 
                 LoadInitialsControls();
 
-                if(pIntRiseId > 0) {
+                if (pIntRiseId > 0)
+                {
                     CleanControls(true);
                     txtFolio.Value = pIntRiseId.ToString();
                     StartSearchMode();
                 }
             }
-            catch(Exception lObjExpception) {
+            catch (Exception lObjExpception)
+            {
                 LogUtility.WriteError(string.Format("[MachineryForm - MachineryForm] Error: {0}", lObjExpception.Message));
                 throw lObjExpception;
             }
-            finally {
+            finally
+            {
                 this.UIAPIRawForm.Freeze(false);
             }
         }
@@ -79,7 +86,8 @@ namespace UGRS.AddOn.Machinery.Forms {
         /// <summary>
         /// Initialize components. Called by framework after form created.
         /// </summary>
-        public override void OnInitializeComponent() {
+        public override void OnInitializeComponent()
+        {
             this.lblFolio = ((SAPbouiCOM.StaticText)(this.GetItem("lblFolio").Specific));
             this.lblDate = ((SAPbouiCOM.StaticText)(this.GetItem("lblDate").Specific));
             this.lblClient = ((SAPbouiCOM.StaticText)(this.GetItem("lblClient").Specific));
@@ -157,18 +165,21 @@ namespace UGRS.AddOn.Machinery.Forms {
         /// <summary>
         /// Initialize form event. Called by framework before form creation.
         /// </summary>
-        public override void OnInitializeFormEvents() {
+        public override void OnInitializeFormEvents()
+        {
             this.ResizeAfter += new SAPbouiCOM.Framework.FormBase.ResizeAfterHandler(this.Form_ResizeAfter);
 
         }
 
-        private void OnCustomInitialize() {
+        private void OnCustomInitialize()
+        {
             UIAPIRawForm.EnableMenu("1293", true); //Borrar
         }
         #endregion
 
         #region Load & Unload Events
-        private void LoadEvents() {
+        private void LoadEvents()
+        {
             Application.SBO_Application.ItemEvent += new SAPbouiCOM._IApplicationEvents_ItemEventEventHandler(SBO_Application_ItemEvent);
             Application.SBO_Application.FormDataEvent += new SAPbouiCOM._IApplicationEvents_FormDataEventEventHandler(SBO_Application_FormEvent);
             UIApplication.GetApplication().MenuEvent += new SAPbouiCOM._IApplicationEvents_MenuEventEventHandler(this.SBO_Application_MenuEvent);
@@ -179,7 +190,8 @@ namespace UGRS.AddOn.Machinery.Forms {
             //SAPbouiCOM.Framework.Application.SBO_Application.ItemEvent += new SAPbouiCOM._IApplicationEvents_ItemEventEventHandler(ChooseFromListAfterEvent);
         }
 
-        private void UnLoadEvents() {
+        private void UnLoadEvents()
+        {
             Application.SBO_Application.ItemEvent -= new SAPbouiCOM._IApplicationEvents_ItemEventEventHandler(SBO_Application_ItemEvent);
             Application.SBO_Application.FormDataEvent -= new SAPbouiCOM._IApplicationEvents_FormDataEventEventHandler(SBO_Application_FormEvent);
             UIApplication.GetApplication().MenuEvent -= new SAPbouiCOM._IApplicationEvents_MenuEventEventHandler(this.SBO_Application_MenuEvent);
@@ -198,213 +210,260 @@ namespace UGRS.AddOn.Machinery.Forms {
         /// <param name="FormUID"></param>
         /// <param name="pVal"></param>
         /// <param name="BubbleEvent"></param>
-        private void SBO_Application_ItemEvent(string FormUID, ref SAPbouiCOM.ItemEvent pVal, out bool BubbleEvent) {
+        private void SBO_Application_ItemEvent(string FormUID, ref SAPbouiCOM.ItemEvent pVal, out bool BubbleEvent)
+        {
             BubbleEvent = true;
             //string y = pVal.CharPressed.ToString();
-            try {
-                if(pVal.FormTypeEx.Equals("UGRS.AddOn.Machinery.Forms.frmCFLFolios")) {
-                    if(!pVal.BeforeAction) {
-                        switch(pVal.EventType) {
+            try
+            {
+                if (pVal.FormTypeEx.Equals("UGRS.AddOn.Machinery.Forms.frmCFLFolios"))
+                {
+                    if (!pVal.BeforeAction)
+                    {
+                        switch (pVal.EventType)
+                        {
                             case SAPbouiCOM.BoEventTypes.et_FORM_CLOSE:
-                            if(mObjFrmFolios != null) {
-                                if(string.IsNullOrEmpty(mObjFrmFolios.mStrFolio))
-                                    return;
+                                if (mObjFrmFolios != null)
+                                {
+                                    if (string.IsNullOrEmpty(mObjFrmFolios.mStrFolio))
+                                        return;
 
-                                txtFolioRelation.Value = mObjFrmFolios.mStrFolio;
+                                    txtFolioRelation.Value = mObjFrmFolios.mStrFolio;
 
-                                //Cargar operadores, contratos y registros iniciales (reg. finales de UDT)
-                                LoadRiseRelControls();
-                                mObjFrmFolios = null;
-                            }
-                            break;
+                                    //Cargar operadores, contratos y registros iniciales (reg. finales de UDT)
+                                    LoadRiseRelControls();
+                                    mObjFrmFolios = null;
+                                }
+                                break;
                         }
                     }
                 }
 
-                if(pVal.FormTypeEx.Equals("UGRS.AddOn.Machinery.Forms.frmCFLOrdersSale")) {
-                    if(!pVal.BeforeAction) {
-                        switch(pVal.EventType) {
+                if (pVal.FormTypeEx.Equals("UGRS.AddOn.Machinery.Forms.frmCFLOrdersSale"))
+                {
+                    if (!pVal.BeforeAction)
+                    {
+                        switch (pVal.EventType)
+                        {
                             case SAPbouiCOM.BoEventTypes.et_FORM_CLOSE:
-                            if(mObjFrmContractsList != null) {
-                                AddContract(mObjFrmContractsList.mObjSelectedContract);
-                                SaveContracts();
-                            }
-                            break;
-                        }
-                    }
-                }
-
-                if(pVal.FormTypeEx.Equals("UGRS.AddOn.Machinery.Forms.frmContracts")) {
-                    if(!pVal.BeforeAction) {
-                        switch(pVal.EventType) {
-                            case SAPbouiCOM.BoEventTypes.et_FORM_CLOSE:
-                            if(mObjFrmContracts != null) {
-                                if(!mObjFrmContracts.mBolFromMenu) {
-                                    AddContract(mObjFrmContracts.mObjCreatedContract);
+                                if (mObjFrmContractsList != null)
+                                {
+                                    AddContract(mObjFrmContractsList.mObjSelectedContract);
                                     SaveContracts();
                                 }
-                            }
-                            break;
+                                break;
                         }
                     }
                 }
 
-                if(pVal.FormTypeEx.Equals("UGRS.AddOn.Machinery.Forms.frmTravelExpenses")) {
-                    if(!pVal.BeforeAction) {
-                        switch(pVal.EventType) {
+                if (pVal.FormTypeEx.Equals("UGRS.AddOn.Machinery.Forms.frmContracts"))
+                {
+                    if (!pVal.BeforeAction)
+                    {
+                        switch (pVal.EventType)
+                        {
                             case SAPbouiCOM.BoEventTypes.et_FORM_CLOSE:
-                            if(mObjFrmTravelExpenses != null) {
-                                //AddTravelExpenses(mObjFrmTravelExpenses.mObjTravelExpensesDTO);
-                            }
-                            break;
-                        }
-                    }
-                }
-
-                if(pVal.FormTypeEx.Equals("UGRS.AddOn.Machinery.Forms.frmGoodIssue")) {
-                    if(!pVal.BeforeAction) {
-                        switch(pVal.EventType) {
-                            case SAPbouiCOM.BoEventTypes.et_FORM_CLOSE:
-                            if(mFrmGoodIssue != null) {
-                                if(mFrmGoodIssue.mIntDocEntry > 0) {
-                                    SaveInitialsRecords();
-                                    SavePurchasesInvReqRecords();
-                                    SaveFinalsRecords();
-                                    SaveTotalsRecords();
-
-                                    mtxInitialRecords.Item.Enabled = false;
-                                    mtxPurchase.Item.Enabled = false;
-                                    mtxFinalRecords.Item.Enabled = false;
-                                    mtxConsumedTotals.Item.Enabled = false;
-                                    btnSaveIR.Item.Enabled = false;
+                                if (mObjFrmContracts != null)
+                                {
+                                    if (!mObjFrmContracts.mBolFromMenu)
+                                    {
+                                        AddContract(mObjFrmContracts.mObjCreatedContract);
+                                        SaveContracts();
+                                    }
                                 }
-                            }
-                            break;
+                                break;
                         }
                     }
                 }
 
-                if(FormUID.Equals(this.UIAPIRawForm.UniqueID)) {
-                    if(!pVal.BeforeAction) {
-                        switch(pVal.EventType) {
+                if (pVal.FormTypeEx.Equals("UGRS.AddOn.Machinery.Forms.frmTravelExpenses"))
+                {
+                    if (!pVal.BeforeAction)
+                    {
+                        switch (pVal.EventType)
+                        {
+                            case SAPbouiCOM.BoEventTypes.et_FORM_CLOSE:
+                                if (mObjFrmTravelExpenses != null)
+                                {
+                                    //AddTravelExpenses(mObjFrmTravelExpenses.mObjTravelExpensesDTO);
+                                }
+                                break;
+                        }
+                    }
+                }
+
+                if (pVal.FormTypeEx.Equals("UGRS.AddOn.Machinery.Forms.frmGoodIssue"))
+                {
+                    if (!pVal.BeforeAction)
+                    {
+                        switch (pVal.EventType)
+                        {
+                            case SAPbouiCOM.BoEventTypes.et_FORM_CLOSE:
+                                if (mFrmGoodIssue != null)
+                                {
+                                    if (mFrmGoodIssue.mIntDocEntry > 0)
+                                    {
+                                        SaveInitialsRecords();
+                                        SavePurchasesInvReqRecords();
+                                        SaveFinalsRecords();
+                                        SaveTotalsRecords();
+
+                                        mtxInitialRecords.Item.Enabled = false;
+                                        mtxPurchase.Item.Enabled = false;
+                                        mtxFinalRecords.Item.Enabled = false;
+                                        mtxConsumedTotals.Item.Enabled = false;
+                                        btnSaveIR.Item.Enabled = false;
+                                    }
+                                }
+                                break;
+                        }
+                    }
+                }
+
+                if (FormUID.Equals(this.UIAPIRawForm.UniqueID))
+                {
+                    if (!pVal.BeforeAction)
+                    {
+                        switch (pVal.EventType)
+                        {
                             case SAPbouiCOM.BoEventTypes.et_CLICK:
-                            if(pVal.ItemUID.Equals("btnSave")) {
-                                if(!btnSave.Item.Enabled)
-                                    return;
+                                if (pVal.ItemUID.Equals("btnSave"))
+                                {
+                                    if (!btnSave.Item.Enabled)
+                                        return;
 
-                                SaveRise();
-                            }
-                            if(pVal.ItemUID.Equals("btnCancel")) {
-                                if(!btnCancel.Item.Enabled)
-                                    return;
-
-                                CancelRise();
-                            }
-                            if(pVal.ItemUID.Equals("btnClose")) {
-                                if(!btnClose.Item.Enabled)
-                                    return;
-
-                                CloseRise();
-                            }
-                            if(pVal.ItemUID.Equals("btnOpen")) {
-                                if(!btnOpen.Item.Enabled)
-                                    return;
-
-                                OpenRise();
-                            }
-                            if(pVal.ItemUID.Equals("btnSearch")) {
-                                if(!btnSearchFolio.Item.Enabled)
-                                    return;
-
-                                OpenFoliosForm();
-                            }
-                            if(pVal.ItemUID.Equals("btnCons")) {
-                                if(!btnConsumables.Item.Enabled)
-                                    return;
-
-                                OpenInventoryRequestForm();
-                            }
-                            if(pVal.ItemUID.Equals("btnVincOV")) {
-                                if(!btnVincOV.Item.Enabled)
-                                    return;
-
-                                OpenContractsListForm();
-                            }
-                            if(pVal.ItemUID.Equals("btnCreate")) {
-                                if(!btnCreateOV.Item.Enabled)
-                                    return;
-
-                                OpenContractForm();
-                            }
-                            if(pVal.ItemUID.Equals("btnSolVia")) {
-                                if(!btnTravelExpenses.Item.Enabled)
-                                    return;
-
-                                OpenTravelExpensesForm();
-                            }
-                            if(pVal.ItemUID.Equals("tabConsu")) {
-                                LoadConsumablesControls();
-                            }
-                            if(pVal.ItemUID.Equals("btnExit")) {
-                                if(!btnExit.Item.Enabled)
-                                    return;
-
-                                OpenGoodIssueForm();
-                            }
-                            if(pVal.ItemUID.Equals("tabHours")) {
-                                LoadHoursControls();
-                            }
-                            if(pVal.ItemUID.Equals("btnRenCal")) {
-                                if(!btnCalculatePerf.Item.Enabled)
-                                    return;
-
-                                CalculatePerformance();
-                            }
-                            if(pVal.ItemUID.Equals("btnSavIR")) {
-                                if(!btnSaveIR.Item.Enabled)
-                                    return;
-
-                                SaveInitialsRecords();
-                            }
-                            break;
-                            case SAPbouiCOM.BoEventTypes.et_CHOOSE_FROM_LIST:
-                            ChooseFromListAfterEvent(pVal);
-                            break;
-                            case SAPbouiCOM.BoEventTypes.et_FORM_LOAD:
-                            LoadInitialsControls();
-                            break;
-                            case SAPbouiCOM.BoEventTypes.et_VALIDATE:
-                            if(pVal.ItemUID.Equals("txtFolio")) {
-                                if(UIApplication.GetApplication().Forms.ActiveForm.Mode == SAPbouiCOM.BoFormMode.fm_FIND_MODE && UIApplication.GetApplication().Forms.ActiveForm.UniqueID == "frmRise") {
-                                    this.UIAPIRawForm.Freeze(true);
-                                    StartSearchMode();
-                                    this.UIAPIRawForm.Freeze(false);
+                                    SaveRise();
                                 }
-                            }
-                            break;
+                                if (pVal.ItemUID.Equals("btnCancel"))
+                                {
+                                    if (!btnCancel.Item.Enabled)
+                                        return;
+
+                                    CancelRise();
+                                }
+                                if (pVal.ItemUID.Equals("btnClose"))
+                                {
+                                    if (!btnClose.Item.Enabled)
+                                        return;
+
+                                    CloseRise();
+                                }
+                                if (pVal.ItemUID.Equals("btnOpen"))
+                                {
+                                    if (!btnOpen.Item.Enabled)
+                                        return;
+
+                                    OpenRise();
+                                }
+                                if (pVal.ItemUID.Equals("btnSearch"))
+                                {
+                                    if (!btnSearchFolio.Item.Enabled)
+                                        return;
+
+                                    OpenFoliosForm();
+                                }
+                                if (pVal.ItemUID.Equals("btnCons"))
+                                {
+                                    if (!btnConsumables.Item.Enabled)
+                                        return;
+
+                                    OpenInventoryRequestForm();
+                                }
+                                if (pVal.ItemUID.Equals("btnVincOV"))
+                                {
+                                    if (!btnVincOV.Item.Enabled)
+                                        return;
+
+                                    OpenContractsListForm();
+                                }
+                                if (pVal.ItemUID.Equals("btnCreate"))
+                                {
+                                    if (!btnCreateOV.Item.Enabled)
+                                        return;
+
+                                    OpenContractForm();
+                                }
+                                if (pVal.ItemUID.Equals("btnSolVia"))
+                                {
+                                    if (!btnTravelExpenses.Item.Enabled)
+                                        return;
+
+                                    OpenTravelExpensesForm();
+                                }
+                                if (pVal.ItemUID.Equals("tabConsu"))
+                                {
+                                    LoadConsumablesControls();
+                                }
+                                if (pVal.ItemUID.Equals("btnExit"))
+                                {
+                                    if (!btnExit.Item.Enabled)
+                                        return;
+
+                                    OpenGoodIssueForm();
+                                }
+                                if (pVal.ItemUID.Equals("tabHours"))
+                                {
+                                    LoadHoursControls();
+                                }
+                                if (pVal.ItemUID.Equals("btnRenCal"))
+                                {
+                                    if (!btnCalculatePerf.Item.Enabled)
+                                        return;
+
+                                    CalculatePerformance();
+                                }
+                                if (pVal.ItemUID.Equals("btnSavIR"))
+                                {
+                                    if (!btnSaveIR.Item.Enabled)
+                                        return;
+
+                                    SaveInitialsRecords();
+                                }
+                                break;
+                            case SAPbouiCOM.BoEventTypes.et_CHOOSE_FROM_LIST:
+                                ChooseFromListAfterEvent(pVal);
+                                break;
+                            case SAPbouiCOM.BoEventTypes.et_FORM_LOAD:
+                                LoadInitialsControls();
+                                break;
+                            case SAPbouiCOM.BoEventTypes.et_VALIDATE:
+                                if (pVal.ItemUID.Equals("txtFolio"))
+                                {
+                                    if (UIApplication.GetApplication().Forms.ActiveForm.Mode == SAPbouiCOM.BoFormMode.fm_FIND_MODE && UIApplication.GetApplication().Forms.ActiveForm.UniqueID == "frmRise")
+                                    {
+                                        this.UIAPIRawForm.Freeze(true);
+                                        StartSearchMode();
+                                        this.UIAPIRawForm.Freeze(false);
+                                    }
+                                }
+                                break;
                             case SAPbouiCOM.BoEventTypes.et_FORM_CLOSE:
-                            UnLoadEvents();
-                            break;
+                                UnLoadEvents();
+                                break;
                         }
                     }
-                    else {
-                        switch(pVal.EventType) {
+                    else
+                    {
+                        switch (pVal.EventType)
+                        {
                             case SAPbouiCOM.BoEventTypes.et_VALIDATE:
-                            if(pVal.ItemUID.Equals("txtFolio")) {
-                                //StartSearchMode();
-                            }
-                            break;
+                                if (pVal.ItemUID.Equals("txtFolio"))
+                                {
+                                    //StartSearchMode();
+                                }
+                                break;
                             default:
-                            break;
+                                break;
                         }
                     }
                 }
             }
-            catch(Exception ex) {
+            catch (Exception ex)
+            {
                 LogUtility.WriteError(string.Format("[MachineryForm - SBO_Application_ItemEvent] Error: {0}", ex.Message));
                 this.UIAPIRawForm.Freeze(false);
 
-                if(!ex.Message.Contains("Form - Invalid Form"))
+                if (!ex.Message.Contains("Form - Invalid Form"))
                     SAPbouiCOM.Framework.Application.SBO_Application.MessageBox(ex.Message);
             }
         }
@@ -414,76 +473,88 @@ namespace UGRS.AddOn.Machinery.Forms {
         /// </summary>
         /// <param name="pVal"></param>
         /// <param name="BubbleEvent"></param>
-        private void SBO_Application_ApplicationMenuEvent(ref SAPbouiCOM.MenuEvent pVal, out bool BubbleEvent) {
+        private void SBO_Application_ApplicationMenuEvent(ref SAPbouiCOM.MenuEvent pVal, out bool BubbleEvent)
+        {
             BubbleEvent = true;
 
-            try {
-                if(!pVal.BeforeAction) {
-                    switch(pVal.MenuUID) {
+            try
+            {
+                if (!pVal.BeforeAction)
+                {
+                    switch (pVal.MenuUID)
+                    {
                         case "1281": // Search Record
-                        if(UIApplication.GetApplication().Forms.ActiveForm.UniqueID == "frmRise") {
-                            this.UIAPIRawForm.Freeze(true);
+                            if (UIApplication.GetApplication().Forms.ActiveForm.UniqueID == "frmRise")
+                            {
+                                this.UIAPIRawForm.Freeze(true);
 
-                            CleanControls(true);
-                            CleanCboItems((SAPbouiCOM.Column)mtxTransitHours.Columns.Item("ColMaqHT"));
-                            CleanCboItems((SAPbouiCOM.Column)mtxTransitHours.Columns.Item("ColNEnHT"));
-                            CleanCboItems((SAPbouiCOM.Column)mtxHours.Columns.Item("ColCOVH"));
-                            CleanCboItems((SAPbouiCOM.Column)mtxHours.Columns.Item("ColNumEH"));
-                            CleanCboItems((SAPbouiCOM.Column)mtxHours.Columns.Item("ColEqmH"));
-                            CleanCboItems((SAPbouiCOM.Column)mtxHours.Columns.Item("ColOprH"));
-                            CleanCboItems((SAPbouiCOM.Column)mtxHours.Columns.Item("ColSupH"));
-                            CleanCboItems((SAPbouiCOM.Column)mtxHours.Columns.Item("ColTramoH"));
-                            CleanCboItems((SAPbouiCOM.Column)mtxTransitHours.Columns.Item("ColOpdHT"));
-                            CleanCboItems((SAPbouiCOM.Column)mtxTransitHours.Columns.Item("ColSupHT"));
+                                CleanControls(true);
+                                CleanCboItems((SAPbouiCOM.Column)mtxTransitHours.Columns.Item("ColMaqHT"));
+                                CleanCboItems((SAPbouiCOM.Column)mtxTransitHours.Columns.Item("ColNEnHT"));
+                                CleanCboItems((SAPbouiCOM.Column)mtxHours.Columns.Item("ColCOVH"));
+                                CleanCboItems((SAPbouiCOM.Column)mtxHours.Columns.Item("ColNumEH"));
+                                CleanCboItems((SAPbouiCOM.Column)mtxHours.Columns.Item("ColEqmH"));
+                                CleanCboItems((SAPbouiCOM.Column)mtxHours.Columns.Item("ColOprH"));
+                                CleanCboItems((SAPbouiCOM.Column)mtxHours.Columns.Item("ColSupH"));
+                                CleanCboItems((SAPbouiCOM.Column)mtxHours.Columns.Item("ColTramoH"));
+                                CleanCboItems((SAPbouiCOM.Column)mtxTransitHours.Columns.Item("ColOpdHT"));
+                                CleanCboItems((SAPbouiCOM.Column)mtxTransitHours.Columns.Item("ColSupHT"));
 
 
-                            /*SAPbouiCOM.Column lObjMachColumn = (SAPbouiCOM.Column)mtxTransitHours.Columns.Item("ColMaqHT");
-                            SAPbouiCOM.Column lObjEcoNumColumn = (SAPbouiCOM.Column)mtxTransitHours.Columns.Item("ColNEnHT");
-                            SAPbouiCOM.Column lObjColumn = (SAPbouiCOM.Column)mtxHours.Columns.Item("ColCOVH");
-                            SAPbouiCOM.Column lObjEcoNumColumn = (SAPbouiCOM.Column)mtxHours.Columns.Item("ColNumEH");
-                            SAPbouiCOM.Column lObjMachColumn = (SAPbouiCOM.Column)mtxHours.Columns.Item("ColEqmH");
-                            SAPbouiCOM.Column lObjColumn = (SAPbouiCOM.Column)mtxHours.Columns.Item("ColOprH");
-                            (SAPbouiCOM.Column)mtxHours.Columns.Item("ColSupH");*/
-                        }
-                        break;
+                                /*SAPbouiCOM.Column lObjMachColumn = (SAPbouiCOM.Column)mtxTransitHours.Columns.Item("ColMaqHT");
+                                SAPbouiCOM.Column lObjEcoNumColumn = (SAPbouiCOM.Column)mtxTransitHours.Columns.Item("ColNEnHT");
+                                SAPbouiCOM.Column lObjColumn = (SAPbouiCOM.Column)mtxHours.Columns.Item("ColCOVH");
+                                SAPbouiCOM.Column lObjEcoNumColumn = (SAPbouiCOM.Column)mtxHours.Columns.Item("ColNumEH");
+                                SAPbouiCOM.Column lObjMachColumn = (SAPbouiCOM.Column)mtxHours.Columns.Item("ColEqmH");
+                                SAPbouiCOM.Column lObjColumn = (SAPbouiCOM.Column)mtxHours.Columns.Item("ColOprH");
+                                (SAPbouiCOM.Column)mtxHours.Columns.Item("ColSupH");*/
+                            }
+                            break;
 
                         case "1282": // Add New Record
-                        if(UIApplication.GetApplication().Forms.ActiveForm.UniqueID == "frmRise") {
-                            BubbleEvent = false;
-                        }
-                        break;
+                            if (UIApplication.GetApplication().Forms.ActiveForm.UniqueID == "frmRise")
+                            {
+                                BubbleEvent = false;
+                            }
+                            break;
 
                         case "1288": // Next Record
-                        if(UIApplication.GetApplication().Forms.ActiveForm.UniqueID == "frmRise") {
-                            BubbleEvent = false;
-                        }
-                        break;
+                            if (UIApplication.GetApplication().Forms.ActiveForm.UniqueID == "frmRise")
+                            {
+                                BubbleEvent = false;
+                            }
+                            break;
 
                         case "1289": // Pevious Record
-                        if(UIApplication.GetApplication().Forms.ActiveForm.UniqueID == "frmRise") {
-                            BubbleEvent = false;
-                        }
-                        break;
+                            if (UIApplication.GetApplication().Forms.ActiveForm.UniqueID == "frmRise")
+                            {
+                                BubbleEvent = false;
+                            }
+                            break;
 
                         case "1290": // First Record
-                        if(UIApplication.GetApplication().Forms.ActiveForm.UniqueID == "frmRise") {
-                            BubbleEvent = false;
-                        }
-                        break;
+                            if (UIApplication.GetApplication().Forms.ActiveForm.UniqueID == "frmRise")
+                            {
+                                BubbleEvent = false;
+                            }
+                            break;
 
                         case "1291": // Last record
-                        if(UIApplication.GetApplication().Forms.ActiveForm.UniqueID == "frmRise") {
-                            BubbleEvent = false;
-                        }
-                        break;
+                            if (UIApplication.GetApplication().Forms.ActiveForm.UniqueID == "frmRise")
+                            {
+                                BubbleEvent = false;
+                            }
+                            break;
                     }
                 }
             }
-            catch(Exception ex) {
+            catch (Exception ex)
+            {
                 LogUtility.WriteError(string.Format("[MachineryForm - SBO_Application_ApplicationMenuEvent] Error: {0}", ex.Message));
                 UIApplication.ShowError(string.Format("MenuEventException: {0}", ex.Message));
             }
-            finally {
+            finally
+            {
                 this.UIAPIRawForm.Freeze(false);
             }
         }
@@ -493,136 +564,159 @@ namespace UGRS.AddOn.Machinery.Forms {
         /// </summary>
         /// <param name="pVal"></param>
         /// <param name="BubbleEvent"></param>
-        public void SBO_Application_FormEvent(ref SAPbouiCOM.BusinessObjectInfo pVal, out bool BubbleEvent) {
+        public void SBO_Application_FormEvent(ref SAPbouiCOM.BusinessObjectInfo pVal, out bool BubbleEvent)
+        {
             BubbleEvent = true;
 
-            try {
-                if(pVal.FormTypeEx.Equals("1250000940")) //CFL orders sales
+            try
+            {
+                if (pVal.FormTypeEx.Equals("1250000940")) //CFL orders sales
                 {
-                    if(pVal.ActionSuccess) {
-                        switch(pVal.EventType) {
+                    if (pVal.ActionSuccess)
+                    {
+                        switch (pVal.EventType)
+                        {
                             case SAPbouiCOM.BoEventTypes.et_FORM_DATA_ADD:
-                            string lStrDocEntry = GetDocEntry(pVal.ObjectKey);
-                            ConsumablesDTO lObjConsumable = mObjMachineryServiceFactory.GetConsumablesService().GetInventoryRequestById(int.Parse(lStrDocEntry));
-                            AddConsumable(lObjConsumable);
-                            break;
+                                string lStrDocEntry = GetDocEntry(pVal.ObjectKey);
+                                ConsumablesDTO lObjConsumable = mObjMachineryServiceFactory.GetConsumablesService().GetInventoryRequestById(int.Parse(lStrDocEntry));
+                                AddConsumable(lObjConsumable);
+                                break;
                         }
                     }
                 }
-                else if(pVal.FormTypeEx.Equals("426")) //Payments form
+                else if (pVal.FormTypeEx.Equals("426")) //Payments form
                 {
-                    if(pVal.ActionSuccess && !pVal.BeforeAction) {
-                        switch(pVal.EventType) {
+                    if (pVal.ActionSuccess && !pVal.BeforeAction)
+                    {
+                        switch (pVal.EventType)
+                        {
                             case SAPbouiCOM.BoEventTypes.et_FORM_DATA_UPDATE:
-                            //Actualizar listado de solicitudes de viáticos del grid
-                            RefreshStatusTravelExpensesMatrix();
-                            break;
+                                //Actualizar listado de solicitudes de viáticos del grid
+                                RefreshStatusTravelExpensesMatrix();
+                                break;
                             case SAPbouiCOM.BoEventTypes.et_FORM_DATA_ADD:
-                            string lStrDocEntry = GetDocEntry(pVal.ObjectKey);
-                            TravelExpensesDTO lObjTravelExpensesDTO = mObjMachineryServiceFactory.GetTravelExpensesService().GetPayment(int.Parse(lStrDocEntry));
-                            AddTravelExpenses(lObjTravelExpensesDTO);
-                            break;
+                                string lStrDocEntry = GetDocEntry(pVal.ObjectKey);
+                                TravelExpensesDTO lObjTravelExpensesDTO = mObjMachineryServiceFactory.GetTravelExpensesService().GetPayment(int.Parse(lStrDocEntry));
+                                AddTravelExpenses(lObjTravelExpensesDTO);
+                                break;
                             default:
-                            break;
+                                break;
                         }
                     }
                 }
-                else if(pVal.FormTypeEx.Equals("139")) //Orders sales form
+                else if (pVal.FormTypeEx.Equals("139")) //Orders sales form
                 {
-                    if(pVal.ActionSuccess && !pVal.BeforeAction) {
-                        switch(pVal.EventType) {
+                    if (pVal.ActionSuccess && !pVal.BeforeAction)
+                    {
+                        switch (pVal.EventType)
+                        {
                             case SAPbouiCOM.BoEventTypes.et_FORM_DATA_UPDATE:
-                            //Actualizar listado de contratos del grid
-                            RefreshContractsStatusMatrix();
-                            break;
+                                //Actualizar listado de contratos del grid
+                                RefreshContractsStatusMatrix();
+                                break;
                             default:
-                            break;
+                                break;
                         }
                     }
                 }
             }
-            catch(Exception ex) {
+            catch (Exception ex)
+            {
                 LogUtility.WriteError(string.Format("[MachineryForm - SBO_Application_FormEvent] Error: {0}", ex.Message));
-                if(!ex.Message.Contains("Form - Invalid Form"))
+                if (!ex.Message.Contains("Form - Invalid Form"))
                     SAPbouiCOM.Framework.Application.SBO_Application.MessageBox(ex.Message);
             }
         }
 
-        private void SBO_Application_RightClickEvent(ref SAPbouiCOM.ContextMenuInfo pVal, out bool BubbleEvent) {
+        private void SBO_Application_RightClickEvent(ref SAPbouiCOM.ContextMenuInfo pVal, out bool BubbleEvent)
+        {
             BubbleEvent = true;
 
-            try {
+            try
+            {
                 mStrMatrixSelected = pVal.ItemUID;
                 mIntMatrixRowSelected = pVal.Row;
             }
-            catch(Exception ex) {
+            catch (Exception ex)
+            {
                 LogUtility.WriteError(string.Format("[MachineryForm - SBO_Application_RightClickEvent] Error: {0}", ex.Message));
-                if(!ex.Message.Contains("Form - Invalid Form"))
+                if (!ex.Message.Contains("Form - Invalid Form"))
                     SAPbouiCOM.Framework.Application.SBO_Application.MessageBox(ex.Message);
             }
         }
 
-        public void SBO_Application_MenuEvent(ref SAPbouiCOM.MenuEvent pVal, out bool BubbleEvent) {
+        public void SBO_Application_MenuEvent(ref SAPbouiCOM.MenuEvent pVal, out bool BubbleEvent)
+        {
             BubbleEvent = true;
 
-            try {
-                if(pVal.MenuUID == "1293" && pVal.BeforeAction == true && UIApplication.GetApplication().Forms.ActiveForm.UniqueID == "frmRise")//Borrar
+            try
+            {
+                if (pVal.MenuUID == "1293" && pVal.BeforeAction == true && UIApplication.GetApplication().Forms.ActiveForm.UniqueID == "frmRise")//Borrar
                 {
-                    if((RiseStatusEnum)mObjRise.DocStatus == RiseStatusEnum.ReOpen)
+                    if ((RiseStatusEnum)mObjRise.DocStatus == RiseStatusEnum.ReOpen)
                         return;
 
-                    if(string.IsNullOrEmpty(mStrMatrixSelected) || mIntMatrixRowSelected < 0)
+                    if (string.IsNullOrEmpty(mStrMatrixSelected) || mIntMatrixRowSelected < 0)
                         return;
 
-                    if(SAPbouiCOM.Framework.Application.SBO_Application.MessageBox("¿Desea elimiar el registro seleccionado?", 2, "Si", "No", "") == 1) {
-                        if(mStrMatrixSelected == mtxEmployees.Item.UniqueID) //matrix empleados
+                    if (SAPbouiCOM.Framework.Application.SBO_Application.MessageBox("¿Desea elimiar el registro seleccionado?", 2, "Si", "No", "") == 1)
+                    {
+                        if (mStrMatrixSelected == mtxEmployees.Item.UniqueID) //matrix empleados
                         {
                             string lStrCode = dtEmployees.GetValue("CodeTEmp", mIntMatrixRowSelected - 1).ToString();
-                            if(!string.IsNullOrEmpty(lStrCode))
+                            if (!string.IsNullOrEmpty(lStrCode))
                                 mLstEmployeesToDelete.Add(lStrCode);
 
                             dtEmployees.Rows.Remove(mIntMatrixRowSelected - 1);
                         }
-                        else if(mStrMatrixSelected == mtxContracts.Item.UniqueID) //matrix contratos
+                        else if (mStrMatrixSelected == mtxContracts.Item.UniqueID) //matrix contratos
                         {
                             string lStrCode = dtContracts.GetValue("CodeTCont", mIntMatrixRowSelected - 1).ToString();
-                            if(!string.IsNullOrEmpty(lStrCode))
+                            if (!string.IsNullOrEmpty(lStrCode))
                                 mLstContractsToDelete.Add(lStrCode);
 
                             dtContracts.Rows.Remove(mIntMatrixRowSelected - 1);
                         }
                     }
-                    else {
+                    else
+                    {
                         BubbleEvent = false;
                     }
                 }
             }
-            catch(Exception ex) {
+            catch (Exception ex)
+            {
                 LogUtility.WriteError(string.Format("[MachineryForm - SBO_Application_MenuEvent] Error: {0}", ex.Message));
-                if(!ex.Message.Contains("Form - Invalid Form"))
+                if (!ex.Message.Contains("Form - Invalid Form"))
                     SAPbouiCOM.Framework.Application.SBO_Application.MessageBox(ex.Message);
             }
         }
 
-        private void ChooseFromListAfterEvent(SAPbouiCOM.ItemEvent pObjValEvent) {
-            if(pObjValEvent.Action_Success) {
+        private void ChooseFromListAfterEvent(SAPbouiCOM.ItemEvent pObjValEvent)
+        {
+            if (pObjValEvent.Action_Success)
+            {
                 SAPbouiCOM.IChooseFromListEvent lObjCFLEvento = (SAPbouiCOM.IChooseFromListEvent)pObjValEvent;
                 SAPbouiCOM.DataTable lObjDataTable = lObjCFLEvento.SelectedObjects;
-                if(lObjCFLEvento.SelectedObjects == null)
+                if (lObjCFLEvento.SelectedObjects == null)
                     return;
 
                 //this.UIAPIRawForm.DataSources.UserDataSources.Item(lObjDataTable.UniqueID).ValueEx = Convert.ToString(lObjDataTable.GetValue(0, 0));
 
-                if(lObjDataTable.UniqueID == "CFL_0") {
+                if (lObjDataTable.UniqueID == "CFL_0")
+                {
                     mStrClientCode = Convert.ToString(lObjDataTable.GetValue(0, 0));
                     this.UIAPIRawForm.DataSources.UserDataSources.Item(lObjDataTable.UniqueID).ValueEx = Convert.ToString(lObjDataTable.GetValue(1, 0));
                 }
-                else if(lObjDataTable.UniqueID == "CFL_Supv") {
+                else if (lObjDataTable.UniqueID == "CFL_Supv")
+                {
                     mStrSupervisorCode = Convert.ToString(lObjDataTable.GetValue(0, 0));
                     this.UIAPIRawForm.DataSources.UserDataSources.Item(lObjDataTable.UniqueID).ValueEx = string.Format("{0} {1}", lObjDataTable.GetValue(1, 0).ToString(), lObjDataTable.GetValue(2, 0).ToString());
                 }
-                if(lObjDataTable.UniqueID == "CFL_Emp") {
-                    if(ExistItemOnGrid(lObjDataTable.GetValue(0, 0).ToString(), dtEmployees, 1)) {
+                if (lObjDataTable.UniqueID == "CFL_Emp")
+                {
+                    if (ExistItemOnGrid(lObjDataTable.GetValue(0, 0).ToString(), dtEmployees, 1))
+                    {
                         Application.SBO_Application.SetStatusBarMessage("No puede repetir el empleado", SAPbouiCOM.BoMessageTime.bmt_Short, true);
                         return;
                     }
@@ -631,7 +725,8 @@ namespace UGRS.AddOn.Machinery.Forms {
                     dtEmployees.SetValue("EmpId", pObjValEvent.Row - 1, lObjDataTable.GetValue(0, 0));
                     dtEmployees.SetValue("EmpName", pObjValEvent.Row - 1, string.Format("{0} {1}", lObjDataTable.GetValue(1, 0).ToString(), lObjDataTable.GetValue(2, 0).ToString()));
 
-                    if(mtxEmployees.RowCount == pObjValEvent.Row) {
+                    if (mtxEmployees.RowCount == pObjValEvent.Row)
+                    {
                         dtEmployees.Rows.Add();
                         dtEmployees.SetValue("#", pObjValEvent.Row, pObjValEvent.Row + 1);
                     }
@@ -642,9 +737,11 @@ namespace UGRS.AddOn.Machinery.Forms {
             }
         }
 
-        private void Form_ResizeAfter(SAPbouiCOM.SBOItemEventArg pVal) {
-            try {
-                if(mtxEmployees == null)
+        private void Form_ResizeAfter(SAPbouiCOM.SBOItemEventArg pVal)
+        {
+            try
+            {
+                if (mtxEmployees == null)
                     return;
 
                 this.UIAPIRawForm.Freeze(true);
@@ -723,22 +820,27 @@ namespace UGRS.AddOn.Machinery.Forms {
                 mtxMachPerformance.AutoResizeColumns();
                 mtxVclPerformance.AutoResizeColumns();
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 LogService.WriteError(string.Format("[MachineryForm - Form_ResizeAfter]: {0}", lObjException.Message));
                 UIApplication.ShowError(string.Format("Error al recalcular el tamaño de los controles: {0}", lObjException.Message));
             }
-            finally {
+            finally
+            {
                 this.UIAPIRawForm.Freeze(false);
             }
         }
 
-        private void mtxInitialRecords_ValidateBefore(object sboObject, SAPbouiCOM.SBOItemEventArg pVal, out bool BubbleEvent) {
+        private void mtxInitialRecords_ValidateBefore(object sboObject, SAPbouiCOM.SBOItemEventArg pVal, out bool BubbleEvent)
+        {
             BubbleEvent = true;
 
-            try {
+            try
+            {
                 this.UIAPIRawForm.Freeze(true);
 
-                if(pVal.ColUID == "ColDlMIR" || pVal.ColUID == "ColDlTIR" || pVal.ColUID == "ColGasIR" || pVal.ColUID == "ColKmhIR") {
+                if (pVal.ColUID == "ColDlMIR" || pVal.ColUID == "ColDlTIR" || pVal.ColUID == "ColGasIR" || pVal.ColUID == "ColKmhIR")
+                {
                     string lStrDieselM = (mtxInitialRecords.Columns.Item("ColDlMIR").Cells.Item(pVal.Row).Specific as SAPbouiCOM.EditText).Value.Trim();
                     string lStrDieselT = (mtxInitialRecords.Columns.Item("ColDlTIR").Cells.Item(pVal.Row).Specific as SAPbouiCOM.EditText).Value.Trim();
                     string lStrGas = (mtxInitialRecords.Columns.Item("ColGasIR").Cells.Item(pVal.Row).Specific as SAPbouiCOM.EditText).Value.Trim();
@@ -760,35 +862,44 @@ namespace UGRS.AddOn.Machinery.Forms {
                     LoadConsumedTotals();
                 }
             }
-            catch(Exception ex) {
+            catch (Exception ex)
+            {
                 this.UIAPIRawForm.Freeze(false);
                 UIApplication.ShowError(ex.Message);
             }
-            finally {
+            finally
+            {
                 this.UIAPIRawForm.Freeze(false);
             }
         }
 
-        private void txtFolio_KeyDownAfter(object sboObject, SAPbouiCOM.SBOItemEventArg pVal) {
-            if(pVal.CharPressed == 13) {
-                if(UIApplication.GetApplication().Forms.ActiveForm.Mode == SAPbouiCOM.BoFormMode.fm_FIND_MODE && UIApplication.GetApplication().Forms.ActiveForm.UniqueID == "frmRise") {
+        private void txtFolio_KeyDownAfter(object sboObject, SAPbouiCOM.SBOItemEventArg pVal)
+        {
+            if (pVal.CharPressed == 13)
+            {
+                if (UIApplication.GetApplication().Forms.ActiveForm.Mode == SAPbouiCOM.BoFormMode.fm_FIND_MODE && UIApplication.GetApplication().Forms.ActiveForm.UniqueID == "frmRise")
+                {
                     this.UIAPIRawForm.Freeze(true);
                     StartSearchMode();
                     this.UIAPIRawForm.Freeze(false);
-                    if(mObjRise != null) {
+                    if (mObjRise != null)
+                    {
                         txtFolio.Value = mObjRise.IdRise.ToString();
                     }
                 }
             }
         }
 
-        private void mtxEmployees_ValidateBefore(object sboObject, SAPbouiCOM.SBOItemEventArg pVal, out bool BubbleEvent) {
+        private void mtxEmployees_ValidateBefore(object sboObject, SAPbouiCOM.SBOItemEventArg pVal, out bool BubbleEvent)
+        {
             BubbleEvent = true;
 
-            try {
+            try
+            {
                 this.UIAPIRawForm.Freeze(true);
 
-                if(pVal.ColUID == "ColAct") {
+                if (pVal.ColUID == "ColAct")
+                {
                     bool lBolStatus = ((dynamic)mtxEmployees.Columns.Item("ColAct").Cells.Item(pVal.Row).Specific).Checked;
                     string lStrStatus = lBolStatus ? "Y" : "N";
 
@@ -798,22 +909,27 @@ namespace UGRS.AddOn.Machinery.Forms {
                     mtxEmployees.AutoResizeColumns();
                 }
             }
-            catch(Exception ex) {
+            catch (Exception ex)
+            {
                 this.UIAPIRawForm.Freeze(false);
                 UIApplication.ShowError(ex.Message);
             }
-            finally {
+            finally
+            {
                 this.UIAPIRawForm.Freeze(false);
             }
         }
 
-        private void mtxFinalRecords_ValidateBefore(object sboObject, SAPbouiCOM.SBOItemEventArg pVal, out bool BubbleEvent) {
+        private void mtxFinalRecords_ValidateBefore(object sboObject, SAPbouiCOM.SBOItemEventArg pVal, out bool BubbleEvent)
+        {
             BubbleEvent = true;
 
-            try {
+            try
+            {
                 this.UIAPIRawForm.Freeze(true);
 
-                if(pVal.ColUID != "ColMacFR" || pVal.ColUID != "ColNEnFR") {
+                if (pVal.ColUID != "ColMacFR" || pVal.ColUID != "ColNEnFR")
+                {
                     string lStrDieselM = (mtxFinalRecords.Columns.Item("ColDlMFR").Cells.Item(pVal.Row).Specific as SAPbouiCOM.EditText).Value.Trim();
                     string lStrDieselT = (mtxFinalRecords.Columns.Item("ColDlTFR").Cells.Item(pVal.Row).Specific as SAPbouiCOM.EditText).Value.Trim();
                     string lStrGas = (mtxFinalRecords.Columns.Item("ColGasFR").Cells.Item(pVal.Row).Specific as SAPbouiCOM.EditText).Value.Trim();
@@ -851,25 +967,30 @@ namespace UGRS.AddOn.Machinery.Forms {
                     LoadConsumedTotals();
                 }
             }
-            catch(Exception ex) {
+            catch (Exception ex)
+            {
                 this.UIAPIRawForm.Freeze(false);
                 UIApplication.ShowError(ex.Message);
             }
-            finally {
+            finally
+            {
                 this.UIAPIRawForm.Freeze(false);
             }
         }
 
-        private void mtxHours_ValidateBefore(object sboObject, SAPbouiCOM.SBOItemEventArg pVal, out bool BubbleEvent) {
+        private void mtxHours_ValidateBefore(object sboObject, SAPbouiCOM.SBOItemEventArg pVal, out bool BubbleEvent)
+        {
             BubbleEvent = true;
 
-            try {
+            try
+            {
                 this.UIAPIRawForm.Freeze(true);
 
                 SAPbouiCOM.EditText lEditTxt = null;
                 string lStrDTColumn = string.Empty;
 
-                if(pVal.ColUID == "ColHPH") {
+                if (pVal.ColUID == "ColHPH")
+                {
                     string lStrFeetHrs = (mtxHours.Columns.Item("ColHPH").Cells.Item(pVal.Row).Specific as SAPbouiCOM.EditText).Value.Trim();
 
                     double lDblFeetHrs = string.IsNullOrEmpty(lStrFeetHrs) ? 0 : double.Parse(lStrFeetHrs);
@@ -879,7 +1000,8 @@ namespace UGRS.AddOn.Machinery.Forms {
                     lEditTxt = txtFootHoursTotal;
                     lStrDTColumn = "HrsFeetHr";
                 }
-                else if(pVal.ColUID == "ColKmHrH") {
+                else if (pVal.ColUID == "ColKmHrH")
+                {
                     string lStrKmHrHct = (mtxHours.Columns.Item("ColKmHrH").Cells.Item(pVal.Row).Specific as SAPbouiCOM.EditText).Value.Trim();
 
                     double lDblKmHrHct = string.IsNullOrEmpty(lStrKmHrHct) ? 0 : double.Parse(lStrKmHrHct);
@@ -889,16 +1011,19 @@ namespace UGRS.AddOn.Machinery.Forms {
                     lEditTxt = txtKmHrTotal;
                     lStrDTColumn = "KmHcHrs";
                 }
-                else if(pVal.ColUID == "ColDateH") {
+                else if (pVal.ColUID == "ColDateH")
+                {
                     string lStrDate = (mtxHours.Columns.Item("ColDateH").Cells.Item(pVal.Row).Specific as SAPbouiCOM.EditText).Value.Trim();
                     dtHours.SetValue("DateHrs", pVal.Row - 1, DateTimeUtility.StringToDateTime(lStrDate));
                 }
-                else if(pVal.ColUID == "ColPendH") {
+                else if (pVal.ColUID == "ColPendH")
+                {
                     string lStrPend = (mtxHours.Columns.Item("ColPendH").Cells.Item(pVal.Row).Specific as SAPbouiCOM.EditText).Value.Trim();
                     double lDblPend = string.IsNullOrEmpty(lStrPend) ? 0 : double.Parse(lStrPend);
                     dtHours.SetValue("PendHrs", pVal.Row - 1, lDblPend);
                 }
-                else if(pVal.ColUID == "ColCloseH") {
+                else if (pVal.ColUID == "ColCloseH")
+                {
                     bool lBolChkd = ((dynamic)mtxHours.Columns.Item("ColCloseH").Cells.Item(pVal.Row).Specific).Checked;
                     string lStrChkd = lBolChkd ? "Y" : "N";
                     dtHours.SetValue("CloseHrs", pVal.Row - 1, lStrChkd);
@@ -907,30 +1032,36 @@ namespace UGRS.AddOn.Machinery.Forms {
                 mtxHours.LoadFromDataSource();
                 mtxHours.AutoResizeColumns();
 
-                if(lEditTxt != null) {
-                    if(lEditTxt.Item.UniqueID == "txtTHP")
+                if (lEditTxt != null)
+                {
+                    if (lEditTxt.Item.UniqueID == "txtTHP")
                         CalculateTotal(lEditTxt, dtHours, "HrsFeetHr");
                     else
                         CalculateTotal(lEditTxt, dtHours, "KmHcHrs");
                 }
             }
-            catch(Exception ex) {
+            catch (Exception ex)
+            {
                 LogUtility.WriteError(string.Format("[MachineryForm - mtxHours_ValidateBefore] Error: {0}", ex.Message));
                 this.UIAPIRawForm.Freeze(false);
                 UIApplication.ShowError(ex.Message);
             }
-            finally {
+            finally
+            {
                 this.UIAPIRawForm.Freeze(false);
             }
         }
 
-        private void mtxTransitHours_ValidateBefore(object sboObject, SAPbouiCOM.SBOItemEventArg pVal, out bool BubbleEvent) {
+        private void mtxTransitHours_ValidateBefore(object sboObject, SAPbouiCOM.SBOItemEventArg pVal, out bool BubbleEvent)
+        {
             BubbleEvent = true;
 
-            try {
+            try
+            {
                 this.UIAPIRawForm.Freeze(true);
 
-                if(pVal.ColUID == "ColHrsHT") {
+                if (pVal.ColUID == "ColHrsHT")
+                {
                     string lStrHrs = (mtxTransitHours.Columns.Item("ColHrsHT").Cells.Item(pVal.Row).Specific as SAPbouiCOM.EditText).Value.Trim();
 
                     double lDblHrs = string.IsNullOrEmpty(lStrHrs) ? 0 : double.Parse(lStrHrs);
@@ -943,175 +1074,199 @@ namespace UGRS.AddOn.Machinery.Forms {
                     CalculateTotal(txtTotalsHours, dtTransitHours, "HrsTH");
                 }
             }
-            catch(Exception ex) {
+            catch (Exception ex)
+            {
                 LogUtility.WriteError(string.Format("[MachineryForm - mtxTransitHours_ValidateBefore] Error: {0}", ex.Message));
                 this.UIAPIRawForm.Freeze(false);
                 UIApplication.ShowError(ex.Message);
             }
-            finally {
+            finally
+            {
                 this.UIAPIRawForm.Freeze(false);
             }
         }
 
-        private void mtxTravelExpenses_LinkPressedBefore(object sboObject, SAPbouiCOM.SBOItemEventArg pVal, out bool BubbleEvent) {
+        private void mtxTravelExpenses_LinkPressedBefore(object sboObject, SAPbouiCOM.SBOItemEventArg pVal, out bool BubbleEvent)
+        {
             BubbleEvent = true;
 
-            if(pVal.ColUID == "ColFolPay") {
+            if (pVal.ColUID == "ColFolPay")
+            {
                 int lIntStatus = int.Parse(dtTravelExpenses.GetValue("StsCTravE", pVal.Row - 1).ToString());
                 string lStrDocEntry = dtTravelExpenses.GetValue("DocETravE", pVal.Row - 1).ToString();
 
-                if(string.IsNullOrEmpty(lStrDocEntry))
+                if (string.IsNullOrEmpty(lStrDocEntry))
                     return;
 
-                if((TravelExpStatusEnum)lIntStatus == TravelExpStatusEnum.Draft) {
+                if ((TravelExpStatusEnum)lIntStatus == TravelExpStatusEnum.Draft)
+                {
                     UIApplication.GetApplication().OpenForm((SAPbouiCOM.BoFormObjectEnum)140, "", lStrDocEntry);
                 }
-                else {
+                else
+                {
                     UIApplication.GetApplication().OpenForm(SAPbouiCOM.BoFormObjectEnum.fo_VendorPayment, "", lStrDocEntry);
                 }
             }
         }
 
-        private void mtxConsumables_LinkPressedBefore(object sboObject, SAPbouiCOM.SBOItemEventArg pVal, out bool BubbleEvent) {
+        private void mtxConsumables_LinkPressedBefore(object sboObject, SAPbouiCOM.SBOItemEventArg pVal, out bool BubbleEvent)
+        {
             BubbleEvent = true;
 
-            if(pVal.ColUID == "ColFolCon") {
+            if (pVal.ColUID == "ColFolCon")
+            {
                 string lStrDocEntry = dtConsumables.GetValue("FolRCons", pVal.Row - 1).ToString();
 
-                if(string.IsNullOrEmpty(lStrDocEntry))
+                if (string.IsNullOrEmpty(lStrDocEntry))
                     return;
 
                 UIApplication.GetApplication().OpenForm(SAPbouiCOM.BoFormObjectEnum.fo_StockTransfersRequest, "", lStrDocEntry);
             }
-            else if(pVal.ColUID == "ColFolTra") {
+            else if (pVal.ColUID == "ColFolTra")
+            {
                 string lStrDocEntry = dtConsumables.GetValue("FolTCons", pVal.Row - 1).ToString();
 
-                if(string.IsNullOrEmpty(lStrDocEntry))
+                if (string.IsNullOrEmpty(lStrDocEntry))
                     return;
 
                 UIApplication.GetApplication().OpenForm(SAPbouiCOM.BoFormObjectEnum.fo_StockTransfers, "", lStrDocEntry);
             }
         }
 
-        private void mtxContracts_LinkPressedBefore(object sboObject, SAPbouiCOM.SBOItemEventArg pVal, out bool BubbleEvent) {
+        private void mtxContracts_LinkPressedBefore(object sboObject, SAPbouiCOM.SBOItemEventArg pVal, out bool BubbleEvent)
+        {
             BubbleEvent = true;
 
-            if(pVal.ColUID == "ColDocEOV") {
+            if (pVal.ColUID == "ColDocEOV")
+            {
                 string lStrDocEntry = dtContracts.GetValue("DocECont", pVal.Row - 1).ToString();
 
-                if(string.IsNullOrEmpty(lStrDocEntry))
+                if (string.IsNullOrEmpty(lStrDocEntry))
                     return;
 
                 UIApplication.GetApplication().OpenForm(SAPbouiCOM.BoFormObjectEnum.fo_Order, "", lStrDocEntry);
             }
         }
 
-        private void lObjColumn_ComboSelectAfter(object sboObject, SAPbouiCOM.SBOItemEventArg pVal) {
-            try {
+        private void lObjColumn_ComboSelectAfter(object sboObject, SAPbouiCOM.SBOItemEventArg pVal)
+        {
+            try
+            {
                 this.UIAPIRawForm.Freeze(true);
 
                 SAPbouiCOM.ComboBox lObjColumn = null;
-                if(pVal.ItemUID == "mtxHrs") {
+                if (pVal.ItemUID == "mtxHrs")
+                {
                     lObjColumn = (mtxHours.Columns.Item(pVal.ColUID).Cells.Item(pVal.Row).Specific as SAPbouiCOM.ComboBox);
                 }
-                else if(pVal.ItemUID == "mtxHrsTra") {
+                else if (pVal.ItemUID == "mtxHrsTra")
+                {
                     lObjColumn = (mtxTransitHours.Columns.Item(pVal.ColUID).Cells.Item(pVal.Row).Specific as SAPbouiCOM.ComboBox);
                 }
 
                 //lObjColumn.ComboSelectAfter += lObjColumn_ComboSelectAfter;
 
-                if(lObjColumn.Selected == null) {
+                if (lObjColumn.Selected == null)
+                {
                     return;
                 }
 
                 string lStrCode = lObjColumn.Selected.Value;
                 string lStrDesc = lObjColumn.Selected.Description;
 
-                switch(pVal.ColUID) {
+                switch (pVal.ColUID)
+                {
                     //mtxHrs
                     case "ColCOVH":
-                    dtHours.SetValue("ContOVHrs", pVal.Row - 1, lStrCode);
-                    dtHours.SetValue("CDEOVHrs", pVal.Row - 1, lStrDesc);
+                        dtHours.SetValue("ContOVHrs", pVal.Row - 1, lStrCode);
+                        dtHours.SetValue("CDEOVHrs", pVal.Row - 1, lStrDesc);
 
-                    string lStrClient = mObjMachineryServiceFactory.GetContractsService().
-                                            DataTableToDTO(dtContracts)
-                                            .Where(x => x.DocEntry.ToString() == lStrCode)
-                                            .FirstOrDefault()
-                                            .CardName;
+                        string lStrClient = mObjMachineryServiceFactory.GetContractsService().
+                                                DataTableToDTO(dtContracts)
+                                                .Where(x => x.DocEntry.ToString() == lStrCode)
+                                                .FirstOrDefault()
+                                                .CardName;
 
-                    dtHours.SetValue("Client", pVal.Row - 1, lStrClient);
+                        dtHours.SetValue("Client", pVal.Row - 1, lStrClient);
 
-                    AddTramosCbo(int.Parse(lStrCode), pVal.Row);
-                    break;
+                        AddTramosCbo(int.Parse(lStrCode), pVal.Row);
+                        break;
                     case "ColSupH":
-                    dtHours.SetValue("SupIdHrs", pVal.Row - 1, lStrCode);
-                    dtHours.SetValue("SupNmHrs", pVal.Row - 1, lStrDesc);
-                    break;
+                        dtHours.SetValue("SupIdHrs", pVal.Row - 1, lStrCode);
+                        dtHours.SetValue("SupNmHrs", pVal.Row - 1, lStrDesc);
+                        break;
                     case "ColOprH":
-                    dtHours.SetValue("OpdIdHrs", pVal.Row - 1, lStrCode);
-                    dtHours.SetValue("OpdNmHrs", pVal.Row - 1, lStrDesc);
-                    break;
+                        dtHours.SetValue("OpdIdHrs", pVal.Row - 1, lStrCode);
+                        dtHours.SetValue("OpdNmHrs", pVal.Row - 1, lStrDesc);
+                        break;
                     case "ColEqmH":
-                    dtHours.SetValue("EqpHrs", pVal.Row - 1, lStrCode);
-                    dtHours.SetValue("NumEcnHrs", pVal.Row - 1, lStrDesc);
-                    break;
+                        dtHours.SetValue("EqpHrs", pVal.Row - 1, lStrCode);
+                        dtHours.SetValue("NumEcnHrs", pVal.Row - 1, lStrDesc);
+                        break;
                     case "ColNumEH":
-                    dtHours.SetValue("NumEcnHrs", pVal.Row - 1, lStrCode);
-                    dtHours.SetValue("EqpHrs", pVal.Row - 1, lStrDesc);
-                    break;
+                        dtHours.SetValue("NumEcnHrs", pVal.Row - 1, lStrCode);
+                        dtHours.SetValue("EqpHrs", pVal.Row - 1, lStrDesc);
+                        break;
                     case "ColTramoH":
-                    dtHours.SetValue("SctnIdHrs", pVal.Row - 1, lStrCode);
-                    dtHours.SetValue("SctnNnHrs", pVal.Row - 1, lStrDesc);
-                    break;
+                        dtHours.SetValue("SctnIdHrs", pVal.Row - 1, lStrCode);
+                        dtHours.SetValue("SctnNnHrs", pVal.Row - 1, lStrDesc);
+                        break;
 
                     //mtxHrsTra
                     case "ColMaqHT":
-                    dtTransitHours.SetValue("MaqTHrs", pVal.Row - 1, lStrCode);
-                    dtTransitHours.SetValue("NumEcoTH", pVal.Row - 1, lStrDesc);
-                    break;
+                        dtTransitHours.SetValue("MaqTHrs", pVal.Row - 1, lStrCode);
+                        dtTransitHours.SetValue("NumEcoTH", pVal.Row - 1, lStrDesc);
+                        break;
                     case "ColNEnHT":
-                    dtTransitHours.SetValue("MaqTHrs", pVal.Row - 1, lStrCode);
-                    dtTransitHours.SetValue("NumEcoTH", pVal.Row - 1, lStrDesc);
-                    break;
+                        dtTransitHours.SetValue("MaqTHrs", pVal.Row - 1, lStrCode);
+                        dtTransitHours.SetValue("NumEcoTH", pVal.Row - 1, lStrDesc);
+                        break;
                     case "ColOpdHT":
-                    dtTransitHours.SetValue("OpdTH", pVal.Row - 1, lStrCode);
-                    dtTransitHours.SetValue("OpdNmTH", pVal.Row - 1, lStrDesc);
-                    break;
+                        dtTransitHours.SetValue("OpdTH", pVal.Row - 1, lStrCode);
+                        dtTransitHours.SetValue("OpdNmTH", pVal.Row - 1, lStrDesc);
+                        break;
 
                     case "ColSupHT":
-                    dtTransitHours.SetValue("SupTH", pVal.Row - 1, lStrCode);
-                    dtTransitHours.SetValue("SupNmTH", pVal.Row - 1, lStrDesc);
-                    break;
+                        dtTransitHours.SetValue("SupTH", pVal.Row - 1, lStrCode);
+                        dtTransitHours.SetValue("SupNmTH", pVal.Row - 1, lStrDesc);
+                        break;
                     default:
-                    break;
+                        break;
                 }
 
-                if(pVal.ItemUID == "mtxHrs") {
+                if (pVal.ItemUID == "mtxHrs")
+                {
                     mtxHours.LoadFromDataSource();
                     mtxHours.SelectRow(pVal.Row, true, false);
                 }
-                else if(pVal.ItemUID == "mtxHrsTra") {
+                else if (pVal.ItemUID == "mtxHrsTra")
+                {
                     mtxTransitHours.LoadFromDataSource();
                     mtxTransitHours.SelectRow(pVal.Row, true, false);
                 }
             }
-            catch(Exception ex) {
+            catch (Exception ex)
+            {
                 LogUtility.WriteError(string.Format("[MachineryForm - lObjColumn_ComboSelectAfter] Error: {0}", ex.Message));
                 UIApplication.ShowError(string.Format("lObjColumn_ComboSelectAfter: {0}", ex.Message));
                 //QsLog.WriteError("frmPurchaseXML (lObjColumn_ComboSelectAfter): " + ex.Message);
             }
-            finally {
+            finally
+            {
                 this.UIAPIRawForm.Freeze(false);
             }
         }
 
-        private void lObjColumn_ComboClickBefore(object sboObject, SAPbouiCOM.SBOItemEventArg pVal, out bool BubbleEvent) {
+        private void lObjColumn_ComboClickBefore(object sboObject, SAPbouiCOM.SBOItemEventArg pVal, out bool BubbleEvent)
+        {
             BubbleEvent = true;
-            try {
+            try
+            {
                 this.UIAPIRawForm.Freeze(true);
 
                 SAPbouiCOM.ComboBox lObjColumn = null; //cboContracts
-                if(pVal.ItemUID == "mtxHrs") {
+                if (pVal.ItemUID == "mtxHrs")
+                {
                     lObjColumn = (mtxHours.Columns.Item("ColCOVH").Cells.Item(pVal.Row).Specific as SAPbouiCOM.ComboBox);
                 }
 
@@ -1119,12 +1274,15 @@ namespace UGRS.AddOn.Machinery.Forms {
                 string lStrDesc = lObjColumn.Selected == null ? string.Empty : lObjColumn.Selected.Description;
 
                 SAPbouiCOM.ComboBox lObjComboBox = (SAPbouiCOM.ComboBox)mtxHours.Columns.Item("ColTramoH").Cells.Item(pVal.Row).Specific;
-                if(!string.IsNullOrEmpty(lStrCode)) {
+                if (!string.IsNullOrEmpty(lStrCode))
+                {
                     //lObjComboBox.ComboSelectAfter += lObjColumn_ComboSelectAfter;
                     CleanCboItems(lObjComboBox);
-                    if(lObjComboBox.ValidValues.Count <= 0) {
+                    if (lObjComboBox.ValidValues.Count <= 0)
+                    {
                         List<SectionsDTO> lLstTramos = mObjMachineryServiceFactory.GetSectionsService().GetSectionsBySalesOrder(int.Parse(lStrCode));
-                        foreach(var lObjTramo in lLstTramos) {
+                        foreach (var lObjTramo in lLstTramos)
+                        {
                             lObjComboBox.ValidValues.Add(lObjTramo.Code.ToString(), lObjTramo.Name);
                         }
 
@@ -1136,12 +1294,14 @@ namespace UGRS.AddOn.Machinery.Forms {
                     CleanCboItems(lObjComboBox);
                 }
             }
-            catch(Exception ex) {
+            catch (Exception ex)
+            {
                 LogUtility.WriteError(string.Format("[MachineryForm - lObjColumn_ComboClickBefore] Error: {0}", ex.Message));
                 UIApplication.ShowError(string.Format("lObjColumn_ComboSelectAfter: {0}", ex.Message));
                 //QsLog.WriteError("frmPurchaseXML (lObjColumn_ComboSelectAfter): " + ex.Message);
             }
-            finally {
+            finally
+            {
                 this.UIAPIRawForm.Freeze(false);
             }
         }
@@ -1149,8 +1309,10 @@ namespace UGRS.AddOn.Machinery.Forms {
 
         #region Functions
         #region Header
-        public void LoadInitialsControls() {
-            try {
+        public void LoadInitialsControls()
+        {
+            try
+            {
                 //this.UIAPIRawForm.Freeze(true);
 
                 string lStrUsername = UIApplication.GetCompany().UserName;
@@ -1174,21 +1336,26 @@ namespace UGRS.AddOn.Machinery.Forms {
                 CreateVehiclePerformanceDataTable();
                 SetCFLToTxt();
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 LogUtility.WriteError(string.Format("[MachineryForm - LoadInitialsControls] Error: {0}", lObjException.Message));
                 Application.SBO_Application.SetStatusBarMessage(lObjException.Message, SAPbouiCOM.BoMessageTime.bmt_Short, true);
             }
-            finally {
+            finally
+            {
                 //this.UIAPIRawForm.Freeze(false);
             }
         }
 
-        public void LoadRiseRelControls() {
-            try {
+        public void LoadRiseRelControls()
+        {
+            try
+            {
                 this.UIAPIRawForm.Freeze(true);
 
                 RiseDTO lObjRelRise = mObjMachineryServiceFactory.GetRiseService().GetRiseById(int.Parse(txtFolioRelation.Value));
-                if(lObjRelRise == null) {
+                if (lObjRelRise == null)
+                {
                     UIApplication.ShowError("La subida no existe");
                     return;
                 }
@@ -1206,28 +1373,35 @@ namespace UGRS.AddOn.Machinery.Forms {
 
                 LoadRiseRelInitialRecords();
 
-                for(int i = 0; i < 30; i++) {
+                for (int i = 0; i < 30; i++)
+                {
                     AddHoursRecord(new HoursRecordsDTO());
                 }
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 LogUtility.WriteError(string.Format("[MachineryForm - LoadRiseRelControls] Error: {0}", lObjException.Message));
                 Application.SBO_Application.MessageBox(lObjException.Message);
             }
-            finally {
+            finally
+            {
                 this.UIAPIRawForm.Freeze(false);
             }
         }
 
-        public void LoadRiseOperators(int pIntFolio, bool pBolisForRelatedRise = false) {
-            try {
+        public void LoadRiseOperators(int pIntFolio, bool pBolisForRelatedRise = false)
+        {
+            try
+            {
                 var lLstOperators = mObjMachineryServiceFactory.GetEmployeesService().GetEmployeesByRiseId(pIntFolio);
 
-                if(pBolisForRelatedRise) {
+                if (pBolisForRelatedRise)
+                {
                     lLstOperators = lLstOperators.Select(c => { c.Code = string.Empty; return c; }).ToList();
                 }
 
-                foreach(var lObjEmployee in lLstOperators) {
+                foreach (var lObjEmployee in lLstOperators)
+                {
                     AddEmployee(lObjEmployee);
                 }
 
@@ -1237,78 +1411,101 @@ namespace UGRS.AddOn.Machinery.Forms {
                 mtxEmployees.LoadFromDataSource();
                 mtxEmployees.AutoResizeColumns();
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 throw new Exception(string.Format("Error al obtener los operadores de la subida: {0}", lObjException.Message));
             }
         }
 
-        public void LoadRiseContracts(int pIntFolio, bool pBolisForRelatedRise = false) {
-            try {
+        public void LoadRiseContracts(int pIntFolio, bool pBolisForRelatedRise = false)
+        {
+            try
+            {
                 var lLstContracts = mObjMachineryServiceFactory.GetContractsService().GetContractsByRiseId(pIntFolio);
 
-                if(pBolisForRelatedRise) {
+                if (pBolisForRelatedRise)
+                {
                     lLstContracts = lLstContracts.Select(c => { c.Code = string.Empty; return c; }).ToList();
                 }
 
-                foreach(var lObjContract in lLstContracts) {
-                    if(pBolisForRelatedRise) {
-                        if(!mObjMachineryServiceFactory.GetContractsService().IsClosed(lObjContract.DocEntry)) {
+                foreach (var lObjContract in lLstContracts)
+                {
+                    if (pBolisForRelatedRise)
+                    {
+                        if (!mObjMachineryServiceFactory.GetContractsService().IsClosed(lObjContract.DocEntry))
+                        {
                             AddContract(lObjContract);
                         }
                     }
-                    else {
+                    else
+                    {
                         AddContract(lObjContract);
                     }
                 }
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 throw new Exception(string.Format("Error al obtener los contratos de la subida: {0}", lObjException.Message));
             }
         }
 
-        public void LoadRiseConsumablesRequest(int pIntFolio, RiseStatusEnum pEnmRiseStatus = RiseStatusEnum.Active) {
-            try {
+        public void LoadRiseConsumablesRequest(int pIntFolio, RiseStatusEnum pEnmRiseStatus = RiseStatusEnum.Active)
+        {
+            try
+            {
                 List<ConsumablesDTO> lLstConsumableReq = new List<ConsumablesDTO>();
-                if(pEnmRiseStatus == RiseStatusEnum.Active) {
+                if (pEnmRiseStatus == RiseStatusEnum.Active)
+                {
                     lLstConsumableReq = mObjMachineryServiceFactory.GetConsumablesService().GetConsumableRequestDocByRiseId(pIntFolio);
                 }
-                else {
+                else
+                {
                     lLstConsumableReq = mObjMachineryServiceFactory.GetConsumablesService().GetConsumableRequestUDTByRiseId(pIntFolio);
                 }
 
-                foreach(var lObjConsumable in lLstConsumableReq) {
+                foreach (var lObjConsumable in lLstConsumableReq)
+                {
                     AddConsumable(lObjConsumable);
                 }
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 throw new Exception(string.Format("Error al obtener las solicitudes de consumibles de la subida: {0}", lObjException.Message));
             }
         }
 
-        public void LoadRiseTravelExpenses(int pIntFolio, RiseStatusEnum pEnmRiseStatus = RiseStatusEnum.Active) {
-            try {
+        public void LoadRiseTravelExpenses(int pIntFolio, RiseStatusEnum pEnmRiseStatus = RiseStatusEnum.Active)
+        {
+            try
+            {
 
                 List<TravelExpensesDTO> lLstTravelExpenses = new List<TravelExpensesDTO>();
-                if(pEnmRiseStatus == RiseStatusEnum.Active) {
+                if (pEnmRiseStatus == RiseStatusEnum.Active)
+                {
                     //lLstTravelExpenses = mObjMachineryServiceFactory.GetTravelExpensesService().GetDraftPaymentsByRiseId(pIntFolio, "frmTExp");
                     lLstTravelExpenses = mObjMachineryServiceFactory.GetTravelExpensesService().GetPaymentsByRiseId(pIntFolio, "frmTExp");
                 }
-                else {
+                else
+                {
                     //lLstTravelExpenses = mObjMachineryServiceFactory.GetTravelExpensesService().GetTravelExpensesByRiseId(pIntFolio, true);
                     lLstTravelExpenses = mObjMachineryServiceFactory.GetTravelExpensesService().GetTravelExpensesByRiseId(pIntFolio);
                 }
 
-                foreach(var lObjTravelExp in lLstTravelExpenses) {
+                foreach (var lObjTravelExp in lLstTravelExpenses)
+                {
                     AddTravelExpenses(lObjTravelExp);
                 }
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 throw new Exception(string.Format("Error al obtener las solicitudes de viáticos de la subida: {0}", lObjException.Message));
             }
         }
 
-        public void LoadRiseRelInitialRecords() {
-            try {
+        public void LoadRiseRelInitialRecords()
+        {
+            try
+            {
 
                 /*var lLstFinalRecord = mObjMachineryServiceFactory
                                     .GetFinalsRecordsService()
@@ -1319,21 +1516,25 @@ namespace UGRS.AddOn.Machinery.Forms {
                                          .GetInitialRecordsByRiseId(int.Parse(txtFolio.Value)).Select(c => { c.Code = string.Empty; return c; }).ToList();
                 //mObjMachineryServiceFactory.GetConsumablesService().GetFinalsRecordsUDTByRiseId(int.Parse(txtFolioRelation.Value)).Select(c => { c.Code = string.Empty; return c; }).ToList();
 
-                foreach(var lObjContract in lLstFinalRecord) {
+                foreach (var lObjContract in lLstFinalRecord)
+                {
                     AddInitialRecord(lObjContract);
                 }
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 throw new Exception(string.Format("Error al obtener los registros iniciales de la subida relacionada: {0}", lObjException.Message));
             }
         }
 
-        private static string GetDocEntry(string pStrObjectKey) {
+        private static string GetDocEntry(string pStrObjectKey)
+        {
             string lStrDocEntry = string.Empty;
             XmlDocument lObjDocument = new XmlDocument();
             lObjDocument.LoadXml(pStrObjectKey);
 
-            foreach(XmlElement item in lObjDocument.ChildNodes.Item(1).ChildNodes) {
+            foreach (XmlElement item in lObjDocument.ChildNodes.Item(1).ChildNodes)
+            {
                 lStrDocEntry = item.InnerText;
             }
 
@@ -1341,9 +1542,12 @@ namespace UGRS.AddOn.Machinery.Forms {
         }
 
         #region Buttons
-        public void SaveRise() {
-            try {
-                if(!ValidateRiseControls()) {
+        public void SaveRise()
+        {
+            try
+            {
+                if (!ValidateRiseControls())
+                {
                     /*if (!mObjMachinerySeviceFactory.GetRiseService().ExistsRise(int.Parse(txtFolio.Value)))
                     {
                         Application.SBO_Application.SetStatusBarMessage("La cabecera de la subida aún no existe, favor de guardarla para continuar", SAPbouiCOM.BoMessageTime.bmt_Short, true);
@@ -1352,13 +1556,15 @@ namespace UGRS.AddOn.Machinery.Forms {
 
                     this.UIAPIRawForm.Freeze(true);
 
-                    if(mObjRise == null) {
+                    if (mObjRise == null)
+                    {
                         mObjMachineryServiceFactory.GetRiseService().Add(GetRiseObject());
                         mObjRise.RowCode = mObjMachineryServiceFactory.GetRiseService().GetCode(mObjRise.IdRise);
 
                         //Application.SBO_Application.SetStatusBarMessage("Se agregó correctamente la subida", SAPbouiCOM.BoMessageTime.bmt_Short, false);
                     }
-                    else {
+                    else
+                    {
                         mObjMachineryServiceFactory.GetRiseService().Update(mObjRise);
 
                         //Application.SBO_Application.SetStatusBarMessage("Se modificó correctamente la subida", SAPbouiCOM.BoMessageTime.bmt_Short, false);
@@ -1380,59 +1586,74 @@ namespace UGRS.AddOn.Machinery.Forms {
                     SavePurchasesInvReqRecords();
                     SaveFinalsRecords();*/
                 }
-                else {
+                else
+                {
                     UIApplication.ShowError("Verificar campos vacíos");
                 }
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 LogUtility.WriteError(string.Format("[MachineryForm - SaveRise] Error al guardar subida: {0}", lObjException.Message));
                 throw new Exception(string.Format("Error al guardar subida: {0}", lObjException.Message));
             }
-            finally {
+            finally
+            {
                 this.UIAPIRawForm.Freeze(false);
             }
         }
 
-        private void SaveEmployees() {
-            try {
-                for(int i = 0; i < dtEmployees.Rows.Count - 1; i++) {
+        private void SaveEmployees()
+        {
+            try
+            {
+                for (int i = 0; i < dtEmployees.Rows.Count - 1; i++)
+                {
                     //bool lBolStatus = ((dynamic)mtxEmployees.Columns.Item(3).Cells.Item(i + 1).Specific).Checked;
                     int lIntStatus = dtEmployees.GetValue("EmpChk", i).ToString() == "Y" ? 1 : 0;
                     string lStrCode = dtEmployees.GetValue("CodeTEmp", i).ToString();
-                    Employees lObjEmployees = new Employees {
+                    Employees lObjEmployees = new Employees
+                    {
                         RowCode = lStrCode,
                         Employee = int.Parse(dtEmployees.GetValue(1, i).ToString()),
                         IdRise = mObjRise.IdRise,
                         Status = lIntStatus,
                     };
 
-                    if(string.IsNullOrEmpty(lStrCode)) {
+                    if (string.IsNullOrEmpty(lStrCode))
+                    {
                         mObjMachineryServiceFactory.GetEmployeesService().Add(lObjEmployees);
                         dtEmployees.SetValue("CodeTEmp", i, mObjMachineryServiceFactory.GetEmployeesService().GetLastCode());
                     }
-                    else {
+                    else
+                    {
                         mObjMachineryServiceFactory.GetEmployeesService().Update(lObjEmployees);
                     }
                 }
 
                 UIApplication.GetApplication().SetStatusBarMessage("Se guardaron correctamente los empleados", SAPbouiCOM.BoMessageTime.bmt_Short, false);
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 throw new Exception(string.Format("Error al guardar los operadores: {0}", lObjException.Message));
             }
         }
 
-        private void SaveContracts() {
-            try {
-                for(int i = 0; i < dtContracts.Rows.Count; i++) {
+        private void SaveContracts()
+        {
+            try
+            {
+                for (int i = 0; i < dtContracts.Rows.Count; i++)
+                {
                     string lStrCode = dtContracts.GetValue("CodeTCont", i).ToString();
-                    Contracts lObjContracts = new Contracts {
+                    Contracts lObjContracts = new Contracts
+                    {
                         RowCode = lStrCode,
                         DocEntry = int.Parse(dtContracts.GetValue("DocECont", i).ToString()),
                         IdRise = mObjRise.IdRise,
                     };
 
-                    if(string.IsNullOrEmpty(lStrCode)) {
+                    if (string.IsNullOrEmpty(lStrCode))
+                    {
                         mObjMachineryServiceFactory.GetContractsService().Add(lObjContracts);
                         dtContracts.SetValue("CodeTCont", i, mObjMachineryServiceFactory.GetContractsService().GetLastCode());
                     }
@@ -1444,22 +1665,28 @@ namespace UGRS.AddOn.Machinery.Forms {
 
                 UIApplication.GetApplication().SetStatusBarMessage("Se guardaron correctamente los contratos", SAPbouiCOM.BoMessageTime.bmt_Short, false);
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 throw new Exception(string.Format("Error al guardar los contratos: {0}", lObjException.Message));
             }
         }
 
-        private void SaveConsumables() {
-            try {
-                for(int i = 0; i < dtConsumables.Rows.Count; i++) {
+        private void SaveConsumables()
+        {
+            try
+            {
+                for (int i = 0; i < dtConsumables.Rows.Count; i++)
+                {
                     string lStrCode = dtConsumables.GetValue(1, i).ToString();
-                    Consumables lObjConsumables = new Consumables {
+                    Consumables lObjConsumables = new Consumables
+                    {
                         RowCode = lStrCode,
                         DocEntry = int.Parse(dtConsumables.GetValue(3, i).ToString()),
                         IdRise = mObjRise.IdRise,
                     };
 
-                    if(string.IsNullOrEmpty(lStrCode)) {
+                    if (string.IsNullOrEmpty(lStrCode))
+                    {
                         mObjMachineryServiceFactory.GetConsumablesService().Add(lObjConsumables);
                         dtConsumables.SetValue("CodeTCons", i, mObjMachineryServiceFactory.GetConsumablesService().GetLastCode());
                     }
@@ -1471,22 +1698,28 @@ namespace UGRS.AddOn.Machinery.Forms {
                     UIApplication.GetApplication().SetStatusBarMessage("Se guardaron correctamente las solicitudes de consumibles", SAPbouiCOM.BoMessageTime.bmt_Short, false);
                 }
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 throw new Exception(string.Format("Error al guardar las solicitudes de consumibles: {0}", lObjException.Message));
             }
         }
 
-        private void SaveTravelExpenses() {
-            try {
-                for(int i = 0; i < dtTravelExpenses.Rows.Count; i++) {
+        private void SaveTravelExpenses()
+        {
+            try
+            {
+                for (int i = 0; i < dtTravelExpenses.Rows.Count; i++)
+                {
                     string lStrCode = dtTravelExpenses.GetValue("CodeTTrav", i).ToString();
-                    TravelExpenses lObjTravelExpenses = new TravelExpenses {
+                    TravelExpenses lObjTravelExpenses = new TravelExpenses
+                    {
                         RowCode = lStrCode,
                         DocEntry = int.Parse(dtTravelExpenses.GetValue(3, i).ToString()),
                         IdRise = mObjRise.IdRise,
                     };
 
-                    if(string.IsNullOrEmpty(lStrCode) || lStrCode.Equals("0")) {
+                    if (string.IsNullOrEmpty(lStrCode) || lStrCode.Equals("0"))
+                    {
                         mObjMachineryServiceFactory.GetTravelExpensesService().Add(lObjTravelExpenses);
                         dtTravelExpenses.SetValue("CodeTTrav", i, mObjMachineryServiceFactory.GetTravelExpensesService().GetLastCode());
                     }
@@ -1498,19 +1731,24 @@ namespace UGRS.AddOn.Machinery.Forms {
                     UIApplication.GetApplication().SetStatusBarMessage("Se guardaron correctamente las solicitudes de viáticos", SAPbouiCOM.BoMessageTime.bmt_Short, false);
                 }
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 throw new Exception(string.Format("Error al guardar las solicitudes de viáticos: {0}", lObjException.Message));
             }
         }
 
-        private void SaveInitialsRecords() {
-            try {
-                if(dtInitialRcords.Rows.Count <= 0)
+        private void SaveInitialsRecords()
+        {
+            try
+            {
+                if (dtInitialRcords.Rows.Count <= 0)
                     return;
 
-                for(int i = 0; i < dtInitialRcords.Rows.Count; i++) {
+                for (int i = 0; i < dtInitialRcords.Rows.Count; i++)
+                {
                     string lStrCode = dtInitialRcords.GetValue("CodeTIR", i).ToString();
-                    InitialRecords lObjInitialRecord = new InitialRecords {
+                    InitialRecords lObjInitialRecord = new InitialRecords
+                    {
                         RowCode = lStrCode,
                         IdRise = mObjRise.IdRise,
                         PrcCode = dtInitialRcords.GetValue("ActCodIR", i).ToString(),
@@ -1526,27 +1764,34 @@ namespace UGRS.AddOn.Machinery.Forms {
                         KmHr = double.Parse(dtInitialRcords.GetValue("KmHrIR", i).ToString()),
                     };
 
-                    if(string.IsNullOrEmpty(lStrCode)) {
+                    if (string.IsNullOrEmpty(lStrCode))
+                    {
                         mObjMachineryServiceFactory.GetInitialRecordsService().Add(lObjInitialRecord);
                         dtInitialRcords.SetValue("CodeTIR", i, mObjMachineryServiceFactory.GetInitialRecordsService().GetLastCode());
                     }
-                    else {
+                    else
+                    {
                         mObjMachineryServiceFactory.GetInitialRecordsService().Update(lObjInitialRecord);
                     }
 
                     UIApplication.GetApplication().SetStatusBarMessage("Se guardaron correctamente los registros iniciales", SAPbouiCOM.BoMessageTime.bmt_Short, false);
                 }
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 throw new Exception(string.Format("Error al guardar los registros iniciales: {0}", lObjException.Message));
             }
         }
 
-        private void SavePurchasesInvReqRecords() {
-            try {
-                for(int i = 0; i < dtPurchase.Rows.Count; i++) {
+        private void SavePurchasesInvReqRecords()
+        {
+            try
+            {
+                for (int i = 0; i < dtPurchase.Rows.Count; i++)
+                {
                     string lStrCode = dtPurchase.GetValue("CodeTPrch", i).ToString();
-                    PurchaseOrders lObjInitialRecord = new PurchaseOrders {
+                    PurchaseOrders lObjInitialRecord = new PurchaseOrders
+                    {
                         RowCode = lStrCode,
                         IdRise = mObjRise.IdRise,
                         Type = int.Parse(dtPurchase.GetValue("DocTyPrch", i).ToString()),
@@ -1562,27 +1807,34 @@ namespace UGRS.AddOn.Machinery.Forms {
                         Oils = double.Parse(dtPurchase.GetValue("OilsPrch", i).ToString()),
                     };
 
-                    if(string.IsNullOrEmpty(lStrCode)) {
+                    if (string.IsNullOrEmpty(lStrCode))
+                    {
                         mObjMachineryServiceFactory.GetPurchasesOrdersService().Add(lObjInitialRecord);
                         dtPurchase.SetValue("CodeTPrch", i, mObjMachineryServiceFactory.GetPurchasesOrdersService().GetLastCode());
                     }
-                    else {
+                    else
+                    {
                         mObjMachineryServiceFactory.GetPurchasesOrdersService().Update(lObjInitialRecord);
                     }
 
                     UIApplication.GetApplication().SetStatusBarMessage("Se guardaron correctamente los registros de compras y traspasos", SAPbouiCOM.BoMessageTime.bmt_Short, false);
                 }
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 throw new Exception(string.Format("Error al guardar los registros de compras y traspasos: {0}", lObjException.Message));
             }
         }
 
-        private void SaveFinalsRecords() {
-            try {
-                for(int i = 0; i < dtFinalRecords.Rows.Count; i++) {
+        private void SaveFinalsRecords()
+        {
+            try
+            {
+                for (int i = 0; i < dtFinalRecords.Rows.Count; i++)
+                {
                     string lStrCode = dtFinalRecords.GetValue("CodeTFR", i).ToString();
-                    FinalsRecords lObjFinalRecord = new FinalsRecords {
+                    FinalsRecords lObjFinalRecord = new FinalsRecords
+                    {
                         RowCode = lStrCode,
                         IdRise = mObjRise.IdRise,
                         PrcCode = dtFinalRecords.GetValue("ActCodFR", i).ToString(),
@@ -1598,29 +1850,36 @@ namespace UGRS.AddOn.Machinery.Forms {
                         KmHr = double.Parse(dtFinalRecords.GetValue("KmHrFR", i).ToString()),
                     };
 
-                    if(string.IsNullOrEmpty(lStrCode)) {
+                    if (string.IsNullOrEmpty(lStrCode))
+                    {
                         mObjMachineryServiceFactory.GetFinalsRecordsService().Add(lObjFinalRecord);
                         dtFinalRecords.SetValue("CodeTFR", i, mObjMachineryServiceFactory.GetFinalsRecordsService().GetLastCode());
                     }
-                    else {
+                    else
+                    {
                         mObjMachineryServiceFactory.GetFinalsRecordsService().Update(lObjFinalRecord);
                     }
 
                     UIApplication.GetApplication().SetStatusBarMessage("Se guardaron correctamente los registros finales", SAPbouiCOM.BoMessageTime.bmt_Short, false);
                 }
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 throw new Exception(string.Format("Error al guardar los registros finales: {0}", lObjException.Message));
             }
         }
 
-        private void SaveTotalsRecords() {
-            try {
+        private void SaveTotalsRecords()
+        {
+            try
+            {
                 mObjMachineryServiceFactory.GetTotalsRecordsService().RemoveByRiseId(mObjRise.IdRise);
 
-                for(int i = 0; i < dtConsumedTotals.Rows.Count; i++) {
+                for (int i = 0; i < dtConsumedTotals.Rows.Count; i++)
+                {
                     string lStrCode = dtConsumedTotals.GetValue("CodeTTR", i).ToString();
-                    TotalRecords lObjTotalRecords = new TotalRecords {
+                    TotalRecords lObjTotalRecords = new TotalRecords
+                    {
                         RowCode = lStrCode,
                         IdRise = mObjRise.IdRise,
                         PrcCode = dtConsumedTotals.GetValue("ActCodTR", i).ToString(),
@@ -1636,34 +1895,43 @@ namespace UGRS.AddOn.Machinery.Forms {
                         KmHr = double.Parse(dtConsumedTotals.GetValue("KmHrTR", i).ToString()),
                     };
 
-                    if(string.IsNullOrEmpty(lStrCode)) {
+                    if (string.IsNullOrEmpty(lStrCode))
+                    {
                         mObjMachineryServiceFactory.GetTotalsRecordsService().Add(lObjTotalRecords);
                         dtConsumedTotals.SetValue("CodeTTR", i, mObjMachineryServiceFactory.GetTotalsRecordsService().GetLastCode());
                     }
-                    else {
+                    else
+                    {
                         mObjMachineryServiceFactory.GetTotalsRecordsService().Update(lObjTotalRecords);
                     }
                 }
 
                 UIApplication.GetApplication().SetStatusBarMessage("Se guardaron correctamente los registros totales", SAPbouiCOM.BoMessageTime.bmt_Short, false);
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 throw new Exception(string.Format("Error al guardar los registros totales: {0}", lObjException.Message));
             }
         }
 
-        private void DeleteTotalsRecords() {
-            try {
+        private void DeleteTotalsRecords()
+        {
+            try
+            {
                 mObjMachineryServiceFactory.GetTotalsRecordsService().Add(new TotalRecords());
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 throw new Exception(string.Format("Error al eliminar los registros totales: {0}", lObjException.Message));
             }
         }
 
-        private void SaveHours() {
-            try {
-                for(int i = 0; i < dtHours.Rows.Count; i++) {
+        private void SaveHours()
+        {
+            try
+            {
+                for (int i = 0; i < dtHours.Rows.Count; i++)
+                {
                     //int lIntContract = int.Parse(dtHours.GetValue("SupIdHrs", i).ToString());
                     int lIntSupId = int.Parse(dtHours.GetValue("SupIdHrs", i).ToString());
                     int lIntOpdId = int.Parse(dtHours.GetValue("OpdIdHrs", i).ToString());
@@ -1672,10 +1940,12 @@ namespace UGRS.AddOn.Machinery.Forms {
                     double lDblFeetHrs = double.Parse(dtHours.GetValue("HrsFeetHr", i).ToString());
                     string lStrDate = dtHours.GetValue("DateHrs", i).ToString();
 
-                    if(lIntSupId > 0 && lIntOpdId > 0 && !string.IsNullOrEmpty(lStrEqmId) && !string.IsNullOrEmpty(lStrEcoNum) && lDblFeetHrs > 0 && !string.IsNullOrEmpty(lStrDate)) {
+                    if (lIntSupId > 0 && lIntOpdId > 0 && !string.IsNullOrEmpty(lStrEqmId) && !string.IsNullOrEmpty(lStrEcoNum) && lDblFeetHrs > 0 && !string.IsNullOrEmpty(lStrDate))
+                    {
                         int lIntStatus = dtHours.GetValue("CloseHrs", i).ToString() == "Y" ? 1 : 0;
                         string lStrCode = dtHours.GetValue("CodeHrs", i).ToString();
-                        HoursRecords lObjHoursRecords = new HoursRecords {
+                        HoursRecords lObjHoursRecords = new HoursRecords
+                        {
                             RowCode = lStrCode,
                             IdRise = mObjRise.IdRise, //62
                             DocEntry = int.Parse(dtHours.GetValue("ContOVHrs", i).ToString()),
@@ -1691,11 +1961,13 @@ namespace UGRS.AddOn.Machinery.Forms {
                             Close = lIntStatus,
                         };
 
-                        if(string.IsNullOrEmpty(lStrCode)) {
+                        if (string.IsNullOrEmpty(lStrCode))
+                        {
                             mObjMachineryServiceFactory.GetHoursRecordsService().Add(lObjHoursRecords);
                             dtHours.SetValue("CodeHrs", i, mObjMachineryServiceFactory.GetHoursRecordsService().GetLastCode());
                         }
-                        else {
+                        else
+                        {
                             mObjMachineryServiceFactory.GetHoursRecordsService().Update(lObjHoursRecords);
                         }
                     }
@@ -1703,27 +1975,33 @@ namespace UGRS.AddOn.Machinery.Forms {
 
                 UIApplication.GetApplication().SetStatusBarMessage("Se guardaron correctamente los registros de horas", SAPbouiCOM.BoMessageTime.bmt_Short, false);
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 throw new Exception(string.Format("Error al guardar los registros de horas: {0}", lObjException.Message));
             }
         }
 
-        private void SaveTransitHours() {
-            try {
-                for(int i = 0; i < dtTransitHours.Rows.Count; i++) {
+        private void SaveTransitHours()
+        {
+            try
+            {
+                for (int i = 0; i < dtTransitHours.Rows.Count; i++)
+                {
                     string lStrEqmId = dtTransitHours.GetValue("MaqTHrs", i).ToString();
                     string lStrEcoNum = dtTransitHours.GetValue("NumEcoTH", i).ToString();
                     double lDblHrs = double.Parse(dtTransitHours.GetValue("HrsTH", i).ToString());
                     int lIntOpdId = int.Parse(dtTransitHours.GetValue("OpdTH", i).ToString());
                     int lIntSupId = int.Parse(dtTransitHours.GetValue("SupTH", i).ToString());
 
-                    if(string.IsNullOrEmpty(lStrEqmId) || string.IsNullOrEmpty(lStrEcoNum) || lDblHrs <= 0 || lIntOpdId <= 0) {
+                    if (string.IsNullOrEmpty(lStrEqmId) || string.IsNullOrEmpty(lStrEcoNum) || lDblHrs <= 0 || lIntOpdId <= 0)
+                    {
                         UIApplication.ShowError("Verificar campos vacíos en horas tránsito");
                         return;
                     }
 
                     string lStrCode = dtTransitHours.GetValue("CodeTH", i).ToString();
-                    TransitHoursRecords lObjTransitHours = new TransitHoursRecords {
+                    TransitHoursRecords lObjTransitHours = new TransitHoursRecords
+                    {
                         RowCode = lStrCode,
                         IdRise = mObjRise.IdRise,//62
                         PrcCode = lStrEqmId,
@@ -1733,27 +2011,34 @@ namespace UGRS.AddOn.Machinery.Forms {
                         Supervisor = lIntSupId
                     };
 
-                    if(string.IsNullOrEmpty(lStrCode)) {
+                    if (string.IsNullOrEmpty(lStrCode))
+                    {
                         mObjMachineryServiceFactory.GetTransitHoursRecordsService().Add(lObjTransitHours);
                         dtTransitHours.SetValue("CodeTH", i, mObjMachineryServiceFactory.GetTransitHoursRecordsService().GetLastCode());
                     }
-                    else {
+                    else
+                    {
                         mObjMachineryServiceFactory.GetTransitHoursRecordsService().Update(lObjTransitHours);
                     }
                 }
 
                 UIApplication.GetApplication().SetStatusBarMessage("Se guardaron correctamente los registros de tránsito de horas", SAPbouiCOM.BoMessageTime.bmt_Short, false);
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 throw new Exception(string.Format("Error al guardar los registros de tránsito de horas: {0}", lObjException.Message));
             }
         }
 
-        private void SavePerformance() {
-            try {
-                for(int i = 0; i < dtMachineryPerformance.Rows.Count; i++) {
+        private void SavePerformance()
+        {
+            try
+            {
+                for (int i = 0; i < dtMachineryPerformance.Rows.Count; i++)
+                {
                     string lStrCode = dtMachineryPerformance.GetValue("CodePFM", i).ToString();
-                    Performance lObjPerformance = new Performance {
+                    Performance lObjPerformance = new Performance
+                    {
                         RowCode = lStrCode,
                         IdRise = mObjRise.IdRise,
                         PrcCode = dtMachineryPerformance.GetValue("MaqPFM", i).ToString(),
@@ -1763,15 +2048,18 @@ namespace UGRS.AddOn.Machinery.Forms {
                         PerformanceF = double.Parse(dtMachineryPerformance.GetValue("PerfPFM", i).ToString()),
                     };
 
-                    if(string.IsNullOrEmpty(lStrCode)) {
+                    if (string.IsNullOrEmpty(lStrCode))
+                    {
                         mObjMachineryServiceFactory.GetPerformanceService().Add(lObjPerformance);
                         dtMachineryPerformance.SetValue("CodePFM", i, mObjMachineryServiceFactory.GetPerformanceService().GetLastCode());
                     }
                 }
 
-                for(int i = 0; i < dtVehiclePerformance.Rows.Count; i++) {
+                for (int i = 0; i < dtVehiclePerformance.Rows.Count; i++)
+                {
                     string lStrCode = dtVehiclePerformance.GetValue("CodePFV", i).ToString();
-                    Performance lObjPerformance = new Performance {
+                    Performance lObjPerformance = new Performance
+                    {
                         RowCode = lStrCode,
                         IdRise = mObjRise.IdRise,
                         PrcCode = dtVehiclePerformance.GetValue("MaqPFV", i).ToString(),
@@ -1781,7 +2069,8 @@ namespace UGRS.AddOn.Machinery.Forms {
                         PerformanceF = double.Parse(dtVehiclePerformance.GetValue("PerfPFV", i).ToString()),
                     };
 
-                    if(string.IsNullOrEmpty(lStrCode)) {
+                    if (string.IsNullOrEmpty(lStrCode))
+                    {
                         mObjMachineryServiceFactory.GetPerformanceService().Add(lObjPerformance);
                         dtVehiclePerformance.SetValue("CodePFV", i, mObjMachineryServiceFactory.GetPerformanceService().GetLastCode());
                     }
@@ -1800,14 +2089,18 @@ namespace UGRS.AddOn.Machinery.Forms {
 
                 UIApplication.GetApplication().SetStatusBarMessage("Se guardaron correctamente los registros de rendimientos", SAPbouiCOM.BoMessageTime.bmt_Short, false);
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 throw new Exception(string.Format("Error al guardar los registros de rendimientos: {0}", lObjException.Message));
             }
         }
 
-        private void RemoveEmployees(ref List<string> pLstEmployeesCodes) {
-            try {
-                foreach(var pStrCode in pLstEmployeesCodes) {
+        private void RemoveEmployees(ref List<string> pLstEmployeesCodes)
+        {
+            try
+            {
+                foreach (var pStrCode in pLstEmployeesCodes)
+                {
                     mObjMachineryServiceFactory.GetEmployeesService().Remove(pStrCode);
                 }
 
@@ -1815,14 +2108,18 @@ namespace UGRS.AddOn.Machinery.Forms {
 
                 UIApplication.GetApplication().SetStatusBarMessage("Se eliminó correctamente el operador", SAPbouiCOM.BoMessageTime.bmt_Short, false);
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 throw new Exception(string.Format("Error al eliminar el operador: {0}", lObjException.Message));
             }
         }
 
-        private void RemoveContracts(ref List<string> pLstContractsCodes) {
-            try {
-                foreach(var pStrCode in pLstContractsCodes) {
+        private void RemoveContracts(ref List<string> pLstContractsCodes)
+        {
+            try
+            {
+                foreach (var pStrCode in pLstContractsCodes)
+                {
                     mObjMachineryServiceFactory.GetContractsService().Remove(pStrCode);
                 }
 
@@ -1830,24 +2127,30 @@ namespace UGRS.AddOn.Machinery.Forms {
 
                 UIApplication.GetApplication().SetStatusBarMessage("Se eliminó correctamente el contrato", SAPbouiCOM.BoMessageTime.bmt_Short, false);
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 throw new Exception(string.Format("Error al eliminar el contrato: {0}", lObjException.Message));
             }
         }
 
-        private Rise GetRiseObject() {
+        private Rise GetRiseObject()
+        {
             int lIntOrigFolio = 0;
-            if(!string.IsNullOrEmpty(txtFolioRelation.Value)) {
+            if (!string.IsNullOrEmpty(txtFolioRelation.Value))
+            {
                 int lIntFolio = mObjMachineryServiceFactory.GetRiseService().GetOriginalFolio(int.Parse(txtFolioRelation.Value));
-                if(lIntFolio == 0) {
+                if (lIntFolio == 0)
+                {
                     lIntOrigFolio = int.Parse(txtFolioRelation.Value);
                 }
-                else {
+                else
+                {
                     lIntOrigFolio = lIntFolio;
                 }
             }
 
-            return mObjRise = new Rise {
+            return mObjRise = new Rise
+            {
                 IdRise = int.Parse(txtFolio.Value),
                 CreatedDate = DateTime.Parse(txtDate.Value),
                 StartDate = DateTimeUtility.StringToDateTime(txtStartDate.Value),
@@ -1863,23 +2166,28 @@ namespace UGRS.AddOn.Machinery.Forms {
             };
         }
 
-        public void CancelRise() {
-            try {
-                if(string.IsNullOrEmpty(txtFolio.Value))
+        public void CancelRise()
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(txtFolio.Value))
                     return;
 
-                if(!mObjMachineryServiceFactory.GetRiseService().ExistsRise(int.Parse(txtFolio.Value))) {
+                if (!mObjMachineryServiceFactory.GetRiseService().ExistsRise(int.Parse(txtFolio.Value)))
+                {
                     Application.SBO_Application.SetStatusBarMessage("La cabecera de la subida aún no existe, favor de guardarla para continuar", SAPbouiCOM.BoMessageTime.bmt_Short, true);
                     return;
                 }
 
                 int lIntValue = Application.SBO_Application.MessageBox("¿Desea cancelar la subida?", 1, "Aceptar", "Cancelar", "");
 
-                if(lIntValue != 1) {
+                if (lIntValue != 1)
+                {
                     return;
                 }
 
-                if(mObjRise != null) {
+                if (mObjRise != null)
+                {
                     this.UIAPIRawForm.Freeze(true);
 
                     mObjRise.DocStatus = (int)RiseStatusEnum.Cancelled;
@@ -1894,51 +2202,62 @@ namespace UGRS.AddOn.Machinery.Forms {
 
                     Application.SBO_Application.SetStatusBarMessage("Se canceló correctamente la subida", SAPbouiCOM.BoMessageTime.bmt_Short, false);
                 }
-                else {
+                else
+                {
                     Application.SBO_Application.SetStatusBarMessage("No se seleccionó una subida", SAPbouiCOM.BoMessageTime.bmt_Short, true);
                 }
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 LogUtility.WriteError(string.Format("[MachineryForm - CancelRise] Error al cancelar la subida: {0}", lObjException.Message));
                 throw new Exception(string.Format("Error al cancelar la subida {0}", lObjException.Message));
             }
-            finally {
+            finally
+            {
                 this.UIAPIRawForm.Freeze(false);
             }
         }
 
-        public void CloseRise() {
-            try {
-                if(string.IsNullOrEmpty(txtFolio.Value))
+        public void CloseRise()
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(txtFolio.Value))
                     return;
 
-                if(!mObjMachineryServiceFactory.GetRiseService().ExistsRise(int.Parse(txtFolio.Value))) {
+                if (!mObjMachineryServiceFactory.GetRiseService().ExistsRise(int.Parse(txtFolio.Value)))
+                {
                     Application.SBO_Application.SetStatusBarMessage("La cabecera de la subida aún no existe, favor de guardarla para continuar", SAPbouiCOM.BoMessageTime.bmt_Short, true);
                     return;
                 }
 
-                if(dtHours.Rows.Count <= 0) {
+                if (dtHours.Rows.Count <= 0)
+                {
                     UIApplication.ShowError("No puede cerrar la subida si no existen registros de horas");
                     return;
                 }
 
-                if(dtTransitHours.Rows.Count <= 0) {
+                if (dtTransitHours.Rows.Count <= 0)
+                {
                     UIApplication.ShowError("No puede cerrar la subida si no existen registros de horas tránsito");
                     return;
                 }
 
-                if(dtMachineryPerformance.Rows.Count <= 0 && dtVehiclePerformance.Rows.Count <= 0) {
+                if (dtMachineryPerformance.Rows.Count <= 0 && dtVehiclePerformance.Rows.Count <= 0)
+                {
                     UIApplication.ShowError("No puede cerrar la subida si no existen registros de rendimiento");
                     return;
                 }
 
                 int lIntValue = Application.SBO_Application.MessageBox("¿Desea cerrar la subida?", 1, "Aceptar", "Cancelar", "");
 
-                if(lIntValue != 1) {
+                if (lIntValue != 1)
+                {
                     return;
                 }
 
-                if(mObjRise != null) {
+                if (mObjRise != null)
+                {
                     this.UIAPIRawForm.Freeze(true);
 
                     mObjRise.DocStatus = (int)RiseStatusEnum.Close;
@@ -1965,7 +2284,8 @@ namespace UGRS.AddOn.Machinery.Forms {
 
                     //BlockControls();
 
-                    if(!mObjMachineryServiceFactory.GetGoodIssuesService().ExistsGoodIssue(mObjRise.IdRise)) {
+                    if (!mObjMachineryServiceFactory.GetGoodIssuesService().ExistsGoodIssue(mObjRise.IdRise))
+                    {
                         SaveInitialsRecords();
                         SavePurchasesInvReqRecords();
                         SaveFinalsRecords();
@@ -1980,36 +2300,44 @@ namespace UGRS.AddOn.Machinery.Forms {
 
                     Application.SBO_Application.SetStatusBarMessage("Se cerró correctamente la subida", SAPbouiCOM.BoMessageTime.bmt_Short, false);
                 }
-                else {
+                else
+                {
                     Application.SBO_Application.SetStatusBarMessage("No se seleccionó una subida", SAPbouiCOM.BoMessageTime.bmt_Short, true);
                 }
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 LogUtility.WriteError(string.Format("[MachineryForm - CloseRise] Error al cerrar la subida: {0}", lObjException.Message));
                 throw new Exception(string.Format("Error al cerrar la subida {0}", lObjException.Message));
             }
-            finally {
+            finally
+            {
                 this.UIAPIRawForm.Freeze(false);
             }
         }
 
-        public void OpenRise() {
-            try {
-                if(string.IsNullOrEmpty(txtFolio.Value))
+        public void OpenRise()
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(txtFolio.Value))
                     return;
 
-                if(!mObjMachineryServiceFactory.GetRiseService().ExistsRise(int.Parse(txtFolio.Value))) {
+                if (!mObjMachineryServiceFactory.GetRiseService().ExistsRise(int.Parse(txtFolio.Value)))
+                {
                     Application.SBO_Application.SetStatusBarMessage("La cabecera de la subida aún no existe, favor de guardarla para continuar", SAPbouiCOM.BoMessageTime.bmt_Short, true);
                     return;
                 }
 
                 int lIntValue = Application.SBO_Application.MessageBox("¿Desea abrir la subida?", 1, "Aceptar", "Cancelar", "");
 
-                if(lIntValue != 1) {
+                if (lIntValue != 1)
+                {
                     return;
                 }
 
-                if(mObjRise != null) {
+                if (mObjRise != null)
+                {
                     this.UIAPIRawForm.Freeze(true);
 
                     mObjRise.DocStatus = (int)RiseStatusEnum.ReOpen;
@@ -2025,31 +2353,39 @@ namespace UGRS.AddOn.Machinery.Forms {
 
                     Application.SBO_Application.SetStatusBarMessage("Se abrió correctamente la subida", SAPbouiCOM.BoMessageTime.bmt_Short, false);
                 }
-                else {
+                else
+                {
                     Application.SBO_Application.SetStatusBarMessage("No se seleccionó una subida", SAPbouiCOM.BoMessageTime.bmt_Short, true);
                 }
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 LogUtility.WriteError(string.Format("[MachineryForm - OpenRise] Error al abrir la subida: {0}", lObjException.Message));
                 throw new Exception(string.Format("Error al abrir la subida {0}", lObjException.Message));
             }
-            finally {
+            finally
+            {
                 this.UIAPIRawForm.Freeze(false);
             }
         }
 
-        public void OpenFoliosForm() {
-            try {
-                if(string.IsNullOrEmpty(txtFolio.Value))
+        public void OpenFoliosForm()
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(txtFolio.Value))
                     return;
 
-                if(Application.SBO_Application.MessageBox("¿Desea relacionar la subida? Se actualizará la información capturada y se guardará la subida", 1, "Aceptar", "Cancelar", "") == 1) {
-                    if(mObjMachineryServiceFactory.GetRiseService().ExistsRise(int.Parse(txtFolio.Value))) {
+                if (Application.SBO_Application.MessageBox("¿Desea relacionar la subida? Se actualizará la información capturada y se guardará la subida", 1, "Aceptar", "Cancelar", "") == 1)
+                {
+                    if (mObjMachineryServiceFactory.GetRiseService().ExistsRise(int.Parse(txtFolio.Value)))
+                    {
                         UIApplication.ShowError("La cabecera de la subida ya existe, no es posible relacionarla");
                         return;
                     }
 
-                    if(ValidateRiseControls()) {
+                    if (ValidateRiseControls())
+                    {
                         UIApplication.ShowError("Verificar campos vacíos");
                         return;
                     }
@@ -2064,27 +2400,35 @@ namespace UGRS.AddOn.Machinery.Forms {
                     mObjFrmFolios.Show();
                 }
             }
-            catch(Exception lObjException) {
-                if(lObjException.Message.Contains("Failed to create form. Please check the form attributes")) {
-                    if(Application.SBO_Application.MessageBox("La pantalla de folios relacionados ya se encuentra abierta, ¿desea cerrar la actual?", 1, "Aceptar", "Cancelar", "") == 1) {
+            catch (Exception lObjException)
+            {
+                if (lObjException.Message.Contains("Failed to create form. Please check the form attributes"))
+                {
+                    if (Application.SBO_Application.MessageBox("La pantalla de folios relacionados ya se encuentra abierta, ¿desea cerrar la actual?", 1, "Aceptar", "Cancelar", "") == 1)
+                    {
                         UIApplication.GetApplication().Forms.Item("frmFolios").Close();
                     }
                 }
-                else {
+                else
+                {
                     throw new Exception(string.Format("Error al abrir la pantalla de folios relacionados: {0}", lObjException.Message));
                 }
             }
-            finally {
+            finally
+            {
                 this.UIAPIRawForm.Freeze(false);
             }
         }
 
-        public void OpenInventoryRequestForm() {
-            try {
-                if(string.IsNullOrEmpty(txtFolio.Value))
+        public void OpenInventoryRequestForm()
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(txtFolio.Value))
                     return;
 
-                if(!mObjMachineryServiceFactory.GetRiseService().ExistsRise(int.Parse(txtFolio.Value))) {
+                if (!mObjMachineryServiceFactory.GetRiseService().ExistsRise(int.Parse(txtFolio.Value)))
+                {
                     Application.SBO_Application.SetStatusBarMessage("La cabecera de la subida aún no existe, favor de guardarla para continuar", SAPbouiCOM.BoMessageTime.bmt_Short, true);
                     return;
                 }
@@ -2097,27 +2441,33 @@ namespace UGRS.AddOn.Machinery.Forms {
                 SAPbouiCOM.EditText txtToWshCode = ((SAPbouiCOM.EditText)UIApplication.GetApplication().Forms.GetForm("1250000940", -1).Items.Item("1470000101").Specific);
                 txtToWshCode.Value = "MQHEOBRA";
 
-                if(!Application.SBO_Application.Menus.Item("6913").Checked) {
+                if (!Application.SBO_Application.Menus.Item("6913").Checked)
+                {
                     Application.SBO_Application.ActivateMenuItem("6913");//2050
                 }
                 SAPbouiCOM.Form lFrmSalesOrder = Application.SBO_Application.Forms.GetFormByTypeAndCount(-1250000940, -1);
                 SAPbouiCOM.EditText txtSORiseFolio = ((SAPbouiCOM.EditText)(lFrmSalesOrder.Items.Item("U_MQ_Rise").Specific));
                 txtSORiseFolio.Value = txtFolio.Value;
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 throw new Exception(string.Format("Error al abrir la pantalla de solicitud de traslado {0}", lObjException.Message));
             }
-            finally {
+            finally
+            {
                 this.UIAPIRawForm.Freeze(false);
             }
         }
 
-        public void OpenContractsListForm() {
-            try {
-                if(string.IsNullOrEmpty(txtFolio.Value))
+        public void OpenContractsListForm()
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(txtFolio.Value))
                     return;
 
-                if(!mObjMachineryServiceFactory.GetRiseService().ExistsRise(int.Parse(txtFolio.Value))) {
+                if (!mObjMachineryServiceFactory.GetRiseService().ExistsRise(int.Parse(txtFolio.Value)))
+                {
                     Application.SBO_Application.SetStatusBarMessage("La cabecera de la subida aún no existe, favor de guardarla para continuar", SAPbouiCOM.BoMessageTime.bmt_Short, true);
                     return;
                 }
@@ -2127,27 +2477,35 @@ namespace UGRS.AddOn.Machinery.Forms {
                 mObjFrmContractsList = new frmCFLOrdersSale();
                 mObjFrmContractsList.Show();
             }
-            catch(Exception lObjException) {
-                if(lObjException.Message.Contains("Failed to create form. Please check the form attributes")) {
-                    if(Application.SBO_Application.MessageBox("La pantalla de seleccionar contratos ya se encuentra abierta, ¿desea cerrar la actual?", 1, "Aceptar", "Cancelar", "") == 1) {
+            catch (Exception lObjException)
+            {
+                if (lObjException.Message.Contains("Failed to create form. Please check the form attributes"))
+                {
+                    if (Application.SBO_Application.MessageBox("La pantalla de seleccionar contratos ya se encuentra abierta, ¿desea cerrar la actual?", 1, "Aceptar", "Cancelar", "") == 1)
+                    {
                         UIApplication.GetApplication().Forms.Item("frmCFLOV").Close();
                     }
                 }
-                else {
+                else
+                {
                     throw new Exception(string.Format("Error al abrir la pantalla con el listado de contratos {0}", lObjException.Message));
                 }
             }
-            finally {
+            finally
+            {
                 this.UIAPIRawForm.Freeze(false);
             }
         }
 
-        public void OpenContractForm() {
-            try {
-                if(string.IsNullOrEmpty(txtFolio.Value))
+        public void OpenContractForm()
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(txtFolio.Value))
                     return;
 
-                if(!mObjMachineryServiceFactory.GetRiseService().ExistsRise(int.Parse(txtFolio.Value))) {
+                if (!mObjMachineryServiceFactory.GetRiseService().ExistsRise(int.Parse(txtFolio.Value)))
+                {
                     Application.SBO_Application.SetStatusBarMessage("La cabecera de la subida aún no existe, favor de guardarla para continuar", SAPbouiCOM.BoMessageTime.bmt_Short, true);
                     return;
                 }
@@ -2156,39 +2514,49 @@ namespace UGRS.AddOn.Machinery.Forms {
                                                     UsersTypeEnum.Machinery, ContractModeEnum.Purchase);
                 mObjFrmContracts.Show();
             }
-            catch(Exception lObjException) {
-                if(lObjException.Message.Contains("Failed to create form. Please check the form attributes")) {
-                    if(Application.SBO_Application.MessageBox("La pantalla de creación de contratos ya se encuentra abierta, ¿desea cerrar la actual?", 1, "Aceptar", "Cancelar", "") == 1) {
+            catch (Exception lObjException)
+            {
+                if (lObjException.Message.Contains("Failed to create form. Please check the form attributes"))
+                {
+                    if (Application.SBO_Application.MessageBox("La pantalla de creación de contratos ya se encuentra abierta, ¿desea cerrar la actual?", 1, "Aceptar", "Cancelar", "") == 1)
+                    {
                         UIApplication.GetApplication().Forms.Item("frmCont").Close();
                     }
                 }
-                else {
+                else
+                {
                     throw new Exception(string.Format("Error al abrir la pantalla de contratos {0}", lObjException.Message));
                 }
             }
         }
 
-        public void OpenTravelExpensesForm() {
-            try {
-                if(string.IsNullOrEmpty(txtFolio.Value))
+        public void OpenTravelExpensesForm()
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(txtFolio.Value))
                     return;
 
-                if(!mObjMachineryServiceFactory.GetRiseService().ExistsRise(int.Parse(txtFolio.Value))) {
+                if (!mObjMachineryServiceFactory.GetRiseService().ExistsRise(int.Parse(txtFolio.Value)))
+                {
                     Application.SBO_Application.SetStatusBarMessage("La cabecera de la subida aún no existe, favor de guardarla para continuar", SAPbouiCOM.BoMessageTime.bmt_Short, true);
                     return;
                 }
 
-                if(string.IsNullOrEmpty(mStrSupervisorCode)) {
+                if (string.IsNullOrEmpty(mStrSupervisorCode))
+                {
                     Application.SBO_Application.SetStatusBarMessage("Seleccione un supervisor para solicitar viáticos", SAPbouiCOM.BoMessageTime.bmt_Short, true);
                     return;
                 }
 
-                if(dtEmployees.Rows.Count <= 0) {
+                if (dtEmployees.Rows.Count <= 0)
+                {
                     Application.SBO_Application.SetStatusBarMessage("No cuenta con operadores para solicitar viáticos", SAPbouiCOM.BoMessageTime.bmt_Short, true);
                     return;
                 }
 
-                if(string.IsNullOrEmpty(txtStartDate.Value) || string.IsNullOrEmpty(txtEndDate.Value)) {
+                if (string.IsNullOrEmpty(txtStartDate.Value) || string.IsNullOrEmpty(txtEndDate.Value))
+                {
                     Application.SBO_Application.SetStatusBarMessage("Verificar las fechas de inicio y fin", SAPbouiCOM.BoMessageTime.bmt_Short, true);
                     return;
                 }
@@ -2198,21 +2566,27 @@ namespace UGRS.AddOn.Machinery.Forms {
                 mObjFrmTravelExpenses = new frmTravelExpenses(int.Parse(txtFolio.Value), mStrSupervisorCode, txtSupervisor.Value, lIntTotalDays, dtEmployees, IsFirstTravelExpenses());
                 mObjFrmTravelExpenses.Show();
             }
-            catch(Exception lObjException) {
-                if(lObjException.Message.Contains("Failed to create form. Please check the form attributes")) {
-                    if(Application.SBO_Application.MessageBox("La pantalla de solicitud de viáticos ya se encuentra abierta, ¿desea cerrar la actual?", 1, "Aceptar", "Cancelar", "") == 1) {
+            catch (Exception lObjException)
+            {
+                if (lObjException.Message.Contains("Failed to create form. Please check the form attributes"))
+                {
+                    if (Application.SBO_Application.MessageBox("La pantalla de solicitud de viáticos ya se encuentra abierta, ¿desea cerrar la actual?", 1, "Aceptar", "Cancelar", "") == 1)
+                    {
                         UIApplication.GetApplication().Forms.Item("frmTExp").Close();
                     }
                 }
-                else {
+                else
+                {
                     throw new Exception(string.Format("Error al abrir la pantalla de solicitud de viáticos {0}", lObjException.Message));
                 }
             }
         }
 
-        public void AddConsumable(ConsumablesDTO lObjConsumable) {
-            try {
-                if(lObjConsumable == null)
+        public void AddConsumable(ConsumablesDTO lObjConsumable)
+        {
+            try
+            {
+                if (lObjConsumable == null)
                     return;
 
                 this.UIAPIRawForm.Freeze(true);
@@ -2232,17 +2606,21 @@ namespace UGRS.AddOn.Machinery.Forms {
                 /*SAPbouiCOM.Form lFrmStockTransfReq = Application.SBO_Application.Forms.ActiveForm;
                 lFrmStockTransfReq.Close();*/
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 throw new Exception(string.Format("Error al agregar la solicitud de consumible {0}", lObjException.Message));
             }
-            finally {
+            finally
+            {
                 this.UIAPIRawForm.Freeze(false);
             }
         }
 
-        public void AddEmployee(EmployeesDTO pObjEmployeesDTO) {
-            try {
-                if(pObjEmployeesDTO == null)
+        public void AddEmployee(EmployeesDTO pObjEmployeesDTO)
+        {
+            try
+            {
+                if (pObjEmployeesDTO == null)
                     return;
 
                 dtEmployees.Rows.Add();
@@ -2255,17 +2633,21 @@ namespace UGRS.AddOn.Machinery.Forms {
                 mtxEmployees.LoadFromDataSource();
                 mtxEmployees.AutoResizeColumns();
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 throw new Exception(string.Format("Error al agregar el operador {0}", lObjException.Message));
             }
         }
 
-        public void AddContract(ContractsDTO pObjContract) {
-            try {
-                if(pObjContract == null)
+        public void AddContract(ContractsDTO pObjContract)
+        {
+            try
+            {
+                if (pObjContract == null)
                     return;
 
-                if(ExistItemOnGrid(pObjContract.DocEntry.ToString(), dtContracts, 1)) {
+                if (ExistItemOnGrid(pObjContract.DocEntry.ToString(), dtContracts, 1))
+                {
                     Application.SBO_Application.SetStatusBarMessage("No puede repetir el contrato", SAPbouiCOM.BoMessageTime.bmt_Short, true);
                     return;
                 }
@@ -2284,21 +2666,27 @@ namespace UGRS.AddOn.Machinery.Forms {
                 dtContracts.SetValue("ImpCont", dtContracts.Rows.Count - 1, pObjContract.Import);
                 dtContracts.SetValue("CodeTCont", dtContracts.Rows.Count - 1, pObjContract.Code);
                 dtContracts.SetValue("CardName", dtContracts.Rows.Count - 1, pObjContract.CardName);
+                dtContracts.SetValue("MunpId", dtContracts.Rows.Count - 1, pObjContract.MunicipalityCode);
+                dtContracts.SetValue("Munp", dtContracts.Rows.Count - 1, pObjContract.Municipality);
 
                 mtxContracts.LoadFromDataSource();
                 mtxContracts.AutoResizeColumns();
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 throw new Exception(string.Format("Error al agregar el contrato {0}", lObjException.Message));
             }
-            finally {
+            finally
+            {
                 this.UIAPIRawForm.Freeze(false);
             }
         }
 
-        public void AddTravelExpenses(TravelExpensesDTO pObjTravelExpensesDTO) {
-            try {
-                if(pObjTravelExpensesDTO == null)
+        public void AddTravelExpenses(TravelExpensesDTO pObjTravelExpensesDTO)
+        {
+            try
+            {
+                if (pObjTravelExpensesDTO == null)
                     return;
 
                 this.UIAPIRawForm.Freeze(true);
@@ -2317,17 +2705,21 @@ namespace UGRS.AddOn.Machinery.Forms {
                 mtxTravelExpenses.LoadFromDataSource();
                 mtxTravelExpenses.AutoResizeColumns();
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 throw new Exception(string.Format("Error al agregar la solicitud de viáticos {0}", lObjException.Message));
             }
-            finally {
+            finally
+            {
                 this.UIAPIRawForm.Freeze(false);
             }
         }
 
-        public void AddInitialRecord(ConsumablesDocumentsDTO pObjInitialRecordDTO) {
-            try {
-                if(pObjInitialRecordDTO == null)
+        public void AddInitialRecord(ConsumablesDocumentsDTO pObjInitialRecordDTO)
+        {
+            try
+            {
+                if (pObjInitialRecordDTO == null)
                     return;
 
                 //this.UIAPIRawForm.Freeze(true);
@@ -2354,17 +2746,21 @@ namespace UGRS.AddOn.Machinery.Forms {
                 mtxInitialRecords.LoadFromDataSource();
                 mtxInitialRecords.AutoResizeColumns();
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 throw new Exception(string.Format("Error al agregar el registro inicial {0}", lObjException.Message));
             }
-            finally {
+            finally
+            {
                 //this.UIAPIRawForm.Freeze(false);
             }
         }
 
-        public void AddFinalRecord(ConsumablesDocumentsDTO pObjFinalRecordDTO) {
-            try {
-                if(pObjFinalRecordDTO == null)
+        public void AddFinalRecord(ConsumablesDocumentsDTO pObjFinalRecordDTO)
+        {
+            try
+            {
+                if (pObjFinalRecordDTO == null)
                     return;
 
                 dtFinalRecords.Rows.Add();
@@ -2387,17 +2783,21 @@ namespace UGRS.AddOn.Machinery.Forms {
                 mtxFinalRecords.LoadFromDataSource();
                 mtxFinalRecords.AutoResizeColumns();
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 throw new Exception(string.Format("Error al agregar el registro final {0}", lObjException.Message));
             }
-            finally {
+            finally
+            {
 
             }
         }
 
-        public void AddPurchaseInvReqRecord(ConsumablesDocumentsDTO pObjConsumableDocDTO) {
-            try {
-                if(pObjConsumableDocDTO == null)
+        public void AddPurchaseInvReqRecord(ConsumablesDocumentsDTO pObjConsumableDocDTO)
+        {
+            try
+            {
+                if (pObjConsumableDocDTO == null)
                     return;
 
                 dtPurchase.Rows.Add();
@@ -2420,17 +2820,21 @@ namespace UGRS.AddOn.Machinery.Forms {
                 mtxPurchase.LoadFromDataSource();
                 mtxPurchase.AutoResizeColumns();
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 throw new Exception(string.Format("Error al agregar el registro de compra {0}", lObjException.Message));
             }
-            finally {
+            finally
+            {
 
             }
         }
 
-        public void AddTotalRecord(ConsumablesDocumentsDTO pObjTotalRecord) {
-            try {
-                if(pObjTotalRecord == null)
+        public void AddTotalRecord(ConsumablesDocumentsDTO pObjTotalRecord)
+        {
+            try
+            {
+                if (pObjTotalRecord == null)
                     return;
 
                 dtConsumedTotals.Rows.Add();
@@ -2453,17 +2857,22 @@ namespace UGRS.AddOn.Machinery.Forms {
                 mtxConsumedTotals.LoadFromDataSource();
                 mtxConsumedTotals.AutoResizeColumns();
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 throw new Exception(string.Format("Error al agregar el registro total {0}", lObjException.Message));
             }
-            finally {
+            finally
+            {
 
             }
         }
 
-        private void RefreshStatusTravelExpensesMatrix() {
-            try {
-                for(int i = 0; i < dtTravelExpenses.Rows.Count; i++) {
+        private void RefreshStatusTravelExpensesMatrix()
+        {
+            try
+            {
+                for (int i = 0; i < dtTravelExpenses.Rows.Count; i++)
+                {
                     int lIntDocEntry = int.Parse(dtTravelExpenses.GetValue(3, i).ToString());
 
                     TravelExpensesDTO lObjTravelExpensesDTO = mObjMachineryServiceFactory.GetTravelExpensesService().GetPayment(lIntDocEntry);
@@ -2475,17 +2884,22 @@ namespace UGRS.AddOn.Machinery.Forms {
                 mtxTravelExpenses.LoadFromDataSource();
                 mtxTravelExpenses.AutoResizeColumns();
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 throw new Exception(string.Format("Error al actualizar el listado de solicitudes de viáticos {0}", lObjException.Message));
             }
-            finally {
+            finally
+            {
                 this.UIAPIRawForm.Freeze(false);
             }
         }
 
-        private void RefreshContractsStatusMatrix() {
-            try {
-                for(int i = 0; i < dtContracts.Rows.Count; i++) {
+        private void RefreshContractsStatusMatrix()
+        {
+            try
+            {
+                for (int i = 0; i < dtContracts.Rows.Count; i++)
+                {
                     int lIntDocEntry = int.Parse(dtContracts.GetValue(1, i).ToString());
 
                     ContractsDTO lObjContractsDTO = mObjMachineryServiceFactory.GetContractsService().GetContract(lIntDocEntry);
@@ -2497,21 +2911,26 @@ namespace UGRS.AddOn.Machinery.Forms {
                 mtxContracts.LoadFromDataSource();
                 mtxContracts.AutoResizeColumns();
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 throw new Exception(string.Format("Error al actualizar el listado de contratos {0}", lObjException.Message));
             }
-            finally {
+            finally
+            {
                 this.UIAPIRawForm.Freeze(false);
             }
         }
 
-        public bool ExistItemOnGrid(string pStrDocEntry, SAPbouiCOM.DataTable pObjDatatable, int pIntColumn) {
+        public bool ExistItemOnGrid(string pStrDocEntry, SAPbouiCOM.DataTable pObjDatatable, int pIntColumn)
+        {
             bool lBolResult = false;
 
-            for(int i = 0; i < pObjDatatable.Rows.Count; i++) {
+            for (int i = 0; i < pObjDatatable.Rows.Count; i++)
+            {
                 string lStrDocEntry = pObjDatatable.GetValue(pIntColumn, i).ToString();
 
-                if(pStrDocEntry == lStrDocEntry) {
+                if (pStrDocEntry == lStrDocEntry)
+                {
                     lBolResult = true;
                 }
             }
@@ -2519,13 +2938,16 @@ namespace UGRS.AddOn.Machinery.Forms {
             return lBolResult;
         }
 
-        private bool IsFirstTravelExpenses() {
+        private bool IsFirstTravelExpenses()
+        {
             bool lBolResult = true;
 
-            for(int i = 0; i < dtTravelExpenses.Rows.Count; i++) {
+            for (int i = 0; i < dtTravelExpenses.Rows.Count; i++)
+            {
                 int lIntDocEntry = int.Parse(dtTravelExpenses.GetValue(7, i).ToString());
 
-                if((TravelExpStatusEnum)lIntDocEntry == TravelExpStatusEnum.Active) {
+                if ((TravelExpStatusEnum)lIntDocEntry == TravelExpStatusEnum.Active)
+                {
                     lBolResult = false;
                 }
             }
@@ -2533,9 +2955,11 @@ namespace UGRS.AddOn.Machinery.Forms {
             return lBolResult;
         }
 
-        public void ShowOrHideOpenBtn() {
-            if(mObjRise != null) {
-                if(mObjRise.DocStatus == (int)RiseStatusEnum.Close) //Cerrado
+        public void ShowOrHideOpenBtn()
+        {
+            if (mObjRise != null)
+            {
+                if (mObjRise.DocStatus == (int)RiseStatusEnum.Close) //Cerrado
                 {
                     /*bool lBolResult = mObjMachineryServiceFactory
                         .GetAuthorizationService()
@@ -2544,7 +2968,8 @@ namespace UGRS.AddOn.Machinery.Forms {
                             .GetUsersService()
                             .GetUserId(Application.SBO_Application.Company.UserName));*/
 
-                    if(mBolIsOperationsUser) {
+                    if (mBolIsOperationsUser)
+                    {
                         btnOpen.Item.Visible = true;
                         btnOpen.Item.Enabled = true;
 
@@ -2556,41 +2981,50 @@ namespace UGRS.AddOn.Machinery.Forms {
             btnOpen.Item.Visible = false;
         }
 
-        public bool ValidateRiseControls() {
+        public bool ValidateRiseControls()
+        {
             bool lBolEmpty = false;
 
-            if(string.IsNullOrEmpty(txtFolio.Value)) {
+            if (string.IsNullOrEmpty(txtFolio.Value))
+            {
                 lBolEmpty = true;
             }
 
-            if(string.IsNullOrEmpty(txtDate.Value)) {
+            if (string.IsNullOrEmpty(txtDate.Value))
+            {
                 lBolEmpty = true;
             }
 
-            if(string.IsNullOrEmpty(txtStartDate.Value)) {
+            if (string.IsNullOrEmpty(txtStartDate.Value))
+            {
                 lBolEmpty = true;
             }
 
-            if(string.IsNullOrEmpty(txtEndDate.Value)) {
+            if (string.IsNullOrEmpty(txtEndDate.Value))
+            {
                 lBolEmpty = true;
             }
 
-            if(string.IsNullOrEmpty(txtClient.Value)) {
+            if (string.IsNullOrEmpty(txtClient.Value))
+            {
                 lBolEmpty = true;
             }
 
-            if(string.IsNullOrEmpty(txtSupervisor.Value)) {
+            if (string.IsNullOrEmpty(txtSupervisor.Value))
+            {
                 lBolEmpty = true;
             }
 
-            if(string.IsNullOrEmpty(txtStatus.Value)) {
+            if (string.IsNullOrEmpty(txtStatus.Value))
+            {
                 lBolEmpty = true;
             }
 
             return lBolEmpty;
         }
 
-        public void BlockControls() {
+        public void BlockControls()
+        {
             txtClient.Item.Enabled = false;
             txtSupervisor.Item.Enabled = false;
             btnOpen.Item.Enabled = false;
@@ -2600,7 +3034,8 @@ namespace UGRS.AddOn.Machinery.Forms {
             btnSaveIR.Item.Enabled = false;
         }
 
-        public void UnBlockControls() {
+        public void UnBlockControls()
+        {
             /*txtClient.Item.Enabled = true;
             txtSupervisor.Item.Enabled = true;
             btnOpen.Item.Enabled = true;
@@ -2642,7 +3077,8 @@ namespace UGRS.AddOn.Machinery.Forms {
             btnSaveIR.Item.Enabled = true;
         }
 
-        private void UnBlockControlsForReopenRise() {
+        private void UnBlockControlsForReopenRise()
+        {
             UIAPIRawForm.EnableMenu("1293", false); //Borrar
 
             //txt
@@ -2667,7 +3103,8 @@ namespace UGRS.AddOn.Machinery.Forms {
         /// <summary>
         /// Fill choose from list.
         /// </summary>
-        private void LoadChoosesFromList() {
+        private void LoadChoosesFromList()
+        {
             SAPbouiCOM.ChooseFromList lObjCFLSup = InitChooseFromLists(false, "171", "CFL_Supv", this.UIAPIRawForm.ChooseFromLists);
             AddConditionSupervisorCFL(lObjCFLSup);
 
@@ -2681,7 +3118,8 @@ namespace UGRS.AddOn.Machinery.Forms {
         public SAPbouiCOM.ChooseFromList InitChooseFromLists(bool pbol, string pStrType, string pStrID, SAPbouiCOM.ChooseFromListCollection pObjCFLs) //
         {
             SAPbouiCOM.ChooseFromList lObjoCFL = null;
-            try {
+            try
+            {
                 SAPbouiCOM.ChooseFromListCreationParams oCFLCreationParams = null;
                 oCFLCreationParams = (SAPbouiCOM.ChooseFromListCreationParams)UIApplication.GetApplication().CreateObject(SAPbouiCOM.BoCreatableObjectType.cot_ChooseFromListCreationParams);
 
@@ -2693,23 +3131,25 @@ namespace UGRS.AddOn.Machinery.Forms {
 
                 this.UIAPIRawForm.DataSources.UserDataSources.Add(pStrID, SAPbouiCOM.BoDataType.dt_SHORT_TEXT, 254);
             }
-            catch(Exception ex) {
+            catch (Exception ex)
+            {
                 UIApplication.ShowMessageBox(string.Format("InitCustomerChooseFromListException: {0}", ex.Message));
 
             }
             return lObjoCFL;
         }
 
-        private void AddConditionSupervisorCFL(SAPbouiCOM.ChooseFromList pCFL) {
+        private void AddConditionSupervisorCFL(SAPbouiCOM.ChooseFromList pCFL)
+        {
             SAPbouiCOM.Condition lObjCon = null;
             SAPbouiCOM.Conditions lObjCons = new SAPbouiCOM.Conditions();
 
-            lObjCon = lObjCons.Add();
+            /*lObjCon = lObjCons.Add();
             lObjCon.Alias = "position";
             lObjCon.Operation = SAPbouiCOM.BoConditionOperation.co_EQUAL;
             lObjCon.CondVal = "4";
 
-            lObjCon.Relationship = SAPbouiCOM.BoConditionRelationship.cr_AND;
+            lObjCon.Relationship = SAPbouiCOM.BoConditionRelationship.cr_AND;*/
 
             lObjCon = lObjCons.Add();
             lObjCon.Alias = "dept";
@@ -2719,7 +3159,8 @@ namespace UGRS.AddOn.Machinery.Forms {
             pCFL.SetConditions(lObjCons);
         }
 
-        private void AddConditionClientCFL(SAPbouiCOM.ChooseFromList pCFL) {
+        private void AddConditionClientCFL(SAPbouiCOM.ChooseFromList pCFL)
+        {
             SAPbouiCOM.Condition lObjCon = null;
             SAPbouiCOM.Conditions lObjCons = new SAPbouiCOM.Conditions();
 
@@ -2738,16 +3179,17 @@ namespace UGRS.AddOn.Machinery.Forms {
             pCFL.SetConditions(lObjCons);
         }
 
-        private void AddConditionEmployeesCFL(SAPbouiCOM.ChooseFromList pCFL) {
+        private void AddConditionEmployeesCFL(SAPbouiCOM.ChooseFromList pCFL)
+        {
             SAPbouiCOM.Condition lObjCon = null;
             SAPbouiCOM.Conditions lObjCons = new SAPbouiCOM.Conditions();
 
-            lObjCon = lObjCons.Add();
+            /*lObjCon = lObjCons.Add();
             lObjCon.Alias = "position";
             lObjCon.Operation = SAPbouiCOM.BoConditionOperation.co_EQUAL;
             lObjCon.CondVal = "3";
 
-            lObjCon.Relationship = SAPbouiCOM.BoConditionRelationship.cr_AND;
+            lObjCon.Relationship = SAPbouiCOM.BoConditionRelationship.cr_AND;*/
 
             lObjCon = lObjCons.Add();
             lObjCon.Alias = "dept";
@@ -2759,7 +3201,8 @@ namespace UGRS.AddOn.Machinery.Forms {
         #endregion
 
         #region TextBox
-        private void SetCFLToTxt() {
+        private void SetCFLToTxt()
+        {
             txtClient.DataBind.SetBound(true, "", "CFL_0");
             txtClient.ChooseFromListUID = "CFL_0";
 
@@ -2771,12 +3214,15 @@ namespace UGRS.AddOn.Machinery.Forms {
         #endregion
 
         #region Consumables tab
-        private void LoadConsumablesControls() {
-            try {
-                if(string.IsNullOrEmpty(txtFolio.Value))
+        private void LoadConsumablesControls()
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(txtFolio.Value))
                     return;
 
-                if(mObjMachineryServiceFactory.GetRiseService().ExistsRise(int.Parse(txtFolio.Value))) {
+                if (mObjMachineryServiceFactory.GetRiseService().ExistsRise(int.Parse(txtFolio.Value)))
+                {
                     this.UIAPIRawForm.Freeze(true);
 
                     LoadInitialRecords(mObjRise.IdRise, (RiseStatusEnum)mObjRise.DocStatus);
@@ -2785,23 +3231,28 @@ namespace UGRS.AddOn.Machinery.Forms {
                     LoadConsumedTotals(mObjRise.IdRise, (RiseStatusEnum)mObjRise.DocStatus);
                 }
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 LogUtility.WriteError(string.Format("[MachineryForm - LoadConsumablesControls] Error: {0}", lObjException.Message));
                 throw new Exception(lObjException.Message);
             }
-            finally {
+            finally
+            {
                 this.UIAPIRawForm.Freeze(false);
             }
         }
 
-        private void LoadInitialRecords(int pIntRiseId = 0, RiseStatusEnum pEnmRiseStatus = RiseStatusEnum.Active) {
-            try {
-                if(mtxInitialRecords.RowCount > 0)
+        private void LoadInitialRecords(int pIntRiseId = 0, RiseStatusEnum pEnmRiseStatus = RiseStatusEnum.Active)
+        {
+            try
+            {
+                if (mtxInitialRecords.RowCount > 0)
                     return;
 
                 List<ConsumablesDocumentsDTO> lLstInitialRecords = new List<ConsumablesDocumentsDTO>();
 
-                if(pEnmRiseStatus == RiseStatusEnum.Active) {
+                if (pEnmRiseStatus == RiseStatusEnum.Active)
+                {
                     /*if (string.IsNullOrEmpty(txtFolioRelation.Value)) //Sin folio relacionado
                     {
                     if (dtConsumables.Rows.Count <= 0)
@@ -2820,31 +3271,38 @@ namespace UGRS.AddOn.Machinery.Forms {
                         //obtener registros finales de la subida relacionada y convertirlos en iniciales para mostrarlos en el grid de RI
                     }*/
                 }
-                else /*if (pEnmRiseStatus == RiseStatusEnum.Close)*/ {
+                else /*if (pEnmRiseStatus == RiseStatusEnum.Close)*/
+                {
                     //lLstInitialRecords = mObjMachineryServiceFactory.GetInitialRecordsService().GetByRiseId(pIntRiseId);
                     lLstInitialRecords = mObjMachineryServiceFactory.GetConsumablesService().GetInitialRecordsUDTByRiseId(pIntRiseId);
                 }
 
-                foreach(var lObjInitialRecord in lLstInitialRecords) {
+                foreach (var lObjInitialRecord in lLstInitialRecords)
+                {
                     AddInitialRecord(lObjInitialRecord);
                 }
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 throw new Exception(string.Format("Error al cargar la información de registros iniciales {0}", lObjException.Message));
             }
-            finally {
+            finally
+            {
 
             }
         }
 
-        private void LoadPurchasesRecords(int pIntRiseId = 0, RiseStatusEnum pEnmRiseStatus = RiseStatusEnum.Active) {
-            try {
-                if(mtxPurchase.RowCount > 0)
+        private void LoadPurchasesRecords(int pIntRiseId = 0, RiseStatusEnum pEnmRiseStatus = RiseStatusEnum.Active)
+        {
+            try
+            {
+                if (mtxPurchase.RowCount > 0)
                     return;
 
                 List<ConsumablesDocumentsDTO> lLstConsumablesDocuments = new List<ConsumablesDocumentsDTO>();
 
-                if(pEnmRiseStatus == RiseStatusEnum.Active) {
+                if (pEnmRiseStatus == RiseStatusEnum.Active)
+                {
                     //int lIntFolioRise = int.Parse(txtFolio.Value);
 
                     List<ConsumablesDocumentsDTO> lLstPurchases = mObjMachineryServiceFactory
@@ -2857,32 +3315,40 @@ namespace UGRS.AddOn.Machinery.Forms {
                     lLstConsumablesDocuments.AddRange(lLstPurchases);
                     //lLstConsumablesDocuments.AddRange(lLstInvRequest);
                 }
-                else /*if (pEnmRiseStatus == RiseStatusEnum.Close)*/ {
+                else /*if (pEnmRiseStatus == RiseStatusEnum.Close)*/
+                {
                     //lLstConsumablesDocuments = mObjMachineryServiceFactory.GetPurchasesOrdersService().GetByRiseId(pIntRiseId);
                     lLstConsumablesDocuments = mObjMachineryServiceFactory.GetConsumablesService().GetPurchasesRecordsUDTByRiseId(pIntRiseId);
                 }
 
-                foreach(var lObjInitialRecord in lLstConsumablesDocuments) {
+                foreach (var lObjInitialRecord in lLstConsumablesDocuments)
+                {
                     AddPurchaseInvReqRecord(lObjInitialRecord);
                 }
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 throw new Exception(string.Format("Error al cargar la información de compras {0}", lObjException.Message));
             }
-            finally {
+            finally
+            {
 
             }
         }
 
-        private void LoadFinalsRecords(int pIntRiseId = 0, RiseStatusEnum pEnmRiseStatus = RiseStatusEnum.Active) {
-            try {
-                if(dtFinalRecords.Rows.Count > 0) {
+        private void LoadFinalsRecords(int pIntRiseId = 0, RiseStatusEnum pEnmRiseStatus = RiseStatusEnum.Active)
+        {
+            try
+            {
+                if (dtFinalRecords.Rows.Count > 0)
+                {
                     return;
                 }
 
                 List<ConsumablesDocumentsDTO> lLstConsumablesDocuments = mObjMachineryServiceFactory.GetConsumablesService().GetFinalsRecordsByRiseId(pIntRiseId);
 
-                foreach(var lObjConsmDoc in lLstConsumablesDocuments) {
+                foreach (var lObjConsmDoc in lLstConsumablesDocuments)
+                {
                     AddFinalRecord(lObjConsmDoc);
                 }
 
@@ -2964,53 +3430,66 @@ namespace UGRS.AddOn.Machinery.Forms {
                 //}
                 #endregion
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 throw new Exception(string.Format("Error al cargar la información de registros finales {0}", lObjException.Message));
             }
-            finally {
+            finally
+            {
 
             }
         }
 
-        private void LoadConsumedTotals(int pIntRiseId = 0, RiseStatusEnum pEnmRiseStatus = RiseStatusEnum.Active) {
-            try {
+        private void LoadConsumedTotals(int pIntRiseId = 0, RiseStatusEnum pEnmRiseStatus = RiseStatusEnum.Active)
+        {
+            try
+            {
                 List<ConsumablesDocumentsDTO> lLstConsumedTotals = new List<ConsumablesDocumentsDTO>();
 
-                if(pEnmRiseStatus == RiseStatusEnum.Active) {
+                if (pEnmRiseStatus == RiseStatusEnum.Active)
+                {
                     lLstConsumedTotals = mObjMachineryServiceFactory.GetConsumablesService().CalculateConsumedTotals(dtInitialRcords, dtPurchase, dtFinalRecords, dtConsumedTotals);
 
                     ClearMatrix(dtConsumedTotals.UniqueID, mtxConsumedTotals);
                 }
-                else/* if (pEnmRiseStatus == RiseStatusEnum.Close)*/ {
-                    if(mtxConsumedTotals.RowCount > 0)
+                else/* if (pEnmRiseStatus == RiseStatusEnum.Close)*/
+                {
+                    if (mtxConsumedTotals.RowCount > 0)
                         return;
 
                     //lLstConsumedTotals = mObjMachineryServiceFactory.GetTotalsRecordsService().GetByRelatedRiseId(pIntRiseId).ToList();
                     lLstConsumedTotals = mObjMachineryServiceFactory.GetConsumablesService().GetTotalsRecordsUDTByRiseId(pIntRiseId).ToList();
                 }
 
-                foreach(var lObjConsumedTotal in lLstConsumedTotals) {
+                foreach (var lObjConsumedTotal in lLstConsumedTotals)
+                {
                     AddTotalRecord(lObjConsumedTotal);
                 }
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 throw new Exception(string.Format("Error al calcular los registros finales {0}", lObjException.Message));
             }
         }
 
-        private void OpenGoodIssueForm() {
-            try {
-                if(dtConsumedTotals.Rows.Count <= 0) {
+        private void OpenGoodIssueForm()
+        {
+            try
+            {
+                if (dtConsumedTotals.Rows.Count <= 0)
+                {
                     Application.SBO_Application.SetStatusBarMessage("No puede crear la salida de mercancía sin líneas", SAPbouiCOM.BoMessageTime.bmt_Short, true);
                     return;
                 }
 
-                if(!mObjMachineryServiceFactory.GetRiseService().ExistsRise(int.Parse(txtFolio.Value))) {
+                if (!mObjMachineryServiceFactory.GetRiseService().ExistsRise(int.Parse(txtFolio.Value)))
+                {
                     Application.SBO_Application.SetStatusBarMessage("La cabecera de la subida aún no existe, favor de guardarla para continuar", SAPbouiCOM.BoMessageTime.bmt_Short, true);
                     return;
                 }
 
-                if(mObjMachineryServiceFactory.GetConsumablesService().HasConsumedTotalsNegativeValues(dtConsumedTotals)) {
+                if (mObjMachineryServiceFactory.GetConsumablesService().HasConsumedTotalsNegativeValues(dtConsumedTotals))
+                {
                     Application.SBO_Application.SetStatusBarMessage("No puede crear la salida de mercancía con valores menores o iguales a 0 en las propiedades inventariables"
                                                                    , SAPbouiCOM.BoMessageTime.bmt_Short, true);
                     return;
@@ -3021,22 +3500,27 @@ namespace UGRS.AddOn.Machinery.Forms {
                 mFrmGoodIssue = new frmGoodIssue(int.Parse(txtFolio.Value), dtConsumedTotals);
                 mFrmGoodIssue.Show();
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 throw new Exception(lObjException.Message);
             }
-            finally {
+            finally
+            {
                 this.UIAPIRawForm.Freeze(false);
             }
         }
         #endregion
 
         #region Hours tab
-        private void LoadHoursControls() {
-            try {
-                if(string.IsNullOrEmpty(txtFolio.Value))
+        private void LoadHoursControls()
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(txtFolio.Value))
                     return;
 
-                if(mObjMachineryServiceFactory.GetRiseService().ExistsRise(int.Parse(txtFolio.Value))) {
+                if (mObjMachineryServiceFactory.GetRiseService().ExistsRise(int.Parse(txtFolio.Value)))
+                {
                     this.UIAPIRawForm.Freeze(true);
 
                     LoadHoursRecords(mObjRise.IdRise, (RiseStatusEnum)mObjRise.DocStatus);
@@ -3051,31 +3535,38 @@ namespace UGRS.AddOn.Machinery.Forms {
                     AddTramosCbo(0, 1);
                 }
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 LogUtility.WriteError(string.Format("[MachineryForm - LoadHoursControls] Error: {0}", lObjException.Message));
                 throw new Exception(lObjException.Message);
             }
-            finally {
+            finally
+            {
                 this.UIAPIRawForm.Freeze(false);
             }
         }
 
-        public void LoadHoursRecords(int pIntRiseId = 0, RiseStatusEnum pEnmRiseStatus = RiseStatusEnum.Active) {
-            try {
-                if(mtxHours.RowCount > 0)
+        public void LoadHoursRecords(int pIntRiseId = 0, RiseStatusEnum pEnmRiseStatus = RiseStatusEnum.Active)
+        {
+            try
+            {
+                if (mtxHours.RowCount > 0)
                     return;
 
                 /*if (pEnmRiseStatus != RiseStatusEnum.Active)
                 {*/
                 List<HoursRecordsDTO> lLstHoursRecords = mObjMachineryServiceFactory.GetHoursRecordsService().GetHoursRecordsByRiseId(pIntRiseId).ToList();
 
-                foreach(var lObjHoursRecord in lLstHoursRecords) {
+                foreach (var lObjHoursRecord in lLstHoursRecords)
+                {
                     AddHoursRecord(lObjHoursRecord);
                 }
                 //}
 
-                if(pEnmRiseStatus == RiseStatusEnum.Active) {
-                    for(int i = 0; i < 30; i++) {
+                if (pEnmRiseStatus == RiseStatusEnum.Active)
+                {
+                    for (int i = 0; i < 30; i++)
+                    {
                         AddHoursRecord(new HoursRecordsDTO());
                     }
                 }
@@ -3087,15 +3578,18 @@ namespace UGRS.AddOn.Machinery.Forms {
                 AddContractsCbo();
                 //AddOperatorsTHCbo();
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 LogUtility.WriteError(string.Format("[MachineryForm - LoadHoursRecords] Error: {0}", lObjException.Message));
                 throw new Exception(string.Format("Error al cargar el listado de contratos: {0}", lObjException.Message));
             }
         }
 
-        public void LoadTransitHoursRecords(int pIntRiseId = 0, RiseStatusEnum pEnmRiseStatus = RiseStatusEnum.Active) {
-            try {
-                if(mtxTransitHours.RowCount > 0)
+        public void LoadTransitHoursRecords(int pIntRiseId = 0, RiseStatusEnum pEnmRiseStatus = RiseStatusEnum.Active)
+        {
+            try
+            {
+                if (mtxTransitHours.RowCount > 0)
                     return;
 
                 /*if (pEnmRiseStatus == RiseStatusEnum.Active)
@@ -3104,20 +3598,27 @@ namespace UGRS.AddOn.Machinery.Forms {
                 List<TransitHoursRecordsDTO> lLstTransitHoursRecords = mObjMachineryServiceFactory.GetTransitHoursRecordsService().GetUDTByRiseId(pIntRiseId);
                 //mObjMachineryServiceFactory.GetTransitHoursRecordsService().GetByRiseId(pIntRiseId);
 
-                foreach(var lObjTransitHours in lLstTransitHoursRecords) {
+                foreach (var lObjTransitHours in lLstTransitHoursRecords)
+                {
                     AddTransitHoursRecord(lObjTransitHours);
                 }
 
-                if(lLstTransitHoursRecords.Count <= 0) {
-                    for(int i = 0; i < dtInitialRcords.Rows.Count; i++) {
+                if (lLstTransitHoursRecords.Count <= 0)
+                {
+                    for (int i = 0; i < dtInitialRcords.Rows.Count; i++)
+                    {
                         AddTransitHoursRecord(new TransitHoursRecordsDTO());
                     }
                 }
 
-                if(pEnmRiseStatus == RiseStatusEnum.Active) {
-                    if(lLstTransitHoursRecords.Count < dtInitialRcords.Rows.Count) {
-                        for(int i = 0; i < dtInitialRcords.Rows.Count - lLstTransitHoursRecords.Count; i++) {
-                            if(dtTransitHours.Rows.Count < dtInitialRcords.Rows.Count) {
+                if (pEnmRiseStatus == RiseStatusEnum.Active)
+                {
+                    if (lLstTransitHoursRecords.Count < dtInitialRcords.Rows.Count)
+                    {
+                        for (int i = 0; i < dtInitialRcords.Rows.Count - lLstTransitHoursRecords.Count; i++)
+                        {
+                            if (dtTransitHours.Rows.Count < dtInitialRcords.Rows.Count)
+                            {
                                 AddTransitHoursRecord(new TransitHoursRecordsDTO());
                             }
                         }
@@ -3126,14 +3627,17 @@ namespace UGRS.AddOn.Machinery.Forms {
 
                 //AddMachineryTransitHoursCbo();
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 throw new Exception(string.Format("Error al cargar el listado de horas tránsito: {0}", lObjException.Message));
             }
         }
 
-        public void AddTransitHoursRecord(TransitHoursRecordsDTO pObjTransitHoursRecord) {
-            try {
-                if(pObjTransitHoursRecord == null)
+        public void AddTransitHoursRecord(TransitHoursRecordsDTO pObjTransitHoursRecord)
+        {
+            try
+            {
+                if (pObjTransitHoursRecord == null)
                     return;
 
                 dtTransitHours.Rows.Add();
@@ -3151,14 +3655,17 @@ namespace UGRS.AddOn.Machinery.Forms {
                 mtxTransitHours.LoadFromDataSource();
                 mtxTransitHours.AutoResizeColumns();
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 throw lObjException;
             }
         }
 
-        public void AddHoursRecord(HoursRecordsDTO pObjHoursRecord) {
-            try {
-                if(pObjHoursRecord == null)
+        public void AddHoursRecord(HoursRecordsDTO pObjHoursRecord)
+        {
+            try
+            {
+                if (pObjHoursRecord == null)
                     return;
 
                 dtHours.Rows.Add();
@@ -3186,22 +3693,29 @@ namespace UGRS.AddOn.Machinery.Forms {
                 mtxHours.LoadFromDataSource();
                 mtxHours.AutoResizeColumns();
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 throw lObjException;
             }
         }
 
-        private void AddSupervisorsCbo() {
-            try {
+        private void AddSupervisorsCbo()
+        {
+            try
+            {
                 SAPbouiCOM.Column lObjColumn = (SAPbouiCOM.Column)mtxHours.Columns.Item("ColSupH");
                 SAPbouiCOM.Cells lObjCells = lObjColumn.Cells;
 
-                if(lObjColumn.ValidValues.Count == 0) {
-                    if(!string.IsNullOrEmpty(mStrSupervisorCode)) {
+                if (lObjColumn.ValidValues.Count == 0)
+                {
+                    if (!string.IsNullOrEmpty(mStrSupervisorCode))
+                    {
                         lObjColumn.ValidValues.Add(mStrSupervisorCode, txtSupervisor.Value);
                     }
-                    for(int i = 0; i < dtEmployees.Rows.Count; i++) {
-                        if(!string.IsNullOrEmpty(dtEmployees.GetValue("EmpName", i).ToString())) {
+                    for (int i = 0; i < dtEmployees.Rows.Count; i++)
+                    {
+                        if (!string.IsNullOrEmpty(dtEmployees.GetValue("EmpName", i).ToString()))
+                        {
                             lObjColumn.ValidValues.Add(dtEmployees.GetValue("EmpId", i).ToString(), dtEmployees.GetValue("EmpName", i).ToString());
                         }
                     }
@@ -3211,22 +3725,29 @@ namespace UGRS.AddOn.Machinery.Forms {
 
                 lObjColumn.ComboSelectAfter += lObjColumn_ComboSelectAfter;
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 throw new Exception(string.Format("Error al agregar el supervisor al listado: {0}", lObjException.Message));
             }
         }
 
-        private void AddOperatorsCbo() {
-            try {
+        private void AddOperatorsCbo()
+        {
+            try
+            {
                 SAPbouiCOM.Column lObjColumn = (SAPbouiCOM.Column)mtxHours.Columns.Item("ColOprH");
                 SAPbouiCOM.Cells lObjCells = lObjColumn.Cells;
 
-                if(lObjColumn.ValidValues.Count == 0) {
-                    if(!string.IsNullOrEmpty(mStrSupervisorCode)) {
+                if (lObjColumn.ValidValues.Count == 0)
+                {
+                    if (!string.IsNullOrEmpty(mStrSupervisorCode))
+                    {
                         lObjColumn.ValidValues.Add(mStrSupervisorCode, txtSupervisor.Value);
                     }
-                    for(int i = 0; i < dtEmployees.Rows.Count; i++) {
-                        if(!string.IsNullOrEmpty(dtEmployees.GetValue("EmpName", i).ToString())) {
+                    for (int i = 0; i < dtEmployees.Rows.Count; i++)
+                    {
+                        if (!string.IsNullOrEmpty(dtEmployees.GetValue("EmpName", i).ToString()))
+                        {
                             lObjColumn.ValidValues.Add(dtEmployees.GetValue("EmpId", i).ToString(), dtEmployees.GetValue("EmpName", i).ToString());
                         }
                     }
@@ -3236,25 +3757,32 @@ namespace UGRS.AddOn.Machinery.Forms {
 
                 lObjColumn.ComboSelectAfter += lObjColumn_ComboSelectAfter;
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 throw new Exception(string.Format("Error al agregar el supervisor al listado: {0}", lObjException.Message));
             }
         }
 
-        private void AddOperatorsTHCbo() {
-            try {
+        private void AddOperatorsTHCbo()
+        {
+            try
+            {
                 SAPbouiCOM.Column lObjColumn = (SAPbouiCOM.Column)mtxTransitHours.Columns.Item("ColOpdHT");
                 SAPbouiCOM.Column lObjColumn2 = (SAPbouiCOM.Column)mtxTransitHours.Columns.Item("ColSupHT");
 
                 SAPbouiCOM.Cells lObjCells = lObjColumn.Cells;
 
-                if(lObjColumn.ValidValues.Count == 0) {
-                    if(!string.IsNullOrEmpty(mStrSupervisorCode)) {
+                if (lObjColumn.ValidValues.Count == 0)
+                {
+                    if (!string.IsNullOrEmpty(mStrSupervisorCode))
+                    {
                         lObjColumn.ValidValues.Add(mStrSupervisorCode, txtSupervisor.Value);
                         lObjColumn2.ValidValues.Add(mStrSupervisorCode, txtSupervisor.Value);
                     }
-                    for(int i = 0; i < dtEmployees.Rows.Count; i++) {
-                        if(!string.IsNullOrEmpty(dtEmployees.GetValue("EmpName", i).ToString())) {
+                    for (int i = 0; i < dtEmployees.Rows.Count; i++)
+                    {
+                        if (!string.IsNullOrEmpty(dtEmployees.GetValue("EmpName", i).ToString()))
+                        {
                             lObjColumn.ValidValues.Add(dtEmployees.GetValue("EmpId", i).ToString(), dtEmployees.GetValue("EmpName", i).ToString());
                             lObjColumn2.ValidValues.Add(dtEmployees.GetValue("EmpId", i).ToString(), dtEmployees.GetValue("EmpName", i).ToString());
                         }
@@ -3267,13 +3795,16 @@ namespace UGRS.AddOn.Machinery.Forms {
                 lObjColumn.ComboSelectAfter += lObjColumn_ComboSelectAfter;
                 lObjColumn2.ComboSelectAfter += lObjColumn_ComboSelectAfter;
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 throw new Exception(string.Format("Error al agregar los operadores de Horas Tránsito al listado: {0}", lObjException.Message));
             }
         }
 
-        private void AddTramosCbo(int pIntSODocEntry, int pIntIndexRow) {
-            try {
+        private void AddTramosCbo(int pIntSODocEntry, int pIntIndexRow)
+        {
+            try
+            {
                 SAPbouiCOM.Column lObjColumn = (SAPbouiCOM.Column)mtxHours.Columns.Item("ColTramoH");
                 SAPbouiCOM.Cells lObjCells = lObjColumn.Cells;
 
@@ -3309,14 +3840,18 @@ namespace UGRS.AddOn.Machinery.Forms {
                 //lObjComboBox.ComboSelectAfter += lObjColumn_ComboSelectAfter;
                 //lObjComboBox.ClickBefore += lObjColumn_ComboClickBefore;
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 throw new Exception(string.Format("Error al agregar los tramos del contrato: {0}", lObjException.Message));
             }
         }
 
-        public void CleanCboItems(SAPbouiCOM.ComboBox pObjCbo) {
-            if(pObjCbo.ValidValues.Count > 0) {
-                foreach(var item in pObjCbo.ValidValues) {
+        public void CleanCboItems(SAPbouiCOM.ComboBox pObjCbo)
+        {
+            if (pObjCbo.ValidValues.Count > 0)
+            {
+                foreach (var item in pObjCbo.ValidValues)
+                {
                     pObjCbo.ValidValues.Remove(pObjCbo.ValidValues.Count - 1, SAPbouiCOM.BoSearchKey.psk_Index);
                 }
 
@@ -3326,9 +3861,12 @@ namespace UGRS.AddOn.Machinery.Forms {
             }
         }
 
-        public void CleanCboItems(SAPbouiCOM.Column pObjCbo) {
-            if(pObjCbo.ValidValues.Count > 0) {
-                foreach(var item in pObjCbo.ValidValues) {
+        public void CleanCboItems(SAPbouiCOM.Column pObjCbo)
+        {
+            if (pObjCbo.ValidValues.Count > 0)
+            {
+                foreach (var item in pObjCbo.ValidValues)
+                {
                     pObjCbo.ValidValues.Remove(pObjCbo.ValidValues.Count - 1, SAPbouiCOM.BoSearchKey.psk_Index);
                 }
 
@@ -3338,18 +3876,23 @@ namespace UGRS.AddOn.Machinery.Forms {
             }
         }
 
-        private void AddMachineryHoursCbo() {
-            try {
+        private void AddMachineryHoursCbo()
+        {
+            try
+            {
                 SAPbouiCOM.Column lObjMachColumn = (SAPbouiCOM.Column)mtxHours.Columns.Item("ColEqmH");
                 SAPbouiCOM.Column lObjEcoNumColumn = (SAPbouiCOM.Column)mtxHours.Columns.Item("ColNumEH");
 
-                if(lObjMachColumn.ValidValues.Count == 0) {
-                    for(int i = 0; i < dtInitialRcords.Rows.Count; i++) //dtInitialRcords
+                if (lObjMachColumn.ValidValues.Count == 0)
+                {
+                    for (int i = 0; i < dtInitialRcords.Rows.Count; i++) //dtInitialRcords
                     {
-                        if(!string.IsNullOrEmpty(dtInitialRcords.GetValue("ActCodIR", i).ToString())) {
+                        if (!string.IsNullOrEmpty(dtInitialRcords.GetValue("ActCodIR", i).ToString()))
+                        {
                             string lStrEqmType = dtInitialRcords.GetValue("EqTypIR", i).ToString();
 
-                            if(lStrEqmType.ToUpper() == "MQ") {
+                            if (lStrEqmType.ToUpper() == "MQ")
+                            {
                                 lObjMachColumn.ValidValues.Add(dtInitialRcords.GetValue("ActCodIR", i).ToString(), dtInitialRcords.GetValue("ActNumIR", i).ToString());
                             }
                         }
@@ -3358,12 +3901,16 @@ namespace UGRS.AddOn.Machinery.Forms {
                     lObjMachColumn.DisplayDesc = false;
                 }
 
-                if(lObjEcoNumColumn.ValidValues.Count == 0) {
-                    for(int i = 0; i < dtInitialRcords.Rows.Count; i++) {
-                        if(!string.IsNullOrEmpty(dtInitialRcords.GetValue("ActNumIR", i).ToString())) {
+                if (lObjEcoNumColumn.ValidValues.Count == 0)
+                {
+                    for (int i = 0; i < dtInitialRcords.Rows.Count; i++)
+                    {
+                        if (!string.IsNullOrEmpty(dtInitialRcords.GetValue("ActNumIR", i).ToString()))
+                        {
                             string lStrEqmType = dtInitialRcords.GetValue("EqTypIR", i).ToString();
 
-                            if(lStrEqmType.ToUpper() == "MQ") {
+                            if (lStrEqmType.ToUpper() == "MQ")
+                            {
                                 lObjEcoNumColumn.ValidValues.Add(dtInitialRcords.GetValue("ActCodIR", i).ToString(), dtInitialRcords.GetValue("ActNumIR", i).ToString());
                             }
                         }
@@ -3375,18 +3922,24 @@ namespace UGRS.AddOn.Machinery.Forms {
                 lObjMachColumn.ComboSelectAfter += lObjColumn_ComboSelectAfter;
                 lObjEcoNumColumn.ComboSelectAfter += lObjColumn_ComboSelectAfter;
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 throw new Exception(string.Format("Error al agregar el listado maquinarias en horas: {0}", lObjException.Message));
             }
         }
 
-        private void AddContractsCbo() {
-            try {
+        private void AddContractsCbo()
+        {
+            try
+            {
                 SAPbouiCOM.Column lObjColumn = (SAPbouiCOM.Column)mtxHours.Columns.Item("ColCOVH");
 
-                if(lObjColumn.ValidValues.Count == 0) {
-                    for(int i = 0; i < dtContracts.Rows.Count; i++) {
-                        if(!string.IsNullOrEmpty(dtContracts.GetValue("DocNCont", i).ToString())) {
+                if (lObjColumn.ValidValues.Count == 0)
+                {
+                    for (int i = 0; i < dtContracts.Rows.Count; i++)
+                    {
+                        if (!string.IsNullOrEmpty(dtContracts.GetValue("DocNCont", i).ToString()))
+                        {
                             lObjColumn.ValidValues.Add(dtContracts.GetValue("DocECont", i).ToString(), dtContracts.GetValue("DocNCont", i).ToString());
                         }
                     }
@@ -3396,22 +3949,29 @@ namespace UGRS.AddOn.Machinery.Forms {
 
                 lObjColumn.ComboSelectAfter += lObjColumn_ComboSelectAfter;
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 throw new Exception(string.Format("Error al agregar el listado de contratos: {0}", lObjException.Message));
             }
         }
 
-        private void AddMachineryTransitHoursCbo() {
-            try {
+        private void AddMachineryTransitHoursCbo()
+        {
+            try
+            {
                 SAPbouiCOM.Column lObjMachColumn = (SAPbouiCOM.Column)mtxTransitHours.Columns.Item("ColMaqHT");
                 SAPbouiCOM.Column lObjEcoNumColumn = (SAPbouiCOM.Column)mtxTransitHours.Columns.Item("ColNEnHT");
 
-                if(lObjMachColumn.ValidValues.Count == 0) {
-                    for(int i = 0; i < dtInitialRcords.Rows.Count; i++) {
-                        if(!string.IsNullOrEmpty(dtInitialRcords.GetValue("ActCodIR", i).ToString())) {
+                if (lObjMachColumn.ValidValues.Count == 0)
+                {
+                    for (int i = 0; i < dtInitialRcords.Rows.Count; i++)
+                    {
+                        if (!string.IsNullOrEmpty(dtInitialRcords.GetValue("ActCodIR", i).ToString()))
+                        {
                             string lStrEqmType = dtInitialRcords.GetValue("EqTypIR", i).ToString();
 
-                            if(lStrEqmType.ToUpper() == "MQ") {
+                            if (lStrEqmType.ToUpper() == "MQ")
+                            {
                                 lObjMachColumn.ValidValues.Add(dtInitialRcords.GetValue("ActCodIR", i).ToString(), dtInitialRcords.GetValue("ActNumIR", i).ToString());
                             }
                         }
@@ -3420,12 +3980,16 @@ namespace UGRS.AddOn.Machinery.Forms {
                     lObjMachColumn.DisplayDesc = false;
                 }
 
-                if(lObjEcoNumColumn.ValidValues.Count == 0) {
-                    for(int i = 0; i < dtInitialRcords.Rows.Count; i++) {
-                        if(!string.IsNullOrEmpty(dtInitialRcords.GetValue("ActNumIR", i).ToString())) {
+                if (lObjEcoNumColumn.ValidValues.Count == 0)
+                {
+                    for (int i = 0; i < dtInitialRcords.Rows.Count; i++)
+                    {
+                        if (!string.IsNullOrEmpty(dtInitialRcords.GetValue("ActNumIR", i).ToString()))
+                        {
                             string lStrEqmType = dtInitialRcords.GetValue("EqTypIR", i).ToString();
 
-                            if(lStrEqmType.ToUpper() == "MQ") {
+                            if (lStrEqmType.ToUpper() == "MQ")
+                            {
                                 lObjEcoNumColumn.ValidValues.Add(dtInitialRcords.GetValue("ActCodIR", i).ToString(), dtInitialRcords.GetValue("ActNumIR", i).ToString());
                             }
                         }
@@ -3437,17 +4001,22 @@ namespace UGRS.AddOn.Machinery.Forms {
                 lObjMachColumn.ComboSelectAfter += lObjColumn_ComboSelectAfter;
                 lObjEcoNumColumn.ComboSelectAfter += lObjColumn_ComboSelectAfter;
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 throw new Exception(string.Format("Error al agregar el listado de maquinas en horas tránsito: {0}", lObjException.Message));
             }
         }
 
-        private void CalculateTotal(SAPbouiCOM.EditText pTxtEditText, SAPbouiCOM.DataTable pDataTable, string pStrColName) {
-            try {
+        private void CalculateTotal(SAPbouiCOM.EditText pTxtEditText, SAPbouiCOM.DataTable pDataTable, string pStrColName)
+        {
+            try
+            {
                 double lDblSubtotal = 0;
 
-                for(int i = 0; i < pDataTable.Rows.Count; i++) {
-                    if(!string.IsNullOrEmpty(pDataTable.GetValue(pStrColName, i).ToString())) {
+                for (int i = 0; i < pDataTable.Rows.Count; i++)
+                {
+                    if (!string.IsNullOrEmpty(pDataTable.GetValue(pStrColName, i).ToString()))
+                    {
                         double lDblImport = double.Parse(pDataTable.GetValue(pStrColName, i).ToString());
 
                         lDblSubtotal += lDblImport;
@@ -3456,32 +4025,39 @@ namespace UGRS.AddOn.Machinery.Forms {
 
                 pTxtEditText.Value = (lDblSubtotal).ToString();
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 throw new Exception(string.Format("Error al calcular el total: {0}", lObjException.Message));
             }
         }
         #endregion
 
         #region Performance
-        private void CalculatePerformance() {
-            try {
+        private void CalculatePerformance()
+        {
+            try
+            {
                 this.UIAPIRawForm.Freeze(true);
 
                 DeletePerfomanceRecords();
                 CalculateMachineryPerformance();
                 CalculateVehiclesPerformance();
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 LogUtility.WriteError(string.Format("[MachineryForm - CalculatePerformance] Error: {0}", lObjException.Message));
                 throw new Exception(lObjException.Message);
             }
-            finally {
+            finally
+            {
                 this.UIAPIRawForm.Freeze(false);
             }
         }
 
-        private void CalculateMachineryPerformance() {
-            try {
+        private void CalculateMachineryPerformance()
+        {
+            try
+            {
                 List<PerformanceDTO> lLstMachineryPerformance = mObjMachineryServiceFactory.GetPerformanceService().CalculateMachineryPerformance(
                                                                     mObjMachineryServiceFactory.GetConsumablesService().TotalsRecordsDataTableToDTO(dtConsumedTotals).Where(x => x.EquipmentType == "MQ").ToList(),
                                                                     mObjMachineryServiceFactory.GetHoursRecordsService().DataTableToDTO(dtHours).Where(x => !string.IsNullOrEmpty(x.PrcCode) && !string.IsNullOrEmpty(x.EcoNum)).ToList(),
@@ -3489,67 +4065,83 @@ namespace UGRS.AddOn.Machinery.Forms {
 
                 ClearMatrix(dtMachineryPerformance.UniqueID, mtxMachPerformance);
 
-                foreach(var lObjPerf in lLstMachineryPerformance) {
+                foreach (var lObjPerf in lLstMachineryPerformance)
+                {
                     AddPerformanceRecord(lObjPerf);
                 }
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 LogUtility.WriteError(string.Format("[MachineryForm - CalculateMachineryPerformance] Error: {0}", lObjException.Message));
                 throw new Exception(lObjException.Message);
             }
         }
 
-        private void CalculateVehiclesPerformance() {
-            try {
+        private void CalculateVehiclesPerformance()
+        {
+            try
+            {
                 List<PerformanceDTO> lLstMachineryPerformance = mObjMachineryServiceFactory.GetPerformanceService().CalculateVehiclePerformance(
                                                                     mObjMachineryServiceFactory.GetConsumablesService()
                                                                     .TotalsRecordsDataTableToDTO(dtConsumedTotals).Where(x => x.EquipmentType == "VL").ToList());
 
                 ClearMatrix(dtVehiclePerformance.UniqueID, mtxVclPerformance);
 
-                foreach(var lObjPerf in lLstMachineryPerformance) {
+                foreach (var lObjPerf in lLstMachineryPerformance)
+                {
                     AddPerformanceRecord(lObjPerf);
                 }
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 LogUtility.WriteError(string.Format("[MachineryForm - CalculateVehiclesPerformance] Error: {0}", lObjException.Message));
                 throw new Exception(lObjException.Message);
             }
-            finally {
+            finally
+            {
 
             }
         }
 
-        public void LoadPerformance() {
-            try {
+        public void LoadPerformance()
+        {
+            try
+            {
                 List<PerformanceDTO> lLstPerfomance = mObjMachineryServiceFactory.GetPerformanceService().GetByRiseId(mObjRise.IdRise);
 
-                foreach(var lObjPerformance in lLstPerfomance) {
+                foreach (var lObjPerformance in lLstPerfomance)
+                {
                     AddPerformanceRecord(lObjPerformance);
                 }
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
 
                 throw new Exception(string.Format("Error al obtener la información del rendimiento: {0}", lObjException.Message));
             }
         }
 
-        public void DeletePerfomanceRecords() {
+        public void DeletePerfomanceRecords()
+        {
             //Vehículos
-            for(int i = 0; i < dtVehiclePerformance.Rows.Count; i++) {
+            for (int i = 0; i < dtVehiclePerformance.Rows.Count; i++)
+            {
                 string lStrCode = dtVehiclePerformance.GetValue("CodePFV", i).ToString();
                 mObjMachineryServiceFactory.GetPerformanceService().Remove(lStrCode);
             }
 
             //Máquinas
-            for(int i = 0; i < dtMachineryPerformance.Rows.Count; i++) {
+            for (int i = 0; i < dtMachineryPerformance.Rows.Count; i++)
+            {
                 string lStrCode = dtMachineryPerformance.GetValue("CodePFM", i).ToString();
                 mObjMachineryServiceFactory.GetPerformanceService().Remove(lStrCode);
             }
         }
 
-        public void LoadRisePerformance(int pIntFolio, RiseStatusEnum pEnmRiseStatus = RiseStatusEnum.Active) {
-            try {
+        public void LoadRisePerformance(int pIntFolio, RiseStatusEnum pEnmRiseStatus = RiseStatusEnum.Active)
+        {
+            try
+            {
                 List<PerformanceDTO> lLstPerformance = new List<PerformanceDTO>();
                 //if (pEnmRiseStatus == RiseStatusEnum.Active)
                 //{
@@ -3562,21 +4154,25 @@ namespace UGRS.AddOn.Machinery.Forms {
 
                 lLstPerformance = mObjMachineryServiceFactory.GetPerformanceService().GetByRiseId(pIntFolio);
 
-                foreach(var lObjPerformance in lLstPerformance) {
+                foreach (var lObjPerformance in lLstPerformance)
+                {
                     AddPerformanceRecord(lObjPerformance);
                 }
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 throw new Exception(string.Format("Error al obtener el rendimineto de la subida: {0}", lObjException.Message));
             }
         }
 
-        public void AddPerformanceRecord(PerformanceDTO pObjPerformanceRecord) {
-            try {
-                if(pObjPerformanceRecord == null)
+        public void AddPerformanceRecord(PerformanceDTO pObjPerformanceRecord)
+        {
+            try
+            {
+                if (pObjPerformanceRecord == null)
                     return;
 
-                if(pObjPerformanceRecord.Type == 1) //maquinaria
+                if (pObjPerformanceRecord.Type == 1) //maquinaria
                 {
                     dtMachineryPerformance.Rows.Add();
                     dtMachineryPerformance.SetValue("#", dtMachineryPerformance.Rows.Count - 1, dtMachineryPerformance.Rows.Count);
@@ -3630,28 +4226,36 @@ namespace UGRS.AddOn.Machinery.Forms {
             dtVehiclePerformance.Columns.Add("CodePFV", SAPbouiCOM.BoFieldsType.ft_Float);
                  */
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 throw new Exception(string.Format("Error al agregar el registro de rendimiento de maquinaria {0}", lObjException.Message));
             }
         }
         #endregion
 
         #region Search mode
-        private void StartSearchMode() {
-            try {
+        private void StartSearchMode()
+        {
+            try
+            {
                 //if (SAPbouiCOM.Framework.Application.SBO_Application.MessageBox("¿Desea entrar en modo búsqueda y perder los datos actuales?", 2, "Si", "No", "") == 1){}
 
-                if(string.IsNullOrEmpty(txtFolio.Value)) {
+                if (string.IsNullOrEmpty(txtFolio.Value))
+                {
                     return;
                 }
-                else {
+                else
+                {
                     int n;
-                    if(!int.TryParse(txtFolio.Value, out n)) {
+                    if (!int.TryParse(txtFolio.Value, out n))
+                    {
                         UIApplication.ShowError("Solo puede ingresar valores numéricos en el folio de la subida");
                         return;
                     }
-                    else {
-                        if(n <= 0) {
+                    else
+                    {
+                        if (n <= 0)
+                        {
                             UIApplication.ShowError("El folio de la subida debe ser mayor a 0");
                             return;
                         }
@@ -3661,7 +4265,8 @@ namespace UGRS.AddOn.Machinery.Forms {
                 //this.UIAPIRawForm.Freeze(true);
 
                 RiseDTO lObjRise = mObjMachineryServiceFactory.GetRiseService().GetRiseById(int.Parse(txtFolio.Value));
-                if(lObjRise == null) {
+                if (lObjRise == null)
+                {
                     UIApplication.ShowError("La subida no existe");
                     return;
                 }
@@ -3673,17 +4278,21 @@ namespace UGRS.AddOn.Machinery.Forms {
 
                 LoadControlsForSeachMode(lObjRise);
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 LogUtility.WriteError(string.Format("[MachineryForm - StartSearchMode] Error: {0}", lObjException.Message));
                 throw new Exception(lObjException.Message);
             }
-            finally {
+            finally
+            {
                 //this.UIAPIRawForm.Freeze(false);
             }
         }
 
-        private void LoadControlsForSeachMode(RiseDTO pObjRise) {
-            try {
+        private void LoadControlsForSeachMode(RiseDTO pObjRise)
+        {
+            try
+            {
                 //txtFolio.Value = lObjRise.IdRise.ToString();
                 txtDate.Value = pObjRise.CreatedDate.ToString("dd/MM/yyyy");
 
@@ -3725,44 +4334,49 @@ namespace UGRS.AddOn.Machinery.Forms {
                 CalculateTotal(txtKmHrTotal, dtHours, "KmHcHrs");
                 CalculateTotal(txtTotalsHours, dtTransitHours, "HrsTH");
 
-                switch(pObjRise.DocStatus) {
+                switch (pObjRise.DocStatus)
+                {
                     case RiseStatusEnum.Active:
-                    UIApplication.GetApplication().Forms.ActiveForm.Mode = SAPbouiCOM.BoFormMode.fm_OK_MODE;
-                    UnBlockControls();
+                        UIApplication.GetApplication().Forms.ActiveForm.Mode = SAPbouiCOM.BoFormMode.fm_OK_MODE;
+                        UnBlockControls();
 
-                    if(mObjMachineryServiceFactory.GetGoodIssuesService().ExistsGoodIssue(pObjRise.IdRise)) {
-                        mtxInitialRecords.Item.Enabled = false;
-                        mtxPurchase.Item.Enabled = false;
-                        mtxFinalRecords.Item.Enabled = false;
-                        mtxConsumedTotals.Item.Enabled = false;
-                        btnSaveIR.Item.Enabled = false;
-                    }
-                    break;
+                        if (mObjMachineryServiceFactory.GetGoodIssuesService().ExistsGoodIssue(pObjRise.IdRise))
+                        {
+                            mtxInitialRecords.Item.Enabled = false;
+                            mtxPurchase.Item.Enabled = false;
+                            mtxFinalRecords.Item.Enabled = false;
+                            mtxConsumedTotals.Item.Enabled = false;
+                            btnSaveIR.Item.Enabled = false;
+                        }
+                        break;
                     case RiseStatusEnum.Close:
-                    UIApplication.GetApplication().Forms.ActiveForm.Mode = SAPbouiCOM.BoFormMode.fm_VIEW_MODE;
-                    ShowOrHideOpenBtn();
-                    break;
+                        UIApplication.GetApplication().Forms.ActiveForm.Mode = SAPbouiCOM.BoFormMode.fm_VIEW_MODE;
+                        ShowOrHideOpenBtn();
+                        break;
                     case RiseStatusEnum.Cancelled:
-                    UIApplication.GetApplication().Forms.ActiveForm.Mode = SAPbouiCOM.BoFormMode.fm_VIEW_MODE;
-                    break;
+                        UIApplication.GetApplication().Forms.ActiveForm.Mode = SAPbouiCOM.BoFormMode.fm_VIEW_MODE;
+                        break;
                     case RiseStatusEnum.ReOpen:
-                    UIApplication.GetApplication().Forms.ActiveForm.Mode = SAPbouiCOM.BoFormMode.fm_VIEW_MODE;
-                    ShowOrHideOpenBtn();
-                    UnBlockControlsForReopenRise();
-                    //AddMtrixEmpoyeesDefaultRow();
-                    break;
+                        UIApplication.GetApplication().Forms.ActiveForm.Mode = SAPbouiCOM.BoFormMode.fm_VIEW_MODE;
+                        ShowOrHideOpenBtn();
+                        UnBlockControlsForReopenRise();
+                        //AddMtrixEmpoyeesDefaultRow();
+                        break;
                     default:
-                    break;
+                        break;
                 }
             }
-            catch(Exception lObjException) {
+            catch (Exception lObjException)
+            {
                 LogUtility.WriteError(string.Format("[MachineryForm - LoadControlsForSeachMode] Error: {0}", lObjException.Message));
                 throw new Exception(lObjException.Message);
             }
         }
 
-        private void CleanControls(bool pBolForSearchMode = false) {
-            if(pBolForSearchMode) {
+        private void CleanControls(bool pBolForSearchMode = false)
+        {
+            if (pBolForSearchMode)
+            {
                 mBolForSearchMode = true;
 
                 txtFolio.Item.Enabled = true;
@@ -3833,20 +4447,24 @@ namespace UGRS.AddOn.Machinery.Forms {
 
         #region General tab
         #region Matrix
-        private void ClearMatrix(string pStrDTName, SAPbouiCOM.Matrix pObjMatrix) {
-            if(!this.UIAPIRawForm.DataSources.DataTables.Item(pStrDTName).IsEmpty) {
+        private void ClearMatrix(string pStrDTName, SAPbouiCOM.Matrix pObjMatrix)
+        {
+            if (!this.UIAPIRawForm.DataSources.DataTables.Item(pStrDTName).IsEmpty)
+            {
                 this.UIAPIRawForm.DataSources.DataTables.Item(pStrDTName).Rows.Clear();
                 pObjMatrix.Clear();
             }
         }
 
-        public void InitColumnCFLEmployees() {
+        public void InitColumnCFLEmployees()
+        {
             SAPbouiCOM.Column lObjColumnItem = mtxEmployees.Columns.Item("ColId");
             lObjColumnItem.DataBind.SetBound(true, "", "CFL_Emp");
             lObjColumnItem.ChooseFromListUID = "CFL_Emp";
         }
 
-        private void CreateDatatableEmployees() {
+        private void CreateDatatableEmployees()
+        {
             this.UIAPIRawForm.DataSources.DataTables.Add("DTEmp");
             dtEmployees = this.UIAPIRawForm.DataSources.DataTables.Item("DTEmp");
             dtEmployees.Columns.Add("#", SAPbouiCOM.BoFieldsType.ft_Integer);
@@ -3859,7 +4477,8 @@ namespace UGRS.AddOn.Machinery.Forms {
             FillMatrixEmployees();
         }
 
-        private void CreateDatatableConsumables() {
+        private void CreateDatatableConsumables()
+        {
             this.UIAPIRawForm.DataSources.DataTables.Add("DTCons");
             dtConsumables = this.UIAPIRawForm.DataSources.DataTables.Item("DTCons");
             dtConsumables.Columns.Add("#", SAPbouiCOM.BoFieldsType.ft_Integer);
@@ -3871,7 +4490,8 @@ namespace UGRS.AddOn.Machinery.Forms {
             FillMatrixConsumables();
         }
 
-        private void CreateContractsDatatable() {
+        private void CreateContractsDatatable()
+        {
             this.UIAPIRawForm.DataSources.DataTables.Add("DTCont");
             dtContracts = this.UIAPIRawForm.DataSources.DataTables.Item("DTCont");
             dtContracts.Columns.Add("#", SAPbouiCOM.BoFieldsType.ft_Integer);
@@ -3885,11 +4505,14 @@ namespace UGRS.AddOn.Machinery.Forms {
             dtContracts.Columns.Add("ImpCont", SAPbouiCOM.BoFieldsType.ft_Price);
             dtContracts.Columns.Add("CodeTCont", SAPbouiCOM.BoFieldsType.ft_AlphaNumeric);
             dtContracts.Columns.Add("CardName", SAPbouiCOM.BoFieldsType.ft_AlphaNumeric);
+            dtContracts.Columns.Add("MunpId", SAPbouiCOM.BoFieldsType.ft_AlphaNumeric);
+            dtContracts.Columns.Add("Munp", SAPbouiCOM.BoFieldsType.ft_AlphaNumeric);
 
             FillContractsMatrix();
         }
 
-        private void CreateTravelExpensesDatatable() {
+        private void CreateTravelExpensesDatatable()
+        {
             this.UIAPIRawForm.DataSources.DataTables.Add("DTTravExp");
             dtTravelExpenses = this.UIAPIRawForm.DataSources.DataTables.Item("DTTravExp");
             dtTravelExpenses.Columns.Add("#", SAPbouiCOM.BoFieldsType.ft_Integer);
@@ -3905,7 +4528,8 @@ namespace UGRS.AddOn.Machinery.Forms {
             FillTravelExpensesMatrix();
         }
 
-        private void CreateInitialRecordsDataTable() {
+        private void CreateInitialRecordsDataTable()
+        {
             this.UIAPIRawForm.DataSources.DataTables.Add("DTIniRds");
             dtInitialRcords = this.UIAPIRawForm.DataSources.DataTables.Item("DTIniRds");
             dtInitialRcords.Columns.Add("#", SAPbouiCOM.BoFieldsType.ft_Integer);
@@ -3929,7 +4553,8 @@ namespace UGRS.AddOn.Machinery.Forms {
             FillInitialsRecordsMatrix();
         }
 
-        private void CreatePurchInvReqDataTable() {
+        private void CreatePurchInvReqDataTable()
+        {
             this.UIAPIRawForm.DataSources.DataTables.Add("DTPrcInv");
             dtPurchase = this.UIAPIRawForm.DataSources.DataTables.Item("DTPrcInv");
             dtPurchase.Columns.Add("#", SAPbouiCOM.BoFieldsType.ft_Integer);
@@ -3953,7 +4578,8 @@ namespace UGRS.AddOn.Machinery.Forms {
             FillPurchReqInvMatrix();
         }
 
-        private void CreateFinalRecordsDataTable() {
+        private void CreateFinalRecordsDataTable()
+        {
             this.UIAPIRawForm.DataSources.DataTables.Add("DTFinalR");
             dtFinalRecords = this.UIAPIRawForm.DataSources.DataTables.Item("DTFinalR");
             dtFinalRecords.Columns.Add("#", SAPbouiCOM.BoFieldsType.ft_Integer);
@@ -3975,7 +4601,8 @@ namespace UGRS.AddOn.Machinery.Forms {
             FillFinalsRecordsMatrix();
         }
 
-        private void CreateTotalsRecordsDataTable() {
+        private void CreateTotalsRecordsDataTable()
+        {
             this.UIAPIRawForm.DataSources.DataTables.Add("DTTotalR");
             dtConsumedTotals = this.UIAPIRawForm.DataSources.DataTables.Item("DTTotalR");
             dtConsumedTotals.Columns.Add("#", SAPbouiCOM.BoFieldsType.ft_Integer);
@@ -3997,7 +4624,8 @@ namespace UGRS.AddOn.Machinery.Forms {
             FillTotalsRecordsMatrix();
         }
 
-        private void CreateHoursDataTable() {
+        private void CreateHoursDataTable()
+        {
             this.UIAPIRawForm.DataSources.DataTables.Add("DTHours");
             dtHours = this.UIAPIRawForm.DataSources.DataTables.Item("DTHours");
             dtHours.Columns.Add("#", SAPbouiCOM.BoFieldsType.ft_Integer);
@@ -4024,7 +4652,8 @@ namespace UGRS.AddOn.Machinery.Forms {
             FillHoursRecordsMatrix();
         }
 
-        private void CreateTransitHoursDataTable() {
+        private void CreateTransitHoursDataTable()
+        {
             this.UIAPIRawForm.DataSources.DataTables.Add("DTTransH");
             dtTransitHours = this.UIAPIRawForm.DataSources.DataTables.Item("DTTransH");
             dtTransitHours.Columns.Add("#", SAPbouiCOM.BoFieldsType.ft_Integer);
@@ -4041,7 +4670,8 @@ namespace UGRS.AddOn.Machinery.Forms {
             FillTransitHoursRecordsMatrix();
         }
 
-        private void CreateMachineryPerformanceDataTable() {
+        private void CreateMachineryPerformanceDataTable()
+        {
             this.UIAPIRawForm.DataSources.DataTables.Add("DTMPerformance");
             dtMachineryPerformance = this.UIAPIRawForm.DataSources.DataTables.Item("DTMPerformance");
             dtMachineryPerformance.Columns.Add("#", SAPbouiCOM.BoFieldsType.ft_Integer);
@@ -4056,7 +4686,8 @@ namespace UGRS.AddOn.Machinery.Forms {
             FillMachineryPerfRecordsMatrix();
         }
 
-        private void CreateVehiclePerformanceDataTable() {
+        private void CreateVehiclePerformanceDataTable()
+        {
             this.UIAPIRawForm.DataSources.DataTables.Add("DTVPerformance");
             dtVehiclePerformance = this.UIAPIRawForm.DataSources.DataTables.Item("DTVPerformance");
             dtVehiclePerformance.Columns.Add("#", SAPbouiCOM.BoFieldsType.ft_Integer);
@@ -4071,7 +4702,8 @@ namespace UGRS.AddOn.Machinery.Forms {
             FillVehiclePerfRecordsMatrix();
         }
 
-        private void FillVehiclePerfRecordsMatrix() {
+        private void FillVehiclePerfRecordsMatrix()
+        {
             mtxVclPerformance.Columns.Item("#").DataBind.Bind("DTVPerformance", "#");
             mtxVclPerformance.Columns.Item("ColMqnVcl").DataBind.Bind("DTVPerformance", "MaqPFV"); //cmb
             mtxVclPerformance.Columns.Item("ColNEVcl").DataBind.Bind("DTVPerformance", "NumEcoPFV");
@@ -4081,7 +4713,8 @@ namespace UGRS.AddOn.Machinery.Forms {
             mtxVclPerformance.AutoResizeColumns();
         }
 
-        private void FillMachineryPerfRecordsMatrix() {
+        private void FillMachineryPerfRecordsMatrix()
+        {
             mtxMachPerformance.Columns.Item("#").DataBind.Bind("DTMPerformance", "#");
             mtxMachPerformance.Columns.Item("ColMqnRen").DataBind.Bind("DTMPerformance", "MaqPFM"); //cmb
             mtxMachPerformance.Columns.Item("ColENRen").DataBind.Bind("DTMPerformance", "NumEcoPFM");
@@ -4091,7 +4724,8 @@ namespace UGRS.AddOn.Machinery.Forms {
             mtxMachPerformance.AutoResizeColumns();
         }
 
-        private void FillTransitHoursRecordsMatrix() {
+        private void FillTransitHoursRecordsMatrix()
+        {
             mtxTransitHours.Columns.Item("#").DataBind.Bind("DTTransH", "#");
             mtxTransitHours.Columns.Item("ColMaqHT").DataBind.Bind("DTTransH", "MaqTHrs"); //cmb
             mtxTransitHours.Columns.Item("ColNEnHT").DataBind.Bind("DTTransH", "NumEcoTH");
@@ -4102,7 +4736,8 @@ namespace UGRS.AddOn.Machinery.Forms {
             mtxTransitHours.AutoResizeColumns();
         }
 
-        private void FillHoursRecordsMatrix() {
+        private void FillHoursRecordsMatrix()
+        {
             mtxHours.Columns.Item("#").DataBind.Bind("DTHours", "#");
             mtxHours.Columns.Item("ColDateH").DataBind.Bind("DTHours", "DateHrs");
             mtxHours.Columns.Item("ColCOVH").DataBind.Bind("DTHours", "ContOVHrs"); //cmb
@@ -4122,7 +4757,8 @@ namespace UGRS.AddOn.Machinery.Forms {
             mtxHours.AutoResizeColumns();
         }
 
-        private void FillTotalsRecordsMatrix() {
+        private void FillTotalsRecordsMatrix()
+        {
             mtxConsumedTotals.Columns.Item("#").DataBind.Bind("DTTotalR", "#");
             mtxConsumedTotals.Columns.Item("ColMacTot").DataBind.Bind("DTTotalR", "ActCodTR");
             mtxConsumedTotals.Columns.Item("ColNEnTot").DataBind.Bind("DTTotalR", "ActNumTR");
@@ -4140,7 +4776,8 @@ namespace UGRS.AddOn.Machinery.Forms {
             mtxConsumedTotals.AutoResizeColumns();
         }
 
-        private void FillFinalsRecordsMatrix() {
+        private void FillFinalsRecordsMatrix()
+        {
             mtxFinalRecords.Columns.Item("#").DataBind.Bind("DTFinalR", "#");
             mtxFinalRecords.Columns.Item("ColMacFR").DataBind.Bind("DTFinalR", "ActCodFR");
             mtxFinalRecords.Columns.Item("ColNEnFR").DataBind.Bind("DTFinalR", "ActNumFR");
@@ -4158,7 +4795,8 @@ namespace UGRS.AddOn.Machinery.Forms {
             mtxFinalRecords.AutoResizeColumns();
         }
 
-        private void FillPurchReqInvMatrix() {
+        private void FillPurchReqInvMatrix()
+        {
             mtxPurchase.Columns.Item("#").DataBind.Bind("DTPrcInv", "#");
             mtxPurchase.Columns.Item("ColMacPur").DataBind.Bind("DTPrcInv", "ActCodPrc");
             mtxPurchase.Columns.Item("ColNmePur").DataBind.Bind("DTPrcInv", "ActNumPrc");
@@ -4175,7 +4813,8 @@ namespace UGRS.AddOn.Machinery.Forms {
             mtxPurchase.AutoResizeColumns();
         }
 
-        private void FillInitialsRecordsMatrix() {
+        private void FillInitialsRecordsMatrix()
+        {
             mtxInitialRecords.Columns.Item("#").DataBind.Bind("DTIniRds", "#");
             mtxInitialRecords.Columns.Item("ColMacIR").DataBind.Bind("DTIniRds", "ActCodIR");
             mtxInitialRecords.Columns.Item("ColNEnIR").DataBind.Bind("DTIniRds", "ActNumIR");
@@ -4193,7 +4832,8 @@ namespace UGRS.AddOn.Machinery.Forms {
             mtxInitialRecords.AutoResizeColumns();
         }
 
-        private void FillTravelExpensesMatrix() {
+        private void FillTravelExpensesMatrix()
+        {
             mtxTravelExpenses.Columns.Item("#").DataBind.Bind("DTTravExp", "#");
             mtxTravelExpenses.Columns.Item("ColDateV").DataBind.Bind("DTTravExp", "DateTravE");
             mtxTravelExpenses.Columns.Item("ColFolVia").DataBind.Bind("DTTravExp", "FolTravE");
@@ -4207,7 +4847,8 @@ namespace UGRS.AddOn.Machinery.Forms {
             mtxTravelExpenses.AutoResizeColumns();
         }
 
-        private void FillContractsMatrix() {
+        private void FillContractsMatrix()
+        {
             mtxContracts.Columns.Item("#").DataBind.Bind("DTCont", "#");
             mtxContracts.Columns.Item("ColDateOV").DataBind.Bind("DTCont", "DateCont");
             mtxContracts.Columns.Item("ColDocEOV").DataBind.Bind("DTCont", "DocNCont");
@@ -4215,6 +4856,7 @@ namespace UGRS.AddOn.Machinery.Forms {
             mtxContracts.Columns.Item("ColImpOV").DataBind.Bind("DTCont", "ImpCont");
             mtxContracts.Columns.Item("ColStsOV").DataBind.Bind("DTCont", "StsCont");
             mtxContracts.Columns.Item("ColCardNm").DataBind.Bind("DTCont", "CardName");
+            mtxContracts.Columns.Item("ColMunOV").DataBind.Bind("DTCont", "Munp");
 
             SAPbouiCOM.LinkedButton oLink = (SAPbouiCOM.LinkedButton)mtxContracts.Columns.Item("ColDocEOV").ExtendedObject;
             //oLink.LinkedObject = SAPbouiCOM.BoLinkedObject.lf_Order;
@@ -4222,7 +4864,8 @@ namespace UGRS.AddOn.Machinery.Forms {
             mtxContracts.AutoResizeColumns();
         }
 
-        private void FillMatrixEmployees() {
+        private void FillMatrixEmployees()
+        {
             mtxEmployees.Columns.Item("#").DataBind.Bind("DTEmp", "#");
             mtxEmployees.Columns.Item("ColId").DataBind.Bind("DTEmp", "EmpId");
             mtxEmployees.Columns.Item("ColEmp").DataBind.Bind("DTEmp", "EmpName");
@@ -4231,14 +4874,16 @@ namespace UGRS.AddOn.Machinery.Forms {
             AddMtrixEmpoyeesDefaultRow();
         }
 
-        private void AddMtrixEmpoyeesDefaultRow() {
+        private void AddMtrixEmpoyeesDefaultRow()
+        {
             mtxEmployees.AddRow();
             dtEmployees.Rows.Add();
             dtEmployees.SetValue("#", 0, 1);
             mtxEmployees.AutoResizeColumns();
         }
 
-        private void FillMatrixConsumables() {
+        private void FillMatrixConsumables()
+        {
             mtxConsumables.Columns.Item("#").DataBind.Bind("DTCons", "#");
             mtxConsumables.Columns.Item("ColDateC").DataBind.Bind("DTCons", "DateCons");
             mtxConsumables.Columns.Item("ColFolCon").DataBind.Bind("DTCons", "FolRCons");

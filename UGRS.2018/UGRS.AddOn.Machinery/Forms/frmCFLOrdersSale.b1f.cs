@@ -158,6 +158,8 @@ namespace UGRS.AddOn.Machinery.Forms
                     dtOrdersSale.SetValue("StatusCod", i, lLstContracts[i].Status);
                     dtOrdersSale.SetValue("ImpCod", i, lLstContracts[i].Import);
                     dtOrdersSale.SetValue("CardName", i, lLstContracts[i].CardName);
+                    dtOrdersSale.SetValue("MunpId", i, lLstContracts[i].MunicipalityCode);
+                    dtOrdersSale.SetValue("Munp", i, lLstContracts[i].Municipality);
                 }
 
                 mtxOrdersSale.AutoResizeColumns();
@@ -190,6 +192,8 @@ namespace UGRS.AddOn.Machinery.Forms
                         Status = dtOrdersSale.GetValue(7, lIntRow - 1).ToString(),
                         Import = double.Parse(dtOrdersSale.GetValue(8, lIntRow - 1).ToString()),
                         CardName = dtOrdersSale.GetValue("CardName", lIntRow - 1).ToString(),
+                        MunicipalityCode = dtOrdersSale.GetValue("MunpId", lIntRow - 1).ToString(),
+                        Municipality = dtOrdersSale.GetValue("Munp", lIntRow - 1).ToString(),
                     };
 
                     this.UIAPIRawForm.Close();
@@ -216,6 +220,8 @@ namespace UGRS.AddOn.Machinery.Forms
             dtOrdersSale.Columns.Add("StatusCod", SAPbouiCOM.BoFieldsType.ft_AlphaNumeric);
             dtOrdersSale.Columns.Add("ImpCod", SAPbouiCOM.BoFieldsType.ft_Price);
             dtOrdersSale.Columns.Add("CardName", SAPbouiCOM.BoFieldsType.ft_AlphaNumeric);
+            dtOrdersSale.Columns.Add("MunpId", SAPbouiCOM.BoFieldsType.ft_AlphaNumeric);
+            dtOrdersSale.Columns.Add("Munp", SAPbouiCOM.BoFieldsType.ft_AlphaNumeric);
 
             FillOrdersSalesMatrix();
         }
@@ -230,6 +236,7 @@ namespace UGRS.AddOn.Machinery.Forms
             mtxOrdersSale.Columns.Item("ColStatus").DataBind.Bind("DTOrdersSales", "Status");
             mtxOrdersSale.Columns.Item("ColImp").DataBind.Bind("DTOrdersSales", "ImpCod");
             mtxOrdersSale.Columns.Item("ColCardNm").DataBind.Bind("DTOrdersSales", "CardName");
+            mtxOrdersSale.Columns.Item("ColMunp").DataBind.Bind("DTOrdersSales", "Munp");
 
             mtxOrdersSale.AutoResizeColumns();
         }

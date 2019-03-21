@@ -354,6 +354,7 @@ namespace UGRS.AddOn.Machinery.Forms
                     lObjGoodIssue.Lines.CostingCode = mStrUserCostCenter;
                     lObjGoodIssue.Lines.CostingCode2 = dtGoodIssues.GetValue("ActiveF", i).ToString();
                     //lObjGoodIssue.Lines.AccountCode = dtGoodIssues.GetValue("ActiveF", i).ToString();
+                    lObjGoodIssue.Lines.WarehouseCode = "MQHEOBRA";
 
                     lObjGoodIssue.Lines.Add();
                 }
