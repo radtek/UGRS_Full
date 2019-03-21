@@ -179,7 +179,7 @@ namespace UGRS.AddOn.Finances
                 }
 
                 // Amount can't be higher than document's total
-                if (lDblBonusAmount > (lOriginal.DocTotal - lOriginal.VatSum))
+                if (lDblBonusAmount > (lOriginal.DocTotal - lOriginal.DownPaymentAmount)) //lOriginal.VatSum
                 {
                     UIApplication.ShowMessageBox("La cantidad introducida no puede ser mayor que el valor del documento.");
                     return;
