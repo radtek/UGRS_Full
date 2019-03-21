@@ -3,12 +3,13 @@ DECLARE @Client VARCHAR(50) = '{Client}'
 DECLARE @Status VARCHAR(10) = '{Status}'
 DECLARE @StartDate VARCHAR(20) = '{StartDate}'
 DECLARE @EndDate VARCHAR(20) = '{EndDate}'
+DECLARE @Municipality VARCHAR(20) = '{Municipality}'
 DECLARE @SQLStatement VARCHAR(MAX) = ''
 
 SET @SQLStatement = 'SELECT T0.U_DocEntry AS DocEntry, T1.DocNum, T1.CardCode, T1.CardName, SUM(ISNULL(T2.Quantity, 0)) AS HrsFeet, 
 SUM(ISNULL(T6.Quantity, 0)) AS ExtrasInv, T1.DocTotal + ISNULL(T3.TotalInv, 0) AS ImportInv, 
 ISNULL(T4.RealHrs, 0) AS RealHrs, SUM(ISNULL(T2.Quantity, 0)) - ISNULL(T4.RealHrs, 0) AS Difference, 
-ISNULL(T4.Status, 0) AS ''Close''
+ISNULL(T4.Status, 0) AS ''Close'', ISNULL(T1.U_GLO_Municipality, '''') AS ''MunicipalityId'', T7.Name AS ''Municipality''
 FROM [@UG_TBL_MQ_RIDC] T0
 INNER JOIN ORDR T1
 	ON T1.DocEntry = T0.U_DocEntry
@@ -31,7 +32,9 @@ LEFT JOIN (SELECT
 FROM [@UG_MQ_RIHR] GROUP BY U_DocEntry) T4
 	ON T1.DocEntry = t4.U_DocEntry
 LEFT JOIN (SELECT NumAtCard, COUNT(*) AS ''Count'', SUM(ISNULL(INV1.Quantity, 0)) AS ''Quantity'' FROM OINV INNER JOIN INV1 ON INV1.DocEntry = OINV.DocEntry GROUP BY NumAtCard) T6
-	ON CAST(T1.DocNum AS varchar) = T6.NumAtCard'
+	ON CAST(T1.DocNum AS varchar) = T6.NumAtCard
+INNER JOIN [@UG_GLO_TOWN] T7
+	ON T7.Code = T1.U_GLO_Municipality'
 
 IF @Contract > 0 BEGIN
 	SET @SQLStatement = @SQLStatement + ' AND T1.DocNum = ' + ''''+ @Contract +''''
@@ -60,7 +63,12 @@ BEGIN
 	SET @SQLStatement = @SQLStatement + ' AND T1.DocDate =' + ''''+ @EndDate +''''
 END
 
-SET @SQLStatement = @SQLStatement + ' GROUP BY T0.U_DocEntry, T1.DocNum, T1.CardCode, T1.CardName, T1.DocTotal, T3.TotalInv, T4.RealHrs, T4.Status, T6.Count'
+IF @Municipality != ''
+BEGIN
+	SET @SQLStatement = @SQLStatement + ' AND T1.U_GLO_Municipality =' + ''''+ @Municipality +''''
+END
+
+SET @SQLStatement = @SQLStatement + ' GROUP BY T0.U_DocEntry, T1.DocNum, T1.CardCode, T1.CardName, T1.DocTotal, T3.TotalInv, T4.RealHrs, T4.Status, T6.Count, T1.U_GLO_Municipality, T7.Name'
 
 print(@SQLStatement)
 

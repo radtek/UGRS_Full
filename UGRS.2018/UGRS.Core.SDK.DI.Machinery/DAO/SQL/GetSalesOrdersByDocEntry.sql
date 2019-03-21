@@ -8,5 +8,9 @@ CASE
 	WHEN T0.DocCur = 'MXP' 
 		THEN T0.DocTotal 
 	ELSE T0.DocTotalFC
-END AS Total
-FROM ORDR T0 WHERE T0.DocEntry = '{DocEntry}'
+END AS Total,
+ISNULL(T0.U_GLO_Municipality, '') AS 'MunicipalityId', T1.Name AS 'Municipality'
+FROM ORDR T0
+INNER JOIN [@UG_GLO_TOWN] T1
+	ON T1.Code = T0.U_GLO_Municipality
+WHERE T0.DocEntry = '{DocEntry}'

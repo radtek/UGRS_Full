@@ -112,9 +112,9 @@ namespace UGRS.Core.SDK.DI.Machinery.Services
             return mObjContractsDAO.IsClosed(pIntDocEntry);
         }
 
-        public List<ContractsFiltersDTO> GetContracts(string pStrContract, string pStrClient, string pStrStatus, string pStrStartDate, string pStrEndDate)
+        public List<ContractsFiltersDTO> GetContracts(string pStrContract, string pStrClient, string pStrStatus, string pStrStartDate, string pStrEndDate, string pStrMunicipality)
         {
-            return mObjContractsDAO.GetContracts(pStrContract, pStrClient, pStrStatus, pStrStartDate, pStrEndDate);
+            return mObjContractsDAO.GetContracts(pStrContract, pStrClient, pStrStatus, pStrStartDate, pStrEndDate, pStrMunicipality);
         }
         #endregion
 

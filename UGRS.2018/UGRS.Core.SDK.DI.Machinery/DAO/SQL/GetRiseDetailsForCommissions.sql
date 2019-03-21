@@ -56,7 +56,7 @@ left join
                                         and U_GLO_PaymentType='GLSOV' and U_FZ_Auxiliar=(select u_supervisor from [@UG_TBL_MQ_RISE] A5 where a5.U_IdRise = @RiseId
 										)order by docentry desc	
                 ) group by U_GLO_Auxiliar, Account , U_GLO_CodeMov, t2.TaxDate, U_GLO_CodeMov,U_GLO_CodeMov
-              having SUM(ISNULL(Debit, 0)) - SUM(ISNULL(Credit, 0)) >0
+              --having SUM(ISNULL(Debit, 0)) - SUM(ISNULL(Credit, 0)) >0
          ) F0 
          group by F0.Account,f0.U_GLO_CodeMov,U_GLO_Auxiliar
 ) A4 ON  a4.Account = @Account and a4.U_GLO_Auxiliar= a0.EmpId

@@ -34,6 +34,8 @@ namespace UGRS.Core.SDK.DI.Machinery.DTO
         public string CardName { get; set; }
         public DateTime DocDate { get; set; }
         public double Import { get; set; }
+        public string MunicipalityCode { get; set; }
+        public string Municipality { get; set; }
 
         private string status;
         public string Status

@@ -18,6 +18,8 @@ namespace UGRS.Core.SDK.DI.Machinery.DTO
         public double RealHrs { get; set; }
         public double Difference { get; set; }
         public int Status { get; set; }
+        public string MunicipalityCode { get; set; }
+        public string Municipality { get; set; }
 
         public string StatusDescription
         {

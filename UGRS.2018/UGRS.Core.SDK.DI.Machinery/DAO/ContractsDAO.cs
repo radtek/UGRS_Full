@@ -41,6 +41,8 @@ namespace UGRS.Core.SDK.DI.Machinery.DAO
                             Type = int.Parse(lObjRecordset.Fields.Item("U_MQ_TipoCont").Value.ToString()),
                             Import = double.Parse(lObjRecordset.Fields.Item("Total").Value.ToString()),
                             CardName = lObjRecordset.Fields.Item("CardName").Value.ToString(),
+                            MunicipalityCode = lObjRecordset.Fields.Item("MunicipalityId").Value.ToString(),
+                            Municipality = lObjRecordset.Fields.Item("Municipality").Value.ToString(),
                         };
 
                         lLstContractsDTO.Add(lObjContractsDTO);
@@ -88,6 +90,8 @@ namespace UGRS.Core.SDK.DI.Machinery.DAO
                             Type = int.Parse(lObjRecordset.Fields.Item("U_MQ_TipoCont").Value.ToString()),
                             Import = double.Parse(lObjRecordset.Fields.Item("Total").Value.ToString()),
                             CardName = lObjRecordset.Fields.Item("CardName").Value.ToString(),
+                            MunicipalityCode = lObjRecordset.Fields.Item("MunicipalityId").Value.ToString(),
+                            Municipality = lObjRecordset.Fields.Item("Municipality").Value.ToString(),
                         };
 
                         lLstContractsDTO.Add(lObjContractsDTO);
@@ -133,6 +137,8 @@ namespace UGRS.Core.SDK.DI.Machinery.DAO
                             Type = int.Parse(lObjRecordset.Fields.Item("U_MQ_TipoCont").Value.ToString()),
                             Import = double.Parse(lObjRecordset.Fields.Item("Total").Value.ToString()),
                             CardName = lObjRecordset.Fields.Item("CardName").Value.ToString(),
+                            MunicipalityCode = lObjRecordset.Fields.Item("MunicipalityId").Value.ToString(),
+                            Municipality = lObjRecordset.Fields.Item("Municipality").Value.ToString(),
                         };
 
                         lObjRecordset.MoveNext();
@@ -258,7 +264,7 @@ namespace UGRS.Core.SDK.DI.Machinery.DAO
             return lBolResult;
         }
 
-        public List<ContractsFiltersDTO> GetContracts(string pStrContract, string pStrClient, string pStrStatus, string pStrStartDate, string pStrEndDate)
+        public List<ContractsFiltersDTO> GetContracts(string pStrContract, string pStrClient, string pStrStatus, string pStrStartDate, string pStrEndDate, string pStrMunicipality)
         {
             List<ContractsFiltersDTO> lLstContractsFiltersDTO = new List<ContractsFiltersDTO>();
             Recordset lObjRecordset = null;
@@ -273,6 +279,7 @@ namespace UGRS.Core.SDK.DI.Machinery.DAO
                 lLstStrParameters.Add("Status", pStrStatus);
                 lLstStrParameters.Add("StartDate", pStrStartDate);
                 lLstStrParameters.Add("EndDate", pStrEndDate);
+                lLstStrParameters.Add("Municipality", pStrMunicipality);
                 
                 string lStrQuery = this.GetSQL("SearchRiseContracts").Inject(lLstStrParameters);
 
@@ -294,6 +301,8 @@ namespace UGRS.Core.SDK.DI.Machinery.DAO
                             RealHrs = double.Parse(lObjRecordset.Fields.Item("RealHrs").Value.ToString()),
                             Difference = double.Parse(lObjRecordset.Fields.Item("Difference").Value.ToString()),
                             Status = int.Parse(lObjRecordset.Fields.Item("Close").Value.ToString()),
+                            MunicipalityCode = lObjRecordset.Fields.Item("MunicipalityId").Value.ToString(),
+                            Municipality = lObjRecordset.Fields.Item("Municipality").Value.ToString(),
                         };
 
                         lLstContractsFiltersDTO.Add(lObjContracts);
