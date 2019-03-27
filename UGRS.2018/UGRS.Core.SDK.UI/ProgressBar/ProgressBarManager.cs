@@ -136,8 +136,11 @@ namespace UGRS.Core.SDK.UI.ProgressBar
         {
             try
             {
-                MemoryUtility.ReleaseComObject(this.mObjProgressBar);
-                this.mObjProgressBar = (SAPbouiCOM.ProgressBar)null;
+                if (mObjProgressBar != null)
+                {
+                    MemoryUtility.ReleaseComObject(this.mObjProgressBar);
+                    this.mObjProgressBar = (SAPbouiCOM.ProgressBar)null;
+                }
             }
             catch
             {

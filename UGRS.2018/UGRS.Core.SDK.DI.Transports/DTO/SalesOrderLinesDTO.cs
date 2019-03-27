@@ -12,6 +12,8 @@ namespace UGRS.Core.SDK.DI.Transports.DTO
        public string Description { get; set; }
        public int Quantity { get; set; }
        public float UnitPrice { get;set;}
+       public float Tax { get; set; }
+       public float TaxWT { get; set; }
        public string PayloadType { get; set; }
        public string VehicleType { get; set; }
        public string Folio { get; set; }
@@ -34,6 +36,9 @@ namespace UGRS.Core.SDK.DI.Transports.DTO
        public string MDestination { get; set; }
        public string Destination { get; set; }
        public bool Shared { get; set; }
+       public string Varios { get; set; }
+       public string Heads { get; set; }
+       public string Bags { get; set; }
 
     }
 }

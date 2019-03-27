@@ -58,14 +58,14 @@ namespace UGRS.AddOn.FoodProduction.UI.Matriz
 
         private void lObjMatrix_ValidateAfter(object sboObject, SBOItemEventArg pVal)
         {
-            int i = 0;
+           // int i = 0;
           
         }
 
         private void lObjMatrix_ValidateBefore(object sboObject, SBOItemEventArg pVal, out bool BubbleEvent)
         {
             BubbleEvent = true;
-            int i = 0;
+          //  int i = 0;
         }
 
         //Carga los datos al data source de la matriz

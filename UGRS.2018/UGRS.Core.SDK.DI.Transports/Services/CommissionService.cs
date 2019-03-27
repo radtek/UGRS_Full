@@ -26,6 +26,10 @@ namespace UGRS.Core.SDK.DI.Transports.Services
             return mObjCommissionDAO.GetComissionsDrivers(pStrDateStart, pStrDateEnd);
         }
 
+        public List<CommissionDriverDTO> GetCommissionDriverSaved(string pStrCommissionId)
+        {
+            return mObjCommissionDAO.GetComissionsDriverSaved(pStrCommissionId);
+        }
         public List<CommissionDTO> GetCommission(string pStrDriverId, string pStrDateStart, string pStrDateEnd)
         {
             return mObjCommissionDAO.GetComission(pStrDriverId, pStrDateStart, pStrDateEnd);
@@ -46,6 +50,11 @@ namespace UGRS.Core.SDK.DI.Transports.Services
             return mObjCommissionDAO.GetAuthorizers(pStrConfigName);
         }
 
+        public string GetAccountConfig(string pStrAccountConfig)
+        {
+            return mObjCommissionDAO.GetAccountConfig(pStrAccountConfig);
+        }
+
         public string GetUSerAuthorization(string pStrUser)
         {
             return mObjCommissionDAO.GetUserAuthorization(pStrUser);
@@ -54,6 +63,40 @@ namespace UGRS.Core.SDK.DI.Transports.Services
         public IList<Commissions> GetCommissionByFolio(string pStrFolio)
         {
             return mObjCommissionDAO.GetCommissionsByFolio(pStrFolio);
+        }
+
+        public Commissions GetCommission(string pStrFolio)
+        {
+            return mObjCommissionDAO.GetCommission(pStrFolio);
+        }
+        public IList<Commissions> GetCommissionByRowCode(string pStrCode)
+        {
+            return mObjCommissionDAO.GetCommissionsByRowCode(pStrCode);
+        }
+
+        public List<CommissionDebtDTO> GetCommissionDebtDTO(string pStrFolio, string pStrAccount, string pStrTypeAux, string pStrAux)
+        {
+            return mObjCommissionDAO.GetCommissionDebt(pStrFolio, pStrAccount, pStrTypeAux, pStrAux);
+        }
+
+        public List<CommissionDriverDTO> GetListDrivers()
+        {
+            return mObjCommissionDAO.GetListDrivers();
+        }
+
+        public IList<CommissionLine> GetCommissionLine(string pStrFolio)
+        {
+            return mObjCommissionDAO.GetCommissionLine(pStrFolio);
+        }
+
+        public SalesOrderLinesDTO SalesOrdeLines(string pStrFolio, string pStrTicket)
+        {
+            return mObjCommissionDAO.GetSalesOrderLinesDTO(pStrFolio, pStrTicket);
+        }
+
+        public string GetAsset(string pStrOcrName)
+        {
+            return mObjCommissionDAO.GetAsset(pStrOcrName);
         }
     }
 }

@@ -101,7 +101,7 @@ namespace UGRS.Core.SDK.DI.Purchases.DAO
                 ImpSob = y.First().ImpSob + y.First().MQ_Credit,
                 ImpComp = y.First().ImpComp,
                 ImpFalt = y.First().ImpFalt + y.First().MQ_Debit,
-                SaldoPen = (y.Sum(s => s.ImpSol) + y.First().MQ_Credit) - y.First().ImpComp + (y.First().ImpFalt + y.First().MQ_Debit) - y.First().ImpSob
+                SaldoPen = (y.Sum(s => s.ImpSol) - y.First().ImpComp + (y.First().ImpFalt + y.First().MQ_Debit) - y.First().ImpSob - y.First().MQ_Credit)
             }).ToList();
 
             foreach (PaymentDTO lObjPayDTO in lLstpaymentDTO)

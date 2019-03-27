@@ -1,6 +1,6 @@
 --Activos fijos
 Select T0.PrcCode, T1.FrgnName, t2.OcrCode from OPRC T0 with (Nolock)
-inner join OITM T1 with (Nolock) on T0.PrcCode = t1.ItemCode
+inner join OITM  T1 with (Nolock) on T0.PrcCode = t1.ItemCode
 inner join (
    select a0.OcrCode, a0.ItemCode from ITM6 A0 with (Nolock)
    inner join ( select max(linenum) Linenum, itemcode from ITM6 with (Nolock) group by itemcode) A1 

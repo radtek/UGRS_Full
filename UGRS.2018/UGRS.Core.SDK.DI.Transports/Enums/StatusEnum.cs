@@ -9,6 +9,8 @@ namespace UGRS.Core.SDK.DI.Transports.Enums
        [Description("Cerrado")]
        CLOSED = 2,
        [Description("Cancelado")]
-       CANCELED = 3
+       CANCELED = 3,
+        [Description("Rechazado")]
+       REJECT = 4
     }
 }

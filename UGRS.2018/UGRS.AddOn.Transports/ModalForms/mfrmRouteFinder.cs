@@ -1,12 +1,10 @@
 ﻿using SAPbouiCOM.Framework;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UGRS.Core.SDK.DI.Transports;
 using UGRS.Core.SDK.DI.Transports.DTO;
 using UGRS.Core.SDK.DI.Transports.Utility;
+using UGRS.Core.SDK.UI;
+using UGRS.Core.Services;
 using UGRS.Core.Utility;
 
 namespace UGRS.AddOn.Transports.ModalForms
@@ -15,7 +13,7 @@ namespace UGRS.AddOn.Transports.ModalForms
     {
         #region SAP items
         SAPbouiCOM.Form lObjModalForm;
-        SAPbouiCOM.EditText lObjTxtRouteName;
+        //SAPbouiCOM.EditText lObjTxtRouteName;
         SAPbouiCOM.EditText lObjTxtOrign;
         SAPbouiCOM.EditText lObjTxtMOrign;
         SAPbouiCOM.EditText lObjTxtDestiny;
@@ -33,8 +31,8 @@ namespace UGRS.AddOn.Transports.ModalForms
         Utils lObjUtility = new Utils();
 
         #region Attributes
-        public int pIntRow = 0;
-        public int pIntCode = 0;
+        public int mIntRow = 0;
+        public int mIntCode = 0;
         public string mStrFrmName = string.Empty;
 
         public SalesOrderLinesDTO pRoutes = null;
@@ -54,7 +52,17 @@ namespace UGRS.AddOn.Transports.ModalForms
         private void lObjBtnSearch_ClickBefore(object sboObjct, SAPbouiCOM.SBOItemEventArg pVal, out bool BubbleEvent)
         {
             BubbleEvent = true;
-            SearchByFilters();
+            try
+            {
+                SearchByFilters();
+            }
+            catch (Exception ex)
+            {
+                LogService.WriteError(ex.Message);
+                LogService.WriteError(ex);
+                UIApplication.ShowMessageBox(ex.Message);
+            }
+          
         }
 
         //private void lObjBtnSelect_ClickBefore(object sboObjct, SAPbouiCOM.SBOItemEventArg pVal, out bool BubbleEvent)
@@ -65,7 +73,18 @@ namespace UGRS.AddOn.Transports.ModalForms
         private void lObjBtnCancel_ClickBefore(object sboObjct, SAPbouiCOM.SBOItemEventArg pVal, out bool BubbleEvent)
         {
             BubbleEvent = true;
-            CloseForm();
+            try
+            {
+                CloseForm();
+            }
+
+            catch (Exception ex)
+            {
+                LogService.WriteError(ex.Message);
+                LogService.WriteError(ex);
+                UIApplication.ShowMessageBox(ex.Message);
+            }
+           
         }
 
         private void lObjBtnNew_ClickBefore(object sboObjct, SAPbouiCOM.SBOItemEventArg pVal, out bool BubbleEvent)
@@ -76,19 +95,29 @@ namespace UGRS.AddOn.Transports.ModalForms
         private void pObjMtxRoutes_ClickBefore(object sboObject, SAPbouiCOM.SBOItemEventArg pVal, out bool BubbleEvent)
         {
             BubbleEvent = true;
-            if (pVal.Row > 0)
+            try
             {
-                SetRoutes(pVal.Row);
-                pObjMtxRoutes.SelectRow(pVal.Row, true, false);
-                //pIntCode = (int)(lObjDtRoutes.Columns.Item("Code").Cells.Item(pVal.Row - 1).Value);
-                //pIntRow = pVal.Row;
+                if (pVal.Row > 0)
+                {
+                    SetRoutes(pVal.Row);
+                    pObjMtxRoutes.SelectRow(pVal.Row, true, false);
+                    //pIntCode = (int)(lObjDtRoutes.Columns.Item("Code").Cells.Item(pVal.Row - 1).Value);
+                    //pIntRow = pVal.Row;
+                }
+                else
+                {
+                    pRoutes = null;
+                    //pIntCode = 0;
+                    //pIntRow = 0;
+                }
             }
-            else
+            catch (Exception ex)
             {
-                pRoutes = null;
-                //pIntCode = 0;
-                //pIntRow = 0;
+                LogService.WriteError(ex.Message);
+                LogService.WriteError(ex);
+                UIApplication.ShowMessageBox(ex.Message);
             }
+           
         }
 
         private void SetRoutes(int pIntRow)
@@ -139,8 +168,11 @@ namespace UGRS.AddOn.Transports.ModalForms
                 }
             }
             catch (Exception ex)
-            {
+            { 
+                LogService.WriteError(ex.Message);
+                LogService.WriteError(ex);
                 SAPbouiCOM.Framework.Application.SBO_Application.MessageBox(string.Format("ItemEventException: {0}", ex.Message));
+              
             }
         }
 

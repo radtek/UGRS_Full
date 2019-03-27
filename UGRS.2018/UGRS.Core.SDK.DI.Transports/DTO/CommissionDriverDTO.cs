@@ -1,9 +1,12 @@
 ﻿
+using System.Collections.Generic;
+using System;
 namespace UGRS.Core.SDK.DI.Transports.DTO
 {
     public class CommissionDriverDTO
     {
 
+        
         /// <summary>
         /// Chofer
         /// </summary>
@@ -54,8 +57,17 @@ namespace UGRS.Core.SDK.DI.Transports.DTO
         /// </summary>
         public double Doubt { get; set; }
 
-        public string DocEntry { get; set; }
 
-
+        public string Type { get; set; }
+        public string Id { get; set; }
+        public DateTime DocDate { get; set; }
+        public List<CommissionDebtDTO> ListDebt { get; set; }
+        public string Folio { get; set; }
+        public string ItemName { get; set; }
+        public string Route { get; set; }
+        public string AF { get; set; }
+        public string TypLoad { get; set; }
+        public string DocNum { get; set; }
+        public bool NoGenerate { get; set; }
     }
 }

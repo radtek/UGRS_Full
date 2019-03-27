@@ -4,42 +4,29 @@
  * Date: 29/08/2018 
  */
 
-using System;
-using UGRS.Core;
-using UGRS.Core.SDK;
-using UGRS.Core.SDK.DI;
-using UGRS.Core.SDK.UI;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using UGRS.Core.SDK.DI;
 using UGRS.Core.SDK.DI.Corrals.DAO;
-using UGRS.Core.SDK.DI.Corrals.DTO;
-using UGRS.Core.SDK.DI.Corrals.Services;
-using System.Threading.Tasks;
-using SAPbobsCOM;
-using SAPbouiCOM;
-using SAPbouiCOM.Framework; 
 
 
-//Test github amartinez
 namespace UGRS.Tests {
-    
 
     [TestClass]
     public class CorralsTests {
 
         [TestMethod]
-        public void Test() {
+        public void GetInvoicesPendingTest() {
 
-            DIApplication.DIConnect((SAPbobsCOM.Company)SAPbouiCOM.Framework.Application.SBO_Application.Company.GetDICompany());
+            var distributionDAO = new DistributionDAO();
+            var massInvoicingDAO = new MassInvoicingDAO();
+            var transferDAO = new TransferDAO();
+
+            DIApplication.DIConnect((SAPbobsCOM.Company)UGRSap.GetCompany());
+            var results = massInvoicingDAO.GetInvoicesPending("N");
+            Assert.IsTrue(results.Count > 0);
 
 
-            
-       
-            
-         
         }
-
-     
-
-
     }
 }
+

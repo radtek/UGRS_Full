@@ -31,7 +31,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>UGRS.AddOn.Purchases.Program</StartupObject>
+    <StartupObject>
+    </StartupObject>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -136,7 +137,6 @@
     <Compile Include="Forms\frmSearchRefunds.b1f.cs">
       <DependentUpon>frmSearchRefunds.b1f</DependentUpon>
     </Compile>
-    <Compile Include="Model\PacConfig.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Menu.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -146,7 +146,6 @@
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
     <Compile Include="Services\ReadXMLService.cs" />
-    <Compile Include="TimbradoSoap33.cs" />
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
@@ -251,6 +250,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="BO\" />
+    <Folder Include="Model\" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

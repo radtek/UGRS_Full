@@ -581,12 +581,9 @@ namespace UGRS.AddOn.FoodProduction.Forms
 							cboTypTic.Item.Enabled = true;
 							mBolIsUpdate = false;
 							mStrSource = "RDR1";
-						  
-
 							break;
 
 						case "1288": // Next Record
-
 							lIntFolio = Convert.ToInt32(txtFolio.Value) + 1;
 							if (lIntFolio > (GetLastTicket() - 1))
 							{
@@ -1503,62 +1500,66 @@ namespace UGRS.AddOn.FoodProduction.Forms
 		}
 
 
-		private List<string> GetListToPrint(Ticket pObjTicket, List<TicketDetail> pLstTicketDetail)
-		{
-			List<string> lLstLine = new List<string>();
-			lLstLine.Add("Folio: " + pObjTicket.Folio);
-			lLstLine.Add("UNION GANADERA REGIONAL DE SONORA");
-			lLstLine.Add("Código: " + pObjTicket.BPCode);
-			lLstLine.Add("Cliente: " + mObjTicketServices.SearchBPName(pObjTicket.BPCode));
-			lLstLine.Add("Chofer: " + pObjTicket.Driver);
-			lLstLine.Add("Placas: " + pObjTicket.CarTag);
+        private List<string> GetListToPrint(Ticket pObjTicket, List<TicketDetail> pLstTicketDetail)
+        {
+            List<string> lLstLine = new List<string>();
+            lLstLine.Add("Folio: " + pObjTicket.Folio);
+            lLstLine.Add("UNION GANADERA REGIONAL DE SONORA");
+            lLstLine.Add("Código: " + pObjTicket.BPCode);
+            lLstLine.Add("Cliente: " + mObjTicketServices.SearchBPName(pObjTicket.BPCode));
+            lLstLine.Add("Chofer: " + pObjTicket.Driver);
+            lLstLine.Add("Placas: " + pObjTicket.CarTag);
             DateTime lDtmDateEntry = mObjTicketServices.GetDateTime(pObjTicket.EntryDate, pLstTicketDetail[0].EntryTime.ToString());
-                lLstLine.Add("Fecha: " + lDtmDateEntry.ToString("dd/MM/yyyy HH:mm"));
-                lLstLine.Add("Peso Inicial: " + pObjTicket.InputWT);
+            lLstLine.Add("Fecha: " + lDtmDateEntry.ToString("dd/MM/yyyy HH:mm"));
+            // lLstLine.Add("Peso Inicial: " + pObjTicket.InputWT);
 
+            int i = 0;
             foreach (TicketDetail lObjTicketDetail in pLstTicketDetail)
             {
+                i++;
                 if ((!string.IsNullOrEmpty(lObjTicketDetail.FirstWT.ToString()) && lObjTicketDetail.FirstWT > 0) || (!string.IsNullOrEmpty(lObjTicketDetail.netWeight.ToString()) && lObjTicketDetail.netWeight > 0) || lObjTicketDetail.WeighingM == 1)
                 {
                     //lLstLine.Add("Cod. Prod: " + lObjTicketDetail.Item);
-                    lLstLine.Add("Prod: " + mObjTicketServices.SearchItemName(lObjTicketDetail.Item));
+                    lLstLine.Add(i.ToString("00") + " Prod: " + mObjTicketServices.SearchItemName(lObjTicketDetail.Item));
                 }
+
+            }
+
+            int j = 0;
+            foreach (TicketDetail lObjTicketDetail in pLstTicketDetail)
+            {
+                j++;
                 if (!string.IsNullOrEmpty(lObjTicketDetail.FirstWT.ToString()) && lObjTicketDetail.FirstWT > 0)
                 {
-                    lLstLine.Add("Peso Ent: " + lObjTicketDetail.FirstWT);
+                    lLstLine.Add(j.ToString("00") + " Peso Ent: " + lObjTicketDetail.FirstWT);
                 }
                 if (!string.IsNullOrEmpty(lObjTicketDetail.SecondWT.ToString()) && lObjTicketDetail.SecondWT > 0)
                 {
-                    lLstLine.Add("Peso Sal: " + lObjTicketDetail.SecondWT);
+                    lLstLine.Add(j.ToString("00") + " Peso Sal: " + lObjTicketDetail.SecondWT);
                 }
                 if (!string.IsNullOrEmpty(lObjTicketDetail.netWeight.ToString()) && lObjTicketDetail.netWeight > 0)
                 {
-                    lLstLine.Add("Peso Neto: " + lObjTicketDetail.netWeight);
+                    lLstLine.Add(j.ToString("00") + " Peso Neto: " + lObjTicketDetail.netWeight);
                 }
+            }
 
-                //if ((!string.IsNullOrEmpty(lObjTicketDetail.FirstWT.ToString()) && lObjTicketDetail.FirstWT > 0) || (!string.IsNullOrEmpty(lObjTicketDetail.netWeight.ToString()) && lObjTicketDetail.netWeight > 0) || lObjTicketDetail.WeighingM == 1)
-                //{
-                //    lLstLine.Add("");
-                //}
-            }
-           
-            if (!string.IsNullOrEmpty(pObjTicket.OutputWT.ToString()) && pObjTicket.OutputWT > 0)
-            {
-                lLstLine.Add("Peso salida: " + pObjTicket.OutputWT.ToString());
-            }
+            //if (!string.IsNullOrEmpty(pObjTicket.OutputWT.ToString()) && pObjTicket.OutputWT > 0)
+            //{
+            //    lLstLine.Add("Peso salida: " + pObjTicket.OutputWT.ToString());
+            //}
 
             if ((pObjTicket.Status == (int)TicketEnum.TicketStatus.Pending || pObjTicket.Status == (int)TicketEnum.TicketStatus.Close))
-				{
-                    DateTime lDtmDateOutput = mObjTicketServices.GetDateTime(pObjTicket.OutputDate, pLstTicketDetail[pLstTicketDetail.Count -1].OutputTime.ToString());
-					lLstLine.Add("Fecha cierre: " + lDtmDateEntry.ToString("dd/MM/yyyy HH:mm"));
-				}
-			//if (!string.IsNullOrEmpty(lObjTicket.OutputWT.ToString()) && lObjTicket.OutputWT > 0)
-			//{
-			//  //  lLstLine.Add("Peso Final: " + lObjTicket.OutputWT);
-			//}
-			//mObjTicketServices.print(pObjTicket, pLstTicketDetail);
-			return lLstLine;
-		}
+            {
+                DateTime lDtmDateOutput = mObjTicketServices.GetDateTime(pObjTicket.OutputDate, pLstTicketDetail[pLstTicketDetail.Count - 1].OutputTime.ToString());
+                lLstLine.Add("Fecha cierre: " + lDtmDateEntry.ToString("dd/MM/yyyy HH:mm"));
+            }
+            //if (!string.IsNullOrEmpty(lObjTicket.OutputWT.ToString()) && lObjTicket.OutputWT > 0)
+            //{
+            //  //  lLstLine.Add("Peso Final: " + lObjTicket.OutputWT);
+            //}
+            //mObjTicketServices.print(pObjTicket, pLstTicketDetail);
+            return lLstLine;
+        }
 
 		private void PrintTicketPort(List<string> pLstLine)
 		{
