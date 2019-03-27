@@ -8,8 +8,6 @@ using UGRS.Core.SDK.DI;
 using UGRS.Core.SDK.DI.Transports;
 using UGRS.Core.SDK.DI.Transports.DTO;
 using UGRS.Core.SDK.DI.Transports.Utility;
-using UGRS.Core.SDK.UI;
-using UGRS.Core.Services;
 using UGRS.Core.Utility;
 
 namespace UGRS.AddOn.Transports.ModalForms
@@ -36,7 +34,7 @@ namespace UGRS.AddOn.Transports.ModalForms
         private string mStrCardCode = string.Empty;
         public string mStrCFLType = string.Empty;
         public string mStrFrmName = string.Empty;
-        public int mIntRow = 0;
+        public int pIntRow = 0;
 
         #endregion
 
@@ -67,55 +65,25 @@ namespace UGRS.AddOn.Transports.ModalForms
         private void lObjBtnCancel_ClickBefore(object sboObject, SAPbouiCOM.SBOItemEventArg pVal, out bool BubbleEvent)
         {
             BubbleEvent = true;
-            try
-            {
-                CloseForm();
-            }
-            catch (Exception ex)
-            {
-                LogService.WriteError(ex.Message);
-                LogService.WriteError(ex);
-                UIApplication.ShowMessageBox(ex.Message);
-            }
-            
+            CloseForm();
         }
 
 
         private void lObjBtnSearch_ClickBefore(object sboObject, SAPbouiCOM.SBOItemEventArg pVal, out bool BubbleEvent)
         {
             BubbleEvent = true;
-            try
-            {
-                SelectMtxDataSource(lObjTxtSearch.Value);
-            }
-            catch (Exception ex)
-            {
-                LogService.WriteError(ex.Message);
-                LogService.WriteError(ex);
-                UIApplication.ShowMessageBox(ex.Message);
-            }
-          
+            SelectMtxDataSource(lObjTxtSearch.Value);
         }
 
 
         private void pObjMtxCFL_ClickBefore(object sboObject, SAPbouiCOM.SBOItemEventArg pVal, out bool BubbleEvent)
         {
             BubbleEvent = true;
-            try
+            if (pVal.Row > 0)
             {
-                if (pVal.Row > 0)
-                {
-                    mIntRow = pVal.Row > 0 ? pVal.Row : 0;
-                    pObjMtxCFL.SelectRow(pVal.Row, true, false);
-                }
+                pIntRow = pVal.Row > 0 ? pVal.Row : 0;
+                pObjMtxCFL.SelectRow(pVal.Row, true, false);
             }
-            catch (Exception ex)
-            {
-                LogService.WriteError(ex.Message);
-                LogService.WriteError(ex);
-                UIApplication.ShowMessageBox(ex.Message);
-            }
-           
         }
         #endregion
 
@@ -164,7 +132,6 @@ namespace UGRS.AddOn.Transports.ModalForms
             SetItems();
             InitializeEvents();
             SelectMtxDataSource();
-
             lObjCFLModalForm.Freeze(false);
         }
 
@@ -192,17 +159,10 @@ namespace UGRS.AddOn.Transports.ModalForms
                     SetCFLFolios();
                     break;
             }
-
-            if (pObjMtxCFL.RowCount > 0)
-            {
-                mIntRow = 1;
-                pObjMtxCFL.SelectRow(1, true, false);
-            }
         }
 
         private void SetCFLFolios()
         {
-            string ss = mObjTransportFactory.GetCFLService().GetCFLFoliosQuery();
             lObjCFLModalForm.DataSources.DataTables.Item("DsItems").ExecuteQuery(mObjTransportFactory.GetCFLService().GetCFLFoliosQuery());
             LoadFoliosMatrix();
         }
@@ -262,8 +222,6 @@ namespace UGRS.AddOn.Transports.ModalForms
 
             pObjMtxCFL.LoadFromDataSource();
             pObjMtxCFL.AutoResizeColumns();
-
-            
         }
 
         private void LoadFoliosMatrix()
@@ -407,7 +365,6 @@ namespace UGRS.AddOn.Transports.ModalForms
             lObjBtnCancel.ClickBefore += new SAPbouiCOM._IButtonEvents_ClickBeforeEventHandler(this.lObjBtnCancel_ClickBefore);
             lObjBtnSearch.ClickBefore += new SAPbouiCOM._IButtonEvents_ClickBeforeEventHandler(this.lObjBtnSearch_ClickBefore);
             pObjMtxCFL.ClickBefore += new SAPbouiCOM._IMatrixEvents_ClickBeforeEventHandler(this.pObjMtxCFL_ClickBefore);
-
         }
 
         public void UnloadEvents()

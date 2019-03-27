@@ -4,7 +4,6 @@ using System.Text;
 using SAPbouiCOM.Framework;
 using UGRS.Core.Utility;
 using UGRS.Core.SDK.DI.Transports.DTO;
-using UGRS.AddOn.Transports.Forms;
 
 namespace UGRS.AddOn.Transports
 {
@@ -16,7 +15,7 @@ namespace UGRS.AddOn.Transports
         {
             SAPbouiCOM.Menus oMenus = null;
             SAPbouiCOM.MenuItem oMenuItem = null;
-
+    
 
             oMenus = Application.SBO_Application.Menus;
 
@@ -39,7 +38,7 @@ namespace UGRS.AddOn.Transports
                 //  If the manu already exists this code will fail
                 oMenus.AddEx(oCreationPackage);
             }
-            catch (Exception )
+            catch (Exception e)
             {
 
             }
@@ -62,14 +61,8 @@ namespace UGRS.AddOn.Transports
                 oCreationPackage.UniqueID = "UGRS.AddOn.Transports.Forms.frmCommissions";
                 oCreationPackage.String = "Comisiones";
                 oMenus.AddEx(oCreationPackage);
-
-                // Create s sub menu
-                oCreationPackage.Type = SAPbouiCOM.BoMenuType.mt_STRING;
-                oCreationPackage.UniqueID = "UGRS.AddOn.Transports.Forms.frmDriversCommissions";
-                oCreationPackage.String = "Pago choferes";
-                oMenus.AddEx(oCreationPackage);
             }
-            catch (Exception )
+            catch (Exception er)
             { //  Menu already exists
                 Application.SBO_Application.SetStatusBarMessage("Menu Already Exists", SAPbouiCOM.BoMessageTime.bmt_Short, true);
             }
@@ -103,15 +96,6 @@ namespace UGRS.AddOn.Transports
                         lObjActiveForm.Show();
                     }
                 }
-
-                if (pVal.BeforeAction && pVal.MenuUID == "UGRS.AddOn.Transports.Forms.frmDriversCommissions")
-                {
-                    //SetInternalParameters();
-                    frmDriversCommissions lObjActiveForm = new frmDriversCommissions();
-                    lObjActiveForm.UIAPIRawForm.Left = 500;
-                    lObjActiveForm.UIAPIRawForm.Top = 10;
-                    lObjActiveForm.Show();
-                }
             }
             catch (Exception ex)
             {
@@ -136,15 +120,8 @@ namespace UGRS.AddOn.Transports
         {
             try
             {
-                if (Application.SBO_Application.Forms.Item(pStrUniqueId).Visible == true)
-                {
-                    return true;
-                }
-                else
-                {
-                    Application.SBO_Application.Forms.Item(pStrUniqueId).Close();
-                    return false;
-                }
+                Application.SBO_Application.Forms.Item(pStrUniqueId);
+                return true;
             }
             catch (Exception)
             {

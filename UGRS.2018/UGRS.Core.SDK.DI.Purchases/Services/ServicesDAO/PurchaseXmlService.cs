@@ -58,10 +58,5 @@ namespace UGRS.Core.SDK.DI.Purchases.Services.ServicesDAO
         {
             return lObjPurchaseXml.GetRiseAF(pStrRiseId);
         }
-
-        public PacConfigDTO GetConfigurationPac() {
-
-            return lObjPurchaseXml.GetConfigurationPac();
-        }
     }
 }

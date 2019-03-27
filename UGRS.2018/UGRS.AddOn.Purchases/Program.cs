@@ -5,9 +5,6 @@ using UGRS.Core.SDK.UI;
 using UGRS.Core.SDK.DI.Purchases;
 using UGRS.Core.Services;
 using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
-using servTim = UGRS.AddOn.Purchases.TimbradoSoap33Prodigia;
 
 namespace UGRS.AddOn.Purchases
 {
@@ -32,19 +29,20 @@ namespace UGRS.AddOn.Purchases
                 }
                 LogService.Filename("AddOnCompras");
                
+                
+                
                 Menu MyMenu = new Menu();
                 MyMenu.AddMenuItems();
                 oApp.RegisterMenuEventHandler(MyMenu.SBO_Application_MenuEvent);
                 DIApplication.DIConnect((SAPbobsCOM.Company)Application.SBO_Application.Company.GetDICompany());
                 Application.SBO_Application.AppEvent += new SAPbouiCOM._IApplicationEvents_AppEventEventHandler(SBO_Application_AppEvent);
                 //TestXML();
-
                 //Initialize Tables 
                 UIApplication.ShowSuccess(string.Format("Inicializar las tablas"));
                 PurchasesServiceFactory lObjFoodProductionFactory = new PurchasesServiceFactory();
                 lObjFoodProductionFactory.GetSetupService().InitializeTables();
-               UIApplication.ShowSuccess(string.Format("AddonCompras 1.2.64 iniciado correctamente"));
-                LogService.WriteSuccess(string.Format("AddonCompras 1.2.64 iniciado correctamente"));
+               UIApplication.ShowSuccess(string.Format("AddonCompras 1.2.59 iniciado correctamente"));
+                LogService.WriteSuccess(string.Format("AddonCompras 1.2.59 iniciado correctamente"));
                 oApp.Run();
               
                
@@ -56,17 +54,16 @@ namespace UGRS.AddOn.Purchases
             }
         }
 
-        static void TestXML()
+        /*static void TestXML()
         {
-
-            string lStrUri = @"C:\Users\ssandoval\Desktop\Qualisys Saul\PROJECTS\Union Ganadera\Compras\XML Enero- Feb";
+            string lStrUri = @"C:\Users\amartinez\Documents\Proyectos\UGRS\Compras\XML\XML Enero- Feb";
             DirectoryInfo d = new DirectoryInfo(lStrUri);//Assuming Test is your Folder
             FileInfo[] Files = d.GetFiles("*.xml"); //Getting Text files
             DateTime mDblTimeGEneral = DateTime.Now;
             int i = 0;
             int Correcto = 0;
             int incorrecto = 0;
-            foreach (FileInfo file in Files.Skip(1).Take(1))
+            foreach (FileInfo file in Files)
             {
                 DateTime mDblTime = DateTime.Now;
                 LogService.WriteInfo (i + " de " + Files.Length + "Leyendo archivo" + file.Name);
@@ -82,9 +79,6 @@ namespace UGRS.AddOn.Purchases
                 {
                     LogService.WriteSuccess("Lectura correcta");
                     Correcto++;
-                    servTim.PadeTimbradoServiceClient mObjTimbradorp = new  servTim.PadeTimbradoServiceClient();
-                    string lStrCFDI = mObjTimbradorp.cfdiPorUUID("1d3027c6-5c49-11e3-a2a4-109add4fad20", "factugrs", "A123456789$", "9E5B72AA-11F4-4E2E-BAF2-E4D83465784B");
-
                 }
 
                 LogService.WriteInfo("Correcto: " + Correcto + " Incorrecto: " + incorrecto);
@@ -92,10 +86,9 @@ namespace UGRS.AddOn.Purchases
                 LogService.WriteInfo(lTmsTime.Seconds + "." + lTmsTime.Milliseconds);
                 i++;
             }
-
             TimeSpan lTmsTimeGral = DateTime.Now - mDblTimeGEneral;
             LogService.WriteInfo(lTmsTimeGral.Seconds + "." + lTmsTimeGral.Milliseconds);
-        }
+        }*/
 
         static void SBO_Application_AppEvent(SAPbouiCOM.BoAppEventTypes EventType)
         {

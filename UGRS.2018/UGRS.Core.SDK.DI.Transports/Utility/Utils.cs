@@ -1,5 +1,9 @@
-﻿using SAPbouiCOM.Framework;
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using SAPbouiCOM.Framework;
 
 namespace UGRS.Core.SDK.DI.Transports.Utility
 {
@@ -7,19 +11,12 @@ namespace UGRS.Core.SDK.DI.Transports.Utility
     {
 
 
-        public bool FormExists(string pStrUniqueId)
+        public bool FormExists(string pStrFrmName)
         {
             try
             {
-                if (Application.SBO_Application.Forms.Item(pStrUniqueId).Visible == true)
-                {
-                    return true;
-                }
-                else
-                {
-                    Application.SBO_Application.Forms.Item(pStrUniqueId).Close();
-                    return false;
-                }
+                Application.SBO_Application.Forms.Item(pStrFrmName);
+                return true;
             }
             catch (Exception)
             {

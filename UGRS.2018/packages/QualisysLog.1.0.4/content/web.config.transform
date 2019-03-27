@@ -1,0 +1,9 @@
+﻿<configuration>
+  <appSettings>
+    <!-- LOG -->
+    <add key="ShowConsole" value="true" />
+    <add key="SaveEventLog" value="true" />
+    <add key="FullLog" value="true" />
+    <add key="LogName" value="App" />
+  </appSettings>
+</configuration>

@@ -1,1 +1,0 @@
-select (Rate / PrctBsAmnt) as Rate from OWHT where WTCode = 'FV' 

@@ -1,17 +1,22 @@
 ﻿using SAPbouiCOM;
+using SAPbouiCOM.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using SAPbouiCOM.Framework;
 using UGRS.Core.Extension.Enum;
+using UGRS.Core.SDK.UI;
 using UGRS.Core.Services;
+using SAPbouiCOM;
 using UGRS.Core.SDK.DI;
 using UGRS.Core.SDK.DI.Transports.Enums;
 using UGRS.Core.SDK.DI.Transports.DTO;
 using UGRS.Core.SDK.DI.Transports;
+using UGRS.AddOn.Transports.ModalForms;
 using UGRS.Core.SDK.DI.Transports.Tables;
 using UGRS.Core.SDK.DI.Transports.Utility;
 using UGRS.Core.Utility;
-using UGRS.Core.SDK.UI;
 
 namespace UGRS.AddOn.Transports.ModalForms
 {
@@ -45,7 +50,7 @@ namespace UGRS.AddOn.Transports.ModalForms
         SAPbouiCOM.EditText mObjTxtKmD;
         SAPbouiCOM.EditText mObjTxtKmE;
         SAPbouiCOM.EditText mObjTxtKmF;
-        //SAPbouiCOM.EditText mObjTxtHeads;
+        SAPbouiCOM.EditText mObjTxtHeads;
         SAPbouiCOM.EditText mObjTxtTotKG;
         SAPbouiCOM.EditText mObjTxtExtra;
         SAPbouiCOM.EditText mObjTxtAnthPyld;
@@ -272,29 +277,29 @@ namespace UGRS.AddOn.Transports.ModalForms
         private void SetRoutesTextsBoxes()
         {
             lObjTxtOrigin.Value = ((SAPbouiCOM.EditText)mModalFrmRouteFinder.pObjMtxRoutes.Columns.Item("cOrign")
-                        .Cells.Item(mModalFrmRouteFinder.mIntRow).Specific).Value.ToString();
+                        .Cells.Item(mModalFrmRouteFinder.pIntRow).Specific).Value.ToString();
 
             lObjMorign.Value = ((SAPbouiCOM.EditText)mModalFrmRouteFinder.pObjMtxRoutes.Columns.Item("cMOrgn")
-                        .Cells.Item(mModalFrmRouteFinder.mIntRow).Specific).Value.ToString();
+                        .Cells.Item(mModalFrmRouteFinder.pIntRow).Specific).Value.ToString();
 
             lObjMDest.Value = ((SAPbouiCOM.EditText)mModalFrmRouteFinder.pObjMtxRoutes.Columns.Item("cMDest")
-                        .Cells.Item(mModalFrmRouteFinder.mIntRow).Specific).Value.ToString();
+                        .Cells.Item(mModalFrmRouteFinder.pIntRow).Specific).Value.ToString();
 
             lObjTxtDestination.Value = ((SAPbouiCOM.EditText)mModalFrmRouteFinder.pObjMtxRoutes.Columns.Item("cDest")
-                        .Cells.Item(mModalFrmRouteFinder.mIntRow).Specific).Value.ToString();
+                        .Cells.Item(mModalFrmRouteFinder.pIntRow).Specific).Value.ToString();
 
             lObjTxtKmA.Value = ((SAPbouiCOM.EditText)mModalFrmRouteFinder.pObjMtxRoutes.Columns.Item("cKmA")
-                        .Cells.Item(mModalFrmRouteFinder.mIntRow).Specific).Value.ToString();
+                        .Cells.Item(mModalFrmRouteFinder.pIntRow).Specific).Value.ToString();
             lObjTxtKmB.Value = ((SAPbouiCOM.EditText)mModalFrmRouteFinder.pObjMtxRoutes.Columns.Item("cKmB")
-                        .Cells.Item(mModalFrmRouteFinder.mIntRow).Specific).Value.ToString();
+                        .Cells.Item(mModalFrmRouteFinder.pIntRow).Specific).Value.ToString();
             lObjTxtKmC.Value = ((SAPbouiCOM.EditText)mModalFrmRouteFinder.pObjMtxRoutes.Columns.Item("cKmC")
-                        .Cells.Item(mModalFrmRouteFinder.mIntRow).Specific).Value.ToString();
+                        .Cells.Item(mModalFrmRouteFinder.pIntRow).Specific).Value.ToString();
             lObjTxtKmD.Value = ((SAPbouiCOM.EditText)mModalFrmRouteFinder.pObjMtxRoutes.Columns.Item("cKmD")
-                        .Cells.Item(mModalFrmRouteFinder.mIntRow).Specific).Value.ToString();
+                        .Cells.Item(mModalFrmRouteFinder.pIntRow).Specific).Value.ToString();
             lObjTxtKmE.Value = ((SAPbouiCOM.EditText)mModalFrmRouteFinder.pObjMtxRoutes.Columns.Item("cKmE")
-                        .Cells.Item(mModalFrmRouteFinder.mIntRow).Specific).Value.ToString();
+                        .Cells.Item(mModalFrmRouteFinder.pIntRow).Specific).Value.ToString();
             lObjTxtKmF.Value = ((SAPbouiCOM.EditText)mModalFrmRouteFinder.pObjMtxRoutes.Columns.Item("cKmF")
-                        .Cells.Item(mModalFrmRouteFinder.mIntRow).Specific).Value.ToString();
+                        .Cells.Item(mModalFrmRouteFinder.pIntRow).Specific).Value.ToString();
 
             LoadConfig();
 
@@ -312,25 +317,25 @@ namespace UGRS.AddOn.Transports.ModalForms
             {
                 case "CFL_TownsA":
                     lObjMorign.Value = ((SAPbouiCOM.EditText)mModalFrmCFL.pObjMtxCFL.Columns.Item("cName")
-                        .Cells.Item(mModalFrmCFL.mIntRow).Specific).Value.ToString();
+                        .Cells.Item(mModalFrmCFL.pIntRow).Specific).Value.ToString();
                     break;
                 case "CFL_TownsB":
                     lObjMDest.Value = ((SAPbouiCOM.EditText)mModalFrmCFL.pObjMtxCFL.Columns.Item("cName")
-                        .Cells.Item(mModalFrmCFL.mIntRow).Specific).Value.ToString();
+                        .Cells.Item(mModalFrmCFL.pIntRow).Specific).Value.ToString();
                     break;
                 case "CFL_Items":
                     lObjTxtArticle.Value = ((SAPbouiCOM.EditText)mModalFrmCFL.pObjMtxCFL.Columns.Item("cName")
-                        .Cells.Item(mModalFrmCFL.mIntRow).Specific).Value.ToString();
+                        .Cells.Item(mModalFrmCFL.pIntRow).Specific).Value.ToString();
                     lObjTxtDesc.Value = ((SAPbouiCOM.EditText)mModalFrmCFL.pObjMtxCFL.Columns.Item("cDesc")
-                        .Cells.Item(mModalFrmCFL.mIntRow).Specific).Value.ToString();
+                        .Cells.Item(mModalFrmCFL.pIntRow).Specific).Value.ToString();
                     break;
                 case "CFL_AF":
                     lObjTxtEcNum.Value = ((SAPbouiCOM.EditText)mModalFrmCFL.pObjMtxCFL.Columns.Item("cItem")
-                        .Cells.Item(mModalFrmCFL.mIntRow).Specific).Value.ToString();
+                        .Cells.Item(mModalFrmCFL.pIntRow).Specific).Value.ToString();
                     break;
                 case "CFL_DR":
                     lObjTxtDriver.Value = ((SAPbouiCOM.EditText)mModalFrmCFL.pObjMtxCFL.Columns.Item("cName")
-                        .Cells.Item(mModalFrmCFL.mIntRow).Specific).Value.ToString();
+                        .Cells.Item(mModalFrmCFL.pIntRow).Specific).Value.ToString();
                     break;
             }
         }
@@ -639,6 +644,8 @@ namespace UGRS.AddOn.Transports.ModalForms
             BubbleEvent = true;
             try
             {
+
+
                 if (FormUID.Equals(mObjMFreights.UniqueID))
                 {
                     if (!pVal.BeforeAction)
@@ -678,7 +685,7 @@ namespace UGRS.AddOn.Transports.ModalForms
                         }
                     }
                 }
-                else if (mModalFrmCFL != null && FormUID.Equals(mModalFrmCFL.mStrFrmName) && mModalFrmCFL.mIntRow > 0)
+                else if (mModalFrmCFL != null && FormUID.Equals(mModalFrmCFL.mStrFrmName) && mModalFrmCFL.pIntRow > 0)
                 {
                     if (!pVal.BeforeAction)
                     {
@@ -694,7 +701,7 @@ namespace UGRS.AddOn.Transports.ModalForms
                         }
                     }
                 }
-                else if (mModalFrmRouteFinder != null && FormUID.Equals(mModalFrmRouteFinder.mStrFrmName) && mModalFrmRouteFinder.mIntRow > 0)
+                else if (mModalFrmRouteFinder != null && FormUID.Equals(mModalFrmRouteFinder.mStrFrmName) && mModalFrmRouteFinder.pIntRow > 0)
                 {
                     if (!pVal.BeforeAction)
                     {
@@ -706,7 +713,7 @@ namespace UGRS.AddOn.Transports.ModalForms
                                     SetRoutesTextsBoxes();
                                     mModalFrmRouteFinder.CloseForm();
                                     mBoolLoaded = true;
-                                    mIntActualRoute = mModalFrmRouteFinder.mIntCode;
+                                    mIntActualRoute = mModalFrmRouteFinder.pIntCode;
                                     lObjTxtDriver.Item.Click();
                                 }
                                 break;
@@ -717,8 +724,6 @@ namespace UGRS.AddOn.Transports.ModalForms
             }
             catch (Exception ex)
             {
-                LogService.WriteError(ex.Message);
-                LogService.WriteError(ex);
                 SAPbouiCOM.Framework.Application.SBO_Application.MessageBox(string.Format("ItemEventException: {0}", ex.Message));
             }
         }
@@ -726,165 +731,99 @@ namespace UGRS.AddOn.Transports.ModalForms
         private void lObjTxt_Validate(object sboObject, SBOItemEventArg pVal, out bool BubbleEvent)
         {
             BubbleEvent = true;
-            try
+
+            if (mBoolLoaded && mIntActualRoute == mModalFrmRouteFinder.pIntCode)
             {
-                if (mBoolLoaded && mIntActualRoute == mModalFrmRouteFinder.mIntCode)
+                if (pVal.ItemChanged)
                 {
-                    if (pVal.ItemChanged)
-                    {
-                        lObjBtnUpdate.Caption = "Actualizar";
-                        lObjBtnUpdate.Item.Enabled = true;
-                    }
-                }
-                else
-                {
-                    if (pVal.ItemChanged)
-                    {
-                        lObjBtnUpdate.Caption = "Nuevo";
-                        lObjBtnUpdate.Item.Enabled = true;
-                    }
+                    lObjBtnUpdate.Caption = "Actualizar";
+                    lObjBtnUpdate.Item.Enabled = true;
                 }
             }
-            catch (Exception ex)
+            else
             {
-                LogService.WriteError("JournalService (CreateAction): " + ex.Message);
-                LogService.WriteError(ex);
-                UIApplication.ShowMessageBox(string.Format("CreateAction: {0}", ex.Message));
+                if (pVal.ItemChanged)
+                {
+                    lObjBtnUpdate.Caption = "Nuevo";
+                    lObjBtnUpdate.Item.Enabled = true;
+                }
             }
+
+
         }
 
         private void lObjTxt_LostFocusAfter(object sboObject, SBOItemEventArg pVal)
         {
-            try
+            SAPbouiCOM.EditText lObjTxt = sboObject as SAPbouiCOM.EditText;
+            if (string.IsNullOrEmpty(lObjTxt.Value))
             {
-                SAPbouiCOM.EditText lObjTxt = sboObject as SAPbouiCOM.EditText;
-                if (string.IsNullOrEmpty(lObjTxt.Value))
-                {
-                    lObjTxt.Value = "0";
-                }
-                SetAmounts();
+                lObjTxt.Value = "0";
             }
-            catch (Exception ex)
-            {
-                LogService.WriteError("JournalService (CreateAction): " + ex.Message);
-                LogService.WriteError(ex);
-                UIApplication.ShowMessageBox(string.Format("CreateAction: {0}", ex.Message));
-            }
+            SetAmounts();
         }
 
         private void lObjCboShared_ComboSelectAfter(object sboObject, SBOItemEventArg pVal)
         {
-            try
+            if (!string.IsNullOrEmpty(lObjCboShared.Value) && (SharedEnum)Convert.ToInt32(lObjCboShared.Value) == SharedEnum.Yes)
             {
-                if (!string.IsNullOrEmpty(lObjCboShared.Value) && (SharedEnum)Convert.ToInt32(lObjCboShared.Value) == SharedEnum.Yes)
-                {
-                    lObjTxtFolio.Item.Enabled = true;
-                }
-                else
-                {
-                    lObjTxtFolio.Item.Enabled = false;
-                }
+                lObjTxtFolio.Item.Enabled = true;
             }
-            catch (Exception ex)
+            else
             {
-                LogService.WriteError("JournalService (CreateAction): " + ex.Message);
-                LogService.WriteError(ex);
-                UIApplication.ShowMessageBox(string.Format("CreateAction: {0}", ex.Message));
+                lObjTxtFolio.Item.Enabled = false;
             }
         }
 
         private void lObjCboVehicleType_ComboSelectAfter(object sboObject, SBOItemEventArg pVal)
         {
-            try
+            if (!string.IsNullOrEmpty(lObjCboVehicleType.Value))
             {
-                if (!string.IsNullOrEmpty(lObjCboVehicleType.Value))
-                {
-                    lObjTxtEcNum.Value = string.Empty;
-                    LoadVehiclePrices();
-                    SetAmounts();
-                }
+                lObjTxtEcNum.Value = string.Empty;
+                LoadVehiclePrices();
+                SetAmounts();
             }
-            catch (Exception ex)
-            {
-                LogService.WriteError("JournalService (CreateAction): " + ex.Message);
-                LogService.WriteError(ex);
-                UIApplication.ShowMessageBox(string.Format("CreateAction: {0}", ex.Message));
-            }
+
         }
 
         private void lObjBtnRoute_ClickBefore(object sboObject, SAPbouiCOM.SBOItemEventArg pVal, out bool BubbleEvent)
         {
             BubbleEvent = true;
-            try
-            {
-                ShowMfRouteFinder();
-            }
-            catch (Exception ex)
-            {
-                LogService.WriteError("JournalService (CreateAction): " + ex.Message);
-                LogService.WriteError(ex);
-                UIApplication.ShowMessageBox(string.Format("CreateAction: {0}", ex.Message));
-            }
+            ShowMfRouteFinder();
         }
 
         private void lObjBtnUpdate_ClickBefore(object sboObject, SAPbouiCOM.SBOItemEventArg pVal, out bool BubbleEvent)
         {
             BubbleEvent = true;
-            try
+
+            switch (lObjBtnUpdate.Caption)
             {
-                switch (lObjBtnUpdate.Caption)
-                {
-                    case "Nuevo":
-                        NewRoute();
-                        break;
-                    case "Actualizar":
-                        UpdateRoute();
-                        break;
-                }
-            }
-            catch (Exception ex)
-            {
-                LogService.WriteError("JournalService (CreateAction): " + ex.Message);
-                LogService.WriteError(ex);
-                UIApplication.ShowMessageBox(string.Format("CreateAction: {0}", ex.Message));
+                case "Nuevo":
+                    NewRoute();
+                    break;
+                case "Actualizar":
+                    UpdateRoute();
+                    break;
             }
 
         }
 
         private void lObjChkIns_ClickAfter(object sboObject, SBOItemEventArg pVal)
         {
-            try
+
+            if (lObjChkEnsm.Checked)
             {
-                if (lObjChkEnsm.Checked)
-                {
-                    LoadInsuranceAmount(false);
-                }
-                else
-                {
-                    LoadInsuranceAmount(true);
-                }
+                LoadInsuranceAmount(false);
             }
-            catch (Exception ex)
+            else
             {
-                LogService.WriteError("JournalService (CreateAction): " + ex.Message);
-                LogService.WriteError(ex);
-                UIApplication.ShowMessageBox(string.Format("CreateAction: {0}", ex.Message));
+                LoadInsuranceAmount(true);
             }
         }
 
         private void lObjBtnAccept_ClickAfter(object sboObject, SBOItemEventArg pVal)
         {
-            try
-            {
-                GetSalesOrderLines();
-                OpenSalesOrder();
-            }
-            catch (Exception ex)
-            {
-                LogService.WriteError("JournalService (CreateAction): " + ex.Message);
-                LogService.WriteError(ex);
-                UIApplication.ShowMessageBox(string.Format("CreateAction: {0}", ex.Message));
-            }
+            GetSalesOrderLines();
+            OpenSalesOrder();
         }
 
         #endregion
@@ -952,10 +891,10 @@ namespace UGRS.AddOn.Transports.ModalForms
         private SAPbouiCOM.EditText lObjTxtTotalFreight;
         private SAPbouiCOM.Button lObjBtnRoute;
         private SAPbouiCOM.StaticText lObjlblDescription;
-       /* private SAPbouiCOM.EditText lObjTxtArea;
+        private SAPbouiCOM.EditText lObjTxtArea;
         private SAPbouiCOM.EditText lObjTxtComment;
         private SAPbouiCOM.StaticText lObjlblArea;
-        private SAPbouiCOM.StaticText lObjlblComment;*/
+        private SAPbouiCOM.StaticText lObjlblComment;
 
         #endregion
     }

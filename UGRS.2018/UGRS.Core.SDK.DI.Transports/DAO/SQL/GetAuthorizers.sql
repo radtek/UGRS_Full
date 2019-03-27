@@ -1,1 +1,1 @@
-select U_Value from [@UG_CONFIG] with (nolock) where Name = '{ConfigName}'
+select U_Value from [@UG_CONFIG] where Name = '{ConfigName}'

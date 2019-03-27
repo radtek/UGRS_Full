@@ -56,18 +56,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DAO\AttachmentDAO.cs" />
-    <Compile Include="DAO\BankDAO.cs" />
     <Compile Include="DAO\CommissionDAO.cs" />
-    <Compile Include="DAO\CommissionDriverDAO.cs" />
     <Compile Include="DAO\RouteListDAO.cs" />
-    <Compile Include="DTO\AccountDTO.cs" />
-    <Compile Include="DTO\AccountsJournalEntryDTO.cs" />
     <Compile Include="DTO\AssetsDTO.cs" />
-    <Compile Include="DTO\BankDTO.cs" />
     <Compile Include="DTO\CFLParamsDTO.cs" />
-    <Compile Include="DTO\CommissionDebtDTO.cs" />
-    <Compile Include="DTO\CommissionDriverDetailsDTO.cs" />
     <Compile Include="DTO\CommissionDTO.cs" />
     <Compile Include="DTO\CommissionDriverDTO.cs" />
     <Compile Include="DTO\CostingCodesDTO.cs" />
@@ -83,10 +75,7 @@
     <Compile Include="Enums\StatusEnum.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\AlertService.cs" />
-    <Compile Include="Services\AttachmentDI.cs" />
     <Compile Include="Services\CFLService.cs" />
-    <Compile Include="Services\BankService.cs" />
-    <Compile Include="Services\CommissionDriverService.cs" />
     <Compile Include="Services\CommissionLineService.cs" />
     <Compile Include="Services\CommissionService.cs" />
     <Compile Include="Services\JournalService.cs" />
@@ -176,35 +165,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="DAO\SQL\GetAuthorizers.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="DAO\SQL\SP_TR_CommissionsDrive.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="DAO\SQL\GetBankAccounts.sql" />
-    <EmbeddedResource Include="DAO\SQL\GetBanks.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="DAO\SQL\GetCommissionDriverFolios.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="DAO\SQL\GetCommissionDriverDetails.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="DAO\SQL\GetAttachPath.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="DAO\SQL\GetAccountByAcctNumber.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="DAO\SQL\GetTaxWT.sql" />
-    <EmbeddedResource Include="DAO\SQL\SP_TR_CommissionsDriveSaved.sql" />
-    <EmbeddedResource Include="DAO\SQL\GetCommissionDebt.sql" />
-    <EmbeddedResource Include="DAO\SQL\GetCmsnDrivers.sql" />
-    <EmbeddedResource Include="DAO\SQL\GetCommissionsDriverSaved.sql" />
-    <EmbeddedResource Include="DAO\SQL\GetTax.sql" />
-    <EmbeddedResource Include="DAO\SQL\GetSOLines.sql" />
-    <Content Include="DAO\SQL\GetJounalDebt.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

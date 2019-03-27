@@ -22,15 +22,5 @@ namespace UGRS.Core.SDK.DI.Transports.Tables
 
         [Field(Description = "Amount", Type = BoFieldTypes.db_Numeric)]
         public double Amount { get; set; }
-
-        [Field(Description = "NoGenerate", Size = 1)]
-        public bool NoGenerate { get; set; }
-
-        [Field(Description = "Type",Type = BoFieldTypes.db_Alpha, Size = 30)]
-        public string Type { get; set; }
-
-        [Field(Description = "Estatus", Type = BoFieldTypes.db_Numeric)]
-        public int Status { get; set; }
-
     }
 }

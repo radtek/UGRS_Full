@@ -288,23 +288,6 @@ namespace UGRS.Core.SDK.DI.Transports.DAO
             return lLstPayloadType;
         }
 
-        public string GetTypePayload(string pStrCode)
-        {
-            string lStrType = string.Empty;
-            try
-            {
-                lStrType = mObjQueryManager.GetValue("U_Type", "Code", pStrCode, "[@UG_TR_TRTY]");
-            }
-            catch (Exception ex)
-            {
-                UIApplication.ShowError(string.Format("GetPayloadTypeList: {0}", ex.Message));
-                LogService.WriteError("RouteListDAO (GetPayloadTypeList): " + ex.Message);
-                LogService.WriteError(ex);
-            }
-            return lStrType;
-        }
-
-
         public string GetItemsQuery(string pStrWhs,string pStrCardCode, string pStrSearch)
         {
             try
@@ -639,7 +622,6 @@ namespace UGRS.Core.SDK.DI.Transports.DAO
 
                 lObjResults.DoQuery(lStrQuery);
 
-                string lStr = lObjResults.Fields.Item("Stat").Value.ToString();
                 return lObjResults.RecordCount > 0 ? lObjResults.Fields.Item("Stat").Value.ToString() : string.Empty; ;
 
             }
@@ -739,7 +721,6 @@ namespace UGRS.Core.SDK.DI.Transports.DAO
                         {
                             Name = lObjResults.Fields.Item("PrcName").Value.ToString(),
                             Code = lObjResults.Fields.Item("PrcCode").Value.ToString(),
-                            Account = lObjResults.Fields.Item("U_TR_Account").Value.ToString(),
 
                         });
 
@@ -826,7 +807,7 @@ namespace UGRS.Core.SDK.DI.Transports.DAO
             }
         }
 
-        public int GetJournalId(string pStrFolio, string pStrTransCode)
+        public int GetJournalId(string pStrFolio)
         {
             SAPbobsCOM.Recordset lObjRecordSet = null;
             string lStrQuery = "";
@@ -834,10 +815,8 @@ namespace UGRS.Core.SDK.DI.Transports.DAO
             try
             {
                 lObjRecordSet = (SAPbobsCOM.Recordset)DIApplication.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.BoRecordset);
-                 Dictionary<string, string> lLstParams = new Dictionary<string, string>();
-                lLstParams.Add("Folio", pStrFolio);
-                lLstParams.Add("TransCode",  pStrTransCode);//TR/F
-                lStrQuery = this.GetSQL("GetJournalId").Inject(lLstParams);
+
+                lStrQuery = this.GetSQL("GetJournalId").InjectSingleValue("Folio", pStrFolio);
 
                 lObjRecordSet.DoQuery(lStrQuery);
 
@@ -854,92 +833,6 @@ namespace UGRS.Core.SDK.DI.Transports.DAO
             {
                 MemoryUtility.ReleaseComObject(lObjRecordSet);
             }
-        }
-
-
-        public string GetCancelJournal(string pStrFolio)
-        {
-            try
-            {
-                string lStrReturn = mObjQueryManager.GetValue("TransId", "StornoToTr", pStrFolio, "OJDT");
-
-                return lStrReturn;
-            }
-            catch (Exception ex)
-            {
-                UIApplication.ShowError(string.Format("GetRetention: {0}", ex.Message));
-                LogService.WriteError("RouteListDAO (GetRetention): " + ex.Message);
-                LogService.WriteError(ex);
-                return "0";
-            }
-        }
-
-        public float GetTax(string pStrItemCode)
-        {
-            SAPbobsCOM.Recordset lObjRecordSet = null;
-            string lStrQuery = "";
-
-            try
-            {
-                lObjRecordSet = (SAPbobsCOM.Recordset)DIApplication.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.BoRecordset);
-                Dictionary<string, string> lLstParams = new Dictionary<string, string>();
-
-                lLstParams.Add("ItemCode", pStrItemCode);
-                lStrQuery = this.GetSQL("GetTax").Inject(lLstParams);
-
-                lObjRecordSet.DoQuery(lStrQuery);
-
-                return float.Parse(lObjRecordSet.Fields.Item("Rate").Value.ToString());
-            }
-            catch (Exception ex)
-            {
-                UIApplication.ShowError(string.Format("GetJournalId: {0}", ex.Message));
-                LogService.WriteError("RouteListDAO (GetJournalId): " + ex.Message);
-                LogService.WriteError(ex);
-                return 0;
-            }
-            finally
-            {
-                MemoryUtility.ReleaseComObject(lObjRecordSet);
-            }
-        }
-
-
-        public float GetTaxWT(string pStrItemCode)
-        {
-            string pStrWT = mObjQueryManager.GetValue("WtLiable", "ItemCode", pStrItemCode, "OITM");
-            if (pStrWT == "Y")
-            {
-                SAPbobsCOM.Recordset lObjRecordSet = null;
-                string lStrQuery = "";
-                try
-                {
-                    lObjRecordSet = (SAPbobsCOM.Recordset)DIApplication.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.BoRecordset);
-                    Dictionary<string, string> lLstParams = new Dictionary<string, string>();
-
-                    lLstParams.Add("ItemCode", pStrItemCode);
-                    lStrQuery = this.GetSQL("GetTaxWT").Inject(lLstParams);
-
-                    lObjRecordSet.DoQuery(lStrQuery);
-                    return float.Parse(lObjRecordSet.Fields.Item("Rate").Value.ToString());
-                }
-                catch (Exception ex)
-                {
-                    UIApplication.ShowError(string.Format("GetJournalId: {0}", ex.Message));
-                    LogService.WriteError("RouteListDAO (GetJournalId): " + ex.Message);
-                    LogService.WriteError(ex);
-                    return 0;
-                }
-                finally
-                {
-                    MemoryUtility.ReleaseComObject(lObjRecordSet);
-                }
-            }
-            else
-            {
-                return 0;
-            }
-
         }
 
         /// <summary>

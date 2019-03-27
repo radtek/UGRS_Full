@@ -112,7 +112,6 @@
     <Compile Include="DAO\PurchaseVouchersDAO.cs" />
     <Compile Include="DAO\PurchaseXmlDAO.cs" />
     <Compile Include="DAO\PurchaseInvoiceDAO.cs" />
-    <Compile Include="DTO\PacConfigDTO.cs" />
     <Compile Include="DTO\SchemaDTO.cs" />
     <Compile Include="DTO\AccountDTO.cs" />
     <Compile Include="DTO\AssetsDTO.cs" />
@@ -126,7 +125,6 @@
     <Compile Include="DTO\SearchVouchersDTO.cs" />
     <Compile Include="DTO\TaxesXMLDTO.cs" />
     <Compile Include="DTO\VoucherDetailDTO.cs" />
-    <Compile Include="DTO\VoucherStatusDTO.cs" />
     <Compile Include="Enums\TypeEnum.cs" />
     <Compile Include="Enums\PermissionsEnum.cs" />
     <Compile Include="Enums\StatusEnum.cs" />
@@ -282,9 +280,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="DAO\SQL\GetReportId.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="DAO\SQL\GetConfigurationPac.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

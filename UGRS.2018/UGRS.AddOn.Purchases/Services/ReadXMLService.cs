@@ -13,31 +13,32 @@ using UGRS.Core.SDK.DI.Purchases;
 using UGRS.Core.SDK.DI.Purchases.DTO;
 using UGRS.Core.SDK.UI;
 using UGRS.Core.Services;
-using UGRS.Core.SDK.DI.Purchases.Services;
-using UGRS.Core.SDK.DI.Purchases.Services.ServicesDAO;
-using servTim = UGRS.AddOn.Purchases.TimbradoSoap33Prodigia;
 
-namespace UGRS.AddOn.Purchases.Services {
-    public class ReadXMLService {
+namespace UGRS.AddOn.Purchases.Services
+{
+    public class ReadXMLService
+    {
         PurchasesServiceFactory mObjPurchasesServiceFactory = new PurchasesServiceFactory();
         /// <summary>
         /// Lee los campos del xml
         /// <summary>
-        public PurchaseXMLDTO ReadXML(string pStrFileName) {
+        public PurchaseXMLDTO ReadXML(string pStrFileName)
+        {
 
             XmlTextReader reader = new XmlTextReader(pStrFileName);
             XDocument lObjDoc = XDocument.Load(pStrFileName);
             XNamespace cfdiNamespace = lObjDoc.Root.Name.Namespace;
             XElement lElementAdenda = lObjDoc.Root.Element(cfdiNamespace + "Addenda");
-            if(lElementAdenda != null) {
+            if (lElementAdenda != null)
+            {
                 lObjDoc.Root.Element(cfdiNamespace + "Addenda").Remove();
             }
 
             List<string> lLstStrSchemas = GetXmlSchemas(lObjDoc);
             LogService.WriteInfo("Obtencion de esquemas correctamente");
 
-
-            //DownloadSchema(lLstStrSchemas);
+          
+            DownloadSchema(lLstStrSchemas);
 
 
             List<string> lStrLstXML = new List<string>();//lStrValidateSchema(lObjDoc, lLstStrSchemas); //
@@ -45,9 +46,11 @@ namespace UGRS.AddOn.Purchases.Services {
             string lStrField = string.Empty;
 
 
-            if(lStrLstXML.Count == 0) {
+            if (lStrLstXML.Count == 0)
+            {
 
-                try {
+                try
+                {
                     XNamespace cfdi;
                     cfdi = lObjDoc.Root.Name.Namespace;
                     XNamespace tfd = @"http://www.sat.gob.mx/TimbreFiscalDigital";
@@ -58,25 +61,32 @@ namespace UGRS.AddOn.Purchases.Services {
                     lObjXML.RFCReceptor = lObjDoc.Root.Element(cfdi + "Receptor").Attribute("Rfc").Value;
 
                     string lStrRFC = mObjPurchasesServiceFactory.GetPurchaseXmlService().GetRFC();
-                    if(lStrRFC != lObjXML.RFCReceptor) {
+                    if (lStrRFC != lObjXML.RFCReceptor)
+                    {
                         SAPbouiCOM.Framework.Application.SBO_Application.MessageBox("RFC de receptor incorrecto");
                         lObjXML = null;
                     }
-                    else {
-                        if(string.IsNullOrEmpty(lObjXML.FolioFiscal)) {
+                    else
+                    {
+                        if (string.IsNullOrEmpty(lObjXML.FolioFiscal))
+                        {
                             lStrLstXML.Add("El folio fiscal no existe en el xml");
                         }
-                        else {
-                            if(ValidateUUID(lObjXML.FolioFiscal)) {
+                        else
+                        {
+                            if (ValidateUUID(lObjXML.FolioFiscal))
+                            {
                                 lStrLstXML.Add(" El folio fiscal ya existe en la base de datos");
                             }
-                            else {
+                            else
+                            {
                                 UIApplication.ShowSuccess(string.Format("XML válido"));
 
-                                lStrField = "Comprobante" + " " + "Folio";
+                               lStrField = "Comprobante" + " " + "Folio";
                                 XAttribute lObjAttribute = lObjDoc.Element(cfdi + "Comprobante").Attribute("Folio");
-                                if(lObjAttribute != null) {
-
+                                if (lObjAttribute != null)
+                                {
+                                   
                                     lObjXML.ReferenceFolio = lObjDoc.Element(cfdi + "Comprobante").Attribute("Folio").Value;
                                 }
 
@@ -99,7 +109,8 @@ namespace UGRS.AddOn.Purchases.Services {
                                 lStrField = "Conceptos";
                                 IEnumerable<XElement> lLstConcepts = lObjDoc.Root.Element(cfdi + "Conceptos").Elements();
                                 List<ConceptsXMLDTO> lLstConceptsXMLDTO = new List<ConceptsXMLDTO>();
-                                foreach(XElement lObjElements in lLstConcepts) {
+                                foreach (XElement lObjElements in lLstConcepts)
+                                {
                                     ConceptsXMLDTO lObjConcepts = new ConceptsXMLDTO();
 
                                     lStrField = "Conceptos" + "//" + "ClaveProdServ";
@@ -129,7 +140,8 @@ namespace UGRS.AddOn.Purchases.Services {
 
 
                                     XAttribute lObjDiscount = lObjElements.Attribute("Descuento");
-                                    if(lObjDiscount != null) {
+                                    if (lObjDiscount != null)
+                                    {
                                         lStrField = "Conceptos" + "//" + "Descuento";
                                         lObjConcepts.Discount = lObjDiscount.Value;
                                         //lObjConcepts.Amount = (Convert.ToDecimal(lObjConcepts.Amount) - Convert.ToDecimal(lObjConcepts.Discount)).ToString();
@@ -137,32 +149,37 @@ namespace UGRS.AddOn.Purchases.Services {
 
 
 
-                                    if(lObjElements.HasElements) {
+                                    if (lObjElements.HasElements)
+                                    {
                                         XElement lObjHasTax = lObjElements.Element(cfdi + "Impuestos");
-                                        if(lObjHasTax != null) {
+                                        if (lObjHasTax != null)
+                                        {
                                             XElement lObjHasTraslate = lObjElements.Element(cfdi + "Impuestos").Element(cfdi + "Traslados");
-                                            if(lObjHasTraslate != null) {
+                                            if (lObjHasTraslate != null)
+                                            {
                                                 lStrField = "Conceptos//Impuestos" + "//" + "Traslados";
                                                 IEnumerable<XElement> lLstTaxesXml = lObjElements.Element(cfdi + "Impuestos").Elements(cfdi + "Traslados").Elements();
 
                                                 List<TaxesXMLDTO> lLstTaxes = new List<TaxesXMLDTO>();
-                                                foreach(XElement lObjTax in lLstTaxesXml) {
+                                                foreach (XElement lObjTax in lLstTaxesXml)
+                                                {
                                                     TaxesXMLDTO lObjTaxes = new TaxesXMLDTO();
 
                                                     lStrField = "Conceptos//Impuestos//Traslados" + "//" + "Importe";
                                                     lObjTaxes.Amount = (string)lObjTax.Attribute("Importe");
-                                                    if(string.IsNullOrEmpty(lObjTaxes.Amount)) lObjTaxes.Amount = "0";
+                                                    if (string.IsNullOrEmpty(lObjTaxes.Amount)) lObjTaxes.Amount = "0";
 
-                                                    if(Convert.ToDouble(lObjTaxes.Amount) > 0) {
+                                                    if (Convert.ToDouble(lObjTaxes.Amount) > 0)
+                                                    {
                                                         lStrField = "Conceptos//Impuestos//Traslados" + "//" + "TasaOCuota";
                                                         lObjTaxes.Rate = (string)lObjTax.Attribute("TasaOCuota");
-                                                        if(string.IsNullOrEmpty(lObjTaxes.Rate)) lObjTaxes.Rate = "";
+                                                        if (string.IsNullOrEmpty(lObjTaxes.Rate)) lObjTaxes.Rate = "";
 
                                                         //lObjTaxes.Rate = lObjTax.Attribute("TasaOCuota").Value;
 
                                                         lStrField = "Conceptos//Impuestos//Traslados" + "//" + "Importe";
                                                         lObjTaxes.Amount = (string)lObjTax.Attribute("Importe");
-                                                        if(string.IsNullOrEmpty(lObjTaxes.Amount)) lObjTaxes.Amount = "";
+                                                        if (string.IsNullOrEmpty(lObjTaxes.Amount)) lObjTaxes.Amount = "";
 
                                                         lStrField = "Conceptos//Impuestos//Traslados" + "//" + "Base";
                                                         lObjTaxes.Base = lObjTax.Attribute("Base").Value;
@@ -173,14 +190,15 @@ namespace UGRS.AddOn.Purchases.Services {
                                                         lStrField = "Conceptos//Impuestos//Traslados" + "//" + "TipoFactor";
                                                         lObjTaxes.TypeFactor = lObjTax.Attribute("TipoFactor").Value;
                                                         lLstTaxes.Add(lObjTaxes);
-
                                                         decimal lDecAmount = Convert.ToDecimal(lObjConcepts.Amount) - Convert.ToDecimal(lObjConcepts.Discount);
                                                         decimal lDecAmount1 = lDecAmount + Convert.ToDecimal(0.01);
                                                         decimal lDecAmount01 = lDecAmount - Convert.ToDecimal(0.01);
                                                         decimal lDecBase = Convert.ToDecimal(lObjTaxes.Base);
 
-                                                        if(lObjTaxes.Tax == "002" && (lDecAmount != lDecBase && lDecAmount1 != lDecBase && lDecAmount01 != lDecBase)) {
-                                                            if(Convert.ToDouble(lObjTaxes.Amount) > 0) {
+                                                        if (lObjTaxes.Tax == "002" && (lDecAmount != lDecBase && lDecAmount1 != lDecBase && lDecAmount01 != lDecBase))
+                                                        {
+                                                            if (Convert.ToDouble(lObjTaxes.Amount) > 0)
+                                                            {
                                                                 lObjConcepts.Amount = (Convert.ToDecimal(lObjTaxes.Base) + Convert.ToDecimal(lObjConcepts.Discount)).ToString();
                                                                 //lObjConcepts.Amount = lObjTaxes.Base;
                                                                 lObjConcepts.UnitPrice = Convert.ToDecimal(((Convert.ToDouble(lObjTaxes.Base) / Convert.ToDouble(lObjConcepts.Quantity)) + Convert.ToDouble(lObjConcepts.Discount))).ToString();
@@ -194,12 +212,14 @@ namespace UGRS.AddOn.Purchases.Services {
 
 
                                             XElement lObjHasWht = lObjElements.Element(cfdi + "Impuestos").Element(cfdi + "Retenciones");
-                                            if(lObjHasWht != null) {
+                                            if (lObjHasWht != null)
+                                            {
                                                 //Retenciones
                                                 lStrField = "Conceptos//Impuestos//Retenciones";
                                                 IEnumerable<XElement> lXmlWithholdingTax = lObjElements.Element(cfdi + "Impuestos").Elements(cfdi + "Retenciones").Elements();
                                                 List<TaxesXMLDTO> lLstWithholdingTax = new List<TaxesXMLDTO>();
-                                                foreach(XElement lObjTax in lXmlWithholdingTax) {
+                                                foreach (XElement lObjTax in lXmlWithholdingTax)
+                                                {
                                                     TaxesXMLDTO lObjTaxes = new TaxesXMLDTO();
                                                     lStrField = "Conceptos//Impuestos//Retenciones" + "//" + "TasaOCuota";
                                                     lObjTaxes.Rate = lObjTax.Attribute("TasaOCuota").Value;
@@ -223,9 +243,10 @@ namespace UGRS.AddOn.Purchases.Services {
                                 }
                                 lObjXML.ConceptLines = lLstConceptsXMLDTO;
 
-                                List<SchemaDTO> lLstSchemaName = GetSchemasName(lObjDoc);
+                                List<SchemaDTO> lLstSchemaName =  GetSchemasName(lObjDoc);
 
-                                if(lLstSchemaName.Where(x => x.Key == "implocal").Count() > 0) {
+                                if (lLstSchemaName.Where(x => x.Key == "implocal").Count() > 0)
+                                {
                                     XNamespace XNSimplocal = lLstSchemaName.Where(x => x.Key == "implocal").FirstOrDefault().Value;
                                     lStrField = "Conceptos//ImpuestosLocales//TotaldeTraslados";
                                     XElement lXElement = lObjDoc.Root.Element(cfdi + "Complemento");
@@ -233,22 +254,25 @@ namespace UGRS.AddOn.Purchases.Services {
                                     IEnumerable<XElement> XImpLoc = lXElement.Descendants();//.Element(XNSimplocal + "ImpuestosLocales");
                                     IEnumerable<XAttribute> xLstAtr = XImpLoc.Attributes();
                                     XAttribute xAtr = xLstAtr.Where(x => x.Name == "TotaldeTraslados").FirstOrDefault();
-                                    if(xAtr != null) {
+                                    if (xAtr != null)
+                                    {
                                         TaxesXMLDTO lObjTaxesXMLDTO = AddLocalTax(Convert.ToDecimal(xAtr.Value), 0.02);
                                         lObjXML.LstLocalTax = new List<TaxesXMLDTO>();
                                         lObjXML.LstLocalTax.Add(lObjTaxesXMLDTO);
                                     }
 
-
+                                    
                                 }
                             }
 
 
                             XElement lObjImpuestos = lObjDoc.Root.Element(cfdi + "Impuestos");
-                            if(lObjImpuestos != null) {
+                            if (lObjImpuestos != null)
+                            {
                                 lStrField = "Impuestos" + " " + "TotalImpuestosTrasladados";
                                 XAttribute lObjTotalTraslados = lObjImpuestos.Attribute("TotalImpuestosTrasladados");
-                                if(lObjTotalTraslados != null) {
+                                if (lObjTotalTraslados != null)
+                                {
                                     lObjXML.TaxesTransfers = lObjDoc.Root.Element(cfdi + "Impuestos").Attribute("TotalImpuestosTrasladados").Value;
                                 }
 
@@ -259,7 +283,8 @@ namespace UGRS.AddOn.Purchases.Services {
                                 List<TaxesXMLDTO> lLstWithholdingTaxDoc = new List<TaxesXMLDTO>();
 
 
-                                foreach(XElement lObjTax in lLstXMLWithholdingTaxDoc) {
+                                foreach (XElement lObjTax in lLstXMLWithholdingTaxDoc)
+                                {
                                     TaxesXMLDTO lObjTaxes = new TaxesXMLDTO();
                                     lStrField = "Impuestos//Retenciones" + "//" + "Importe";
                                     lObjTaxes.Amount = lObjTax.Attribute("Importe").Value;
@@ -278,7 +303,8 @@ namespace UGRS.AddOn.Purchases.Services {
                         //}
                     }
                 }
-                catch(Exception ex) {
+                catch (Exception ex)
+                {
                     lObjXML = null;
                     lStrLstXML.Add(lStrField);
                     LogService.WriteError("ReadXMLService (ReadXML) " + ex.Message + ": " + lStrField);
@@ -286,7 +312,8 @@ namespace UGRS.AddOn.Purchases.Services {
                 }
 
             }
-            if(lStrLstXML.Count > 0) {
+            if (lStrLstXML.Count > 0)
+            {
                 lObjXML = null;
                 string lStrMessage = string.Format("Error en  {0}:\n{1}",
                     (lStrLstXML.Count == 1 ? "el siguiente campo" : "los siguientes campos " + lStrField),
@@ -299,7 +326,8 @@ namespace UGRS.AddOn.Purchases.Services {
         }
 
 
-        private TaxesXMLDTO AddIeps(decimal lDblAmount, double lDblBase) {
+        private TaxesXMLDTO AddIeps(decimal lDblAmount, double lDblBase)
+        {
             TaxesXMLDTO lObjTaxIeps = new TaxesXMLDTO();
             lObjTaxIeps.Tax = "003";
             lObjTaxIeps.Rate = "1";
@@ -310,7 +338,8 @@ namespace UGRS.AddOn.Purchases.Services {
             return lObjTaxIeps;
         }
 
-        private TaxesXMLDTO AddLocalTax(decimal lDblAmount, double lDblBase) {
+        private TaxesXMLDTO AddLocalTax(decimal lDblAmount, double lDblBase)
+        {
             TaxesXMLDTO lObjLocalTax = new TaxesXMLDTO();
             lObjLocalTax.Tax = "ISH";
             lObjLocalTax.Rate = "0.02";
@@ -324,11 +353,13 @@ namespace UGRS.AddOn.Purchases.Services {
         /// <summary>
         /// Validacion de esquema comparandolo con el archivo de cfdv33
         /// <summary>
-        private List<string> lStrValidateSchema(XDocument pObjDoc, List<string> pLstStringSchema) {
+        private List<string> lStrValidateSchema(XDocument pObjDoc, List<string> pLstStringSchema)
+        {
 
-
+           
             List<string> lStrLstXML = new List<string>();
-            try {
+            try
+            {
                 // ReadXMLService lObjReadXML = new ReadXMLService();
 
                 XmlSchemaSet lObjSchemas = new XmlSchemaSet();
@@ -336,7 +367,8 @@ namespace UGRS.AddOn.Purchases.Services {
                 //UIApplication.ShowWarning(string.Format("Validando XML"));
                 //SAPbouiCOM.Framework.Application.SBO_Application.StatusBar = statu
 
-                foreach(string lStrSchema in pLstStringSchema) {
+                foreach (string lStrSchema in pLstStringSchema)
+                {
                     LogService.WriteInfo("Esquema: " + lStrSchema);
                     string lStrFilename = lStrSchema.Substring(lStrSchema.LastIndexOf("/") + 1);
                     string lStrPath = Path.Combine(Environment.CurrentDirectory, @"Services\", lStrFilename);
@@ -356,16 +388,18 @@ namespace UGRS.AddOn.Purchases.Services {
 
                 //lObjSchemas.Add(@"http://www.sat.gob.mx/sitio_internet/cfd/catalogos", "C:\\Users\\amartinez\\Desktop\\XML\\catCFDI.xsd");
                 //lObjSchemas.Add(@"http://www.sat.gob.mx/sitio_internet/cfd/tipoDatos/tdCFDI", "C:\\Users\\amartinez\\Desktop\\XML\\tdCFDI.xsd");
-
+            
                 //lObjSchemas.Add("http://www.sat.gob.mx/cfd/3", "C:\\Users\\amartinez\\Desktop\\XML\\cfdv33.xsd");
                 // lObjSchemas.Add("http://www.sat.gob.mx/sitio_internet/cfd/tipoDatos/tdCFDI", "C:\\Users\\amartinez\\Desktop\\XML\\tdCFDI.xsd");
 
 
-                pObjDoc.Validate(lObjSchemas, (o, e) => {
+                pObjDoc.Validate(lObjSchemas, (o, e) =>
+                {
                     lStrLstXML.Add(e.Message);
                 });
             }
-            catch(Exception ex) {
+            catch (Exception ex)
+            {
                 lStrLstXML.Add(ex.Message);
                 LogService.WriteError("ReadXMLService (lStrValidateSchema) " + ex.Message);
                 LogService.WriteError(ex);
@@ -373,48 +407,58 @@ namespace UGRS.AddOn.Purchases.Services {
             return lStrLstXML;
         }
 
-        static void ValidationCallback(object sender, ValidationEventArgs args) {
-            if(args.Severity == XmlSeverityType.Warning)
+        static void ValidationCallback(object sender, ValidationEventArgs args)
+        {
+            if (args.Severity == XmlSeverityType.Warning)
                 LogService.WriteError("WARNING: ");
-            else if(args.Severity == XmlSeverityType.Error)
+            else if (args.Severity == XmlSeverityType.Error)
                 LogService.WriteError("ERROR: ");
             LogService.WriteError("ReadXMLService (ValidationCallback) " + args.Message);
         }
 
-        private bool ValidateUUID(string UUID) {
+        private bool ValidateUUID(string UUID)
+        {
             return mObjPurchasesServiceFactory.GetPurchaseXmlService().ValidateUUID(UUID);
         }
 
-        private XmlSchema GetXmlSchema(string pStrFileName) {
-
+        private XmlSchema GetXmlSchema(string pStrFileName)
+        {
+            
             XmlSchema lObjXmlSchema = new XmlSchema();
-            try {
+            try
+            { 
                 LogService.WriteInfo("Carga de esquema:" + pStrFileName);
                 string lStrFileName = pStrFileName;
                 string lStrPath = Path.Combine(Environment.CurrentDirectory, @"Services\", lStrFileName);
                 XmlTextReader lObjReader = new XmlTextReader(lStrPath); //"C:\\Users\\amartinez\\Desktop\\XML\\cfdv33.xsd");
-
-
-
+             
+            
+               
             }
-            catch(Exception ex) {
+            catch (Exception ex)
+            {
                 LogService.WriteError("ReadXMLService (GetXmlSchema) " + ex.Message);
             }
             LogService.WriteInfo("Realizado correctamente:" + pStrFileName);
             return lObjXmlSchema;
         }
 
-        private void DownloadSchema(List<string> lLstStrSchemas) {
+        private void DownloadSchema(List<string> lLstStrSchemas)
+        {
 
             string lStrFilenameCatch = string.Empty;
-
-            try {
-                foreach(string lStrSchema in lLstStrSchemas) {
-
+           
+            try
+            {
+                foreach (string lStrSchema in lLstStrSchemas)
+                {
+                   
                     string lStrFilename = lStrSchema.Substring(lStrSchema.LastIndexOf("/") + 1);
                     lStrFilenameCatch = lStrFilename;
-                    if(!ExistFile(lStrFilename)) {
-                        using(var client = new WebClient()) {
+                    if (!ExistFile(lStrFilename))
+                    {
+                        using (var client = new WebClient())
+                        {
                             LogService.WriteInfo("Descargando esquema: " + lStrSchema);
                             client.DownloadFile(lStrSchema.Substring(lStrSchema.LastIndexOf(" ") + 1), Path.Combine(Environment.CurrentDirectory, @"Services\", lStrFilename));
                             LogService.WriteInfo("Descarga correcta:" + lStrSchema);
@@ -422,26 +466,32 @@ namespace UGRS.AddOn.Purchases.Services {
                     }
                 }
             }
-            catch(Exception ex) {
-                UIApplication.ShowMessageBox("Error al descargar el esquema " + lStrFilenameCatch + " favor de revisar el log o permisos de guardado " + ex.Message);
+            catch (Exception ex)
+            {
+                UIApplication.ShowMessageBox("Error al descargar el esquema " +lStrFilenameCatch + " favor de revisar el log o permisos de guardado " + ex.Message);
                 LogService.WriteError("ReadXMLService (DownloadSchema) " + ex.Message);
                 LogService.WriteError(ex);
             }
         }
 
-
-        private bool ExistFile(string pStrFile) {
-            try {
+       
+        private bool ExistFile(string pStrFile)
+        {
+            try
+            {
                 pStrFile = Path.Combine(Environment.CurrentDirectory, @"Services\", pStrFile);
-                if(System.IO.File.Exists(pStrFile)) {
+                if (System.IO.File.Exists(pStrFile))
+                {
                     return true;
                 }
-                else {
+                else
+                {
                     LogService.WriteInfo("Esquema no encontrado: " + pStrFile);
                     return false;
                 }
             }
-            catch(Exception ex) {
+            catch (Exception ex)
+            {
 
                 UIApplication.ShowError("Error al obtener los esquemas favor de revisar el log " + ex.Message);
                 LogService.WriteError("ReadXMLService (ExistFile) " + ex.Message);
@@ -451,18 +501,22 @@ namespace UGRS.AddOn.Purchases.Services {
         }
 
 
-        private List<SchemaDTO> GetSchemasName(XDocument pObjxDoc) {
+        private List<SchemaDTO> GetSchemasName(XDocument pObjxDoc)
+        {
             XmlDocument lXmlDoc = new XmlDocument();
             List<SchemaDTO> lStrName = new List<SchemaDTO>();
-            using(var xmlReader = pObjxDoc.CreateReader()) {
+            using (var xmlReader = pObjxDoc.CreateReader())
+            {
                 lXmlDoc.Load(xmlReader);
             }
 
             IDictionary<string, string> IDicLocalNamespaces = null;
             XPathNavigator lObjxNav = lXmlDoc.CreateNavigator();
-            while(lObjxNav.MoveToFollowing(XPathNodeType.Element)) {
+            while (lObjxNav.MoveToFollowing(XPathNodeType.Element))
+            {
                 IDicLocalNamespaces = lObjxNav.GetNamespacesInScope(XmlNamespaceScope.Local);
-                foreach(var localNamespace in IDicLocalNamespaces) {
+                foreach (var localNamespace in IDicLocalNamespaces)
+                {
                     lStrName.Add(new SchemaDTO { Key = localNamespace.Key, Value = localNamespace.Value });
                 }
             }
@@ -471,29 +525,37 @@ namespace UGRS.AddOn.Purchases.Services {
         }
 
 
-        private List<string> GetXmlSchemas(XDocument pObjxDoc) {
+        private List<string> GetXmlSchemas(XDocument pObjxDoc)
+        {
             List<string> lLstStrLocations = new List<string>();
-            try {
+            try
+            {
                 XmlDocument lXmlDoc = new XmlDocument();
 
-                using(var xmlReader = pObjxDoc.CreateReader()) {
+                using (var xmlReader = pObjxDoc.CreateReader())
+                {
                     lXmlDoc.Load(xmlReader);
                 }
 
                 IDictionary<string, string> IDicLocalNamespaces = null;
                 XPathNavigator lObjxNav = lXmlDoc.CreateNavigator();
-                while(lObjxNav.MoveToFollowing(XPathNodeType.Element)) {
+                while (lObjxNav.MoveToFollowing(XPathNodeType.Element))
+                {
                     IDicLocalNamespaces = lObjxNav.GetNamespacesInScope(XmlNamespaceScope.Local);
-                    foreach(var localNamespace in IDicLocalNamespaces) {
+                    foreach (var localNamespace in IDicLocalNamespaces)
+                    {
                         XmlDocument lObjDoc = new XmlDocument();
                         lObjDoc.LoadXml(lObjxNav.OuterXml);
                         XmlNode lObjNode = lObjDoc.DocumentElement;
                         XmlAttributeCollection lObjAttributeCollection = lObjNode.Attributes;
-                        for(int i = 0; i < lObjAttributeCollection.Count; i++) {
-                            if(lObjAttributeCollection[i].Name.Contains("schemaLocation")) {
-                                if(!lLstStrLocations.Any(x => x == lObjAttributeCollection[i].Value)) {
+                        for (int i = 0; i < lObjAttributeCollection.Count; i++)
+                        {
+                            if (lObjAttributeCollection[i].Name.Contains("schemaLocation"))
+                            {
+                                if (!lLstStrLocations.Any(x => x == lObjAttributeCollection[i].Value))
+                                {
                                     string lStrchema = lObjAttributeCollection[i].Value.Substring(lObjAttributeCollection[i].Value.LastIndexOf(" ") + 1);
-                                    lLstStrLocations.Add(lObjAttributeCollection[i].Value);
+                                        lLstStrLocations.Add(lObjAttributeCollection[i].Value);
                                 }
                                 break;
                             }
@@ -501,7 +563,8 @@ namespace UGRS.AddOn.Purchases.Services {
                     }
                 }
             }
-            catch(Exception ex) {
+            catch (Exception ex)
+            {
                 UIApplication.ShowError("Error al obtener los esquemas favor de revisar el log " + ex.Message);
                 LogService.WriteError("ReadXMLService (GetXmlSchemas) " + ex.Message);
                 LogService.WriteError(ex);
@@ -510,60 +573,32 @@ namespace UGRS.AddOn.Purchases.Services {
             return lLstStrLocations;
         }
 
-        public static bool PingHost(string pStrAddress) {
+        public static bool PingHost(string pStrAddress)
+        {
             bool lBolpingable = false;
             Ping pinger = null;
-            try {
+            try
+            {
                 pinger = new Ping();
                 PingReply reply = pinger.Send(pStrAddress);
                 lBolpingable = reply.Status == IPStatus.Success;
             }
-            catch(PingException ex) {
+            catch (PingException ex)
+            {
                 LogService.WriteError("No fue posible realizar el ping" + pStrAddress);
                 LogService.WriteError(ex);
                 // Discard PingExceptions and return false;
             }
-            finally {
-                if(pinger != null) {
+            finally
+            {
+                if (pinger != null)
+                {
                     pinger.Dispose();
                 }
             }
 
             return lBolpingable;
         }
-
-        public bool CheckVoucherStatus(PurchaseXMLDTO lObjPurchaseXML) {
-
-            try {
-                var pacConfDTO = new PurchaseXmlService().GetConfigurationPac();
-                var mObjTimbradorp = new servTim.PadeTimbradoServiceClient();
-                var resultXML = mObjTimbradorp.consultarEstatusComprobante(pacConfDTO.Contract, pacConfDTO.User, pacConfDTO.Pass, lObjPurchaseXML.FolioFiscal, lObjPurchaseXML.RFCProvider, lObjPurchaseXML.RFCReceptor, lObjPurchaseXML.Total, null);
-                var statusXML = XDocument.Parse(resultXML)
-                                         .Document.Descendants("servicioConsultaComprobante")
-                                         .Select(p => new VoucherStatusDTO {
-                                             QueryOK = p.Element("consultaOk").Value ?? "",
-                                             Code = p.Element("codigo").Value ?? "",
-                                             StatusCode = p.Element("codigoEstatus").Value ?? "",
-                                             IsCancelable = p.Element("esCancelable").Value ?? "",
-                                             Status = p.Element("estado").Value ?? "",
-                                         }).FirstOrDefault();
-
-                if(statusXML.QueryOK.Equals("true") && statusXML.Status.Equals("Vigente")) {
-                    UIApplication.ShowMessageBox(String.Format("El estado del comprobante se consulto satisfactoriamente: \nFolio Fiscal: {0} \nCodigoEstatus: {1} \nEstado: {2} \nCancelable: {3}\n", lObjPurchaseXML.FolioFiscal, statusXML.StatusCode, statusXML.Status, statusXML.IsCancelable));
-                    return true;
-                }
-                else {
-                    UIApplication.ShowMessageBox(String.Format("Estado del comprobante consultado sin éxito: \nFolio Fiscal: {0} \nCodigoEstatus: {1} \nEstado: {2}\n", lObjPurchaseXML.FolioFiscal, statusXML.StatusCode, statusXML.Status));
-                }
-
-            }
-            catch(Exception ex) {
-                LogService.WriteError("(CheckVoucherStatus): " + ex.Message + "," + ex.StackTrace);
-                LogService.WriteError(ex);
-                UIApplication.ShowMessageBox("Problemas al consultar el estado del comprobante: " + ex.Message);
-            }
-            return false;
-        }
-
+     
     }
 }
