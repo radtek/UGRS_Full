@@ -16,6 +16,9 @@ namespace UGRS.Core.SDK.DI.Transports.Tables
         [Field(Description = "Folio Interno", Type = BoFieldTypes.db_Alpha, Size = 30)]
         public string InternalFolio { get; set; }
 
+        [Field(Description = "Folio Asiento", Type = BoFieldTypes.db_Alpha, Size = 30)]
+        public string JournalEntryId { get; set; }
+
         [Field(Description = "Compartido", Size = 1)]
         public bool Shared { get; set; }
 
@@ -34,6 +37,10 @@ namespace UGRS.Core.SDK.DI.Transports.Tables
         [Field(Description = "Chofer", Type = BoFieldTypes.db_Alpha, Size = 50)]
         public string Driver { get; set; }
 
+
+        [Field(Description = "Nombre Chofer", Type = BoFieldTypes.db_Alpha, Size = 50)]
+        public string DriverName { get; set; }
+
        [Field(Description = "Cargos extra", Type = BoFieldTypes.db_Numeric)]
         public float Extra { get; set; }
 
@@ -51,6 +58,50 @@ namespace UGRS.Core.SDK.DI.Transports.Tables
 
        [Field(Description = "Seguro", Size = 1)]
        public bool Insurance { get; set; }
+
+       [Field(Description = "Total Kilos", Type = BoFieldTypes.db_Alpha, Size = 30)]
+       public string TotKG { get; set; }
+
+       [Field(Description = "Cabezas", Type = BoFieldTypes.db_Alpha, Size = 30)]
+       public string Heads { get; set; }
+
+       [Field(Description = "Sacos-Pacas", Type = BoFieldTypes.db_Alpha, Size = 30)]
+       public string Bags { get; set; }
+
+       [Field(Description = "Varios", Type = BoFieldTypes.db_Alpha, Size = 30)]
+       public string Varios { get; set; }
+
+        /*--Ruta--*/
+       [Field(Description = "Origen", Type = BoFieldTypes.db_Alpha, Size = 30)]
+       public string Origin { get; set; }
+
+       [Field(Description = "Municipio Origen", Type = BoFieldTypes.db_Alpha, Size = 30)]
+       public string MOrigin { get; set; }
+
+
+       [Field(Description = "Destination", Type = BoFieldTypes.db_Alpha, Size = 30)]
+       public string Destination { get; set; }
+
+       [Field(Description = "Municipio Destination", Type = BoFieldTypes.db_Alpha, Size = 30)]
+       public string MDestination { get; set; }
+
+       [Field(Description = "KmA", Type = BoFieldTypes.db_Alpha, Size = 30)]
+       public string KmA { get; set; }
+
+       [Field(Description = "KmB", Type = BoFieldTypes.db_Alpha, Size = 30)]
+       public string KmB { get; set; }
+
+       [Field(Description = "KmC", Type = BoFieldTypes.db_Alpha, Size = 30)]
+       public string KmC { get; set; }
+
+       [Field(Description = "KmD", Type = BoFieldTypes.db_Alpha, Size = 30)]
+       public string KmD { get; set; }
+
+       [Field(Description = "KmE", Type = BoFieldTypes.db_Alpha, Size = 30)]
+       public string KmE { get; set; }
+
+       [Field(Description = "KmF", Type = BoFieldTypes.db_Alpha, Size = 30)]
+       public string KmF { get; set; }
 
     }
 }

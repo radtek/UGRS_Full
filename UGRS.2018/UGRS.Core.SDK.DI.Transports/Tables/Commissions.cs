@@ -27,6 +27,15 @@ namespace UGRS.Core.SDK.DI.Transports.Tables
         [Field(Description = "Estatus", Type=  BoFieldTypes.db_Numeric)]
         public int Status { get; set; }
 
+        [Field(Description = "Usuario",  Type = BoFieldTypes.db_Alpha, Size = 50)]
+        public string User { get; set; }
+
+        [Field(Description = "Pago Chofer", Type = BoFieldTypes.db_Alpha, Size = 1)]
+        public string HasDriverCms { get; set; }
+
+        [Field(Description = "Comentario", Type = BoFieldTypes.db_Alpha, Size = 50)]
+        public string Coments { get; set; }
+
         public List<CommissionLine> LstCommissionLine;
 
     }

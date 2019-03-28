@@ -1,0 +1,7 @@
+﻿SELECT BankCode, BankName
+FROM ODSC
+WHERE EXISTS (
+	SELECT *
+	FROM DSC1
+	WHERE ODSC.BankCode = DSC1.BankCode
+)

@@ -48,5 +48,20 @@ namespace UGRS.Core.SDK.DI.Transports
         {
             return new AlertService();
         }
+
+        public BankService GetBankService()
+        {
+            return new BankService();
+        }
+
+        public CommissionDriverService GetCommissionDriverService()
+        {
+            return new CommissionDriverService();
+        }
+
+        public AttachmentDI GetAttachmentDI()
+        {
+            return new AttachmentDI();
+        }
     }
 }

@@ -1,1 +1,1 @@
-SELECT PrcCode,PrcName FROM OPRC WHERE DimCode = 1 and CCTypeCode = 'O'
+SELECT PrcCode,PrcName, U_TR_Account FROM OPRC WHERE DimCode = 1
