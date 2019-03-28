@@ -327,6 +327,35 @@ namespace UGRS.Core.SDK.DI.Purchases.DAO
 
             return lLstAssetsDTO;
         }
+
+        public PacConfigDTO GetConfigurationPac() {
+
+
+            SAPbobsCOM.Recordset lObjRecordset = (SAPbobsCOM.Recordset)DIApplication.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.BoRecordset);
+            var pacConfigDTO = new PacConfigDTO();
+
+            try {
+
+                lObjRecordset.DoQuery(this.GetSQL("GetConfigurationPac"));
+
+                if(lObjRecordset.RecordCount > 0) {
+
+                    pacConfigDTO.Contract = lObjRecordset.Fields.Item("U_Contract").Value.ToString();
+                    pacConfigDTO.Pass = lObjRecordset.Fields.Item("U_Pass").Value.ToString();
+                    pacConfigDTO.User = lObjRecordset.Fields.Item("U_User").Value.ToString();
+                }
+            }
+            catch(Exception ex) {
+                UIApplication.ShowMessageBox(string.Format("GetConfigurationPac: {0}", ex.Message));
+                LogService.WriteError("PurchasesXmlDAO (GetConfigurationPac): " + ex.Message);
+                LogService.WriteError(ex);
+            }
+            finally {
+                MemoryUtility.ReleaseComObject(lObjRecordset);
+            }
+
+            return pacConfigDTO;
+        }
         #endregion
     }
 }
