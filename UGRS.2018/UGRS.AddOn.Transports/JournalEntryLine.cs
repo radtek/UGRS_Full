@@ -48,6 +48,8 @@ namespace UGRS.AddOn.Transports
                                     Auxiliar = pObjCmsnDriverDTO.DriverId,
                                     Ref1 = DebtDTO.Folio,
                                     CostingCode = "TR_TRANS",
+                                    //Ref2 = DebtDTO.
+                                    CodeMov = DebtDTO.Folio,
                                 });
                                 lDecRemanente -= DebtDTO.Importe;
                             }
@@ -62,6 +64,7 @@ namespace UGRS.AddOn.Transports
                                     TypeAux = "2",
                                     Auxiliar = pObjCmsnDriverDTO.DriverId,
                                     CostingCode = "TR_TRANS",
+                                    CodeMov = DebtDTO.Folio,
                                 });
                                 lDecRemanente = 0;
                             }
@@ -81,6 +84,7 @@ namespace UGRS.AddOn.Transports
                         TypeAux = "2",
                         Auxiliar = pObjCmsnDriverDTO.DriverId,
                         CostingCode = "TR_TRANS",
+                        CodeMov = pObjCmsnDriverDTO.Folio,
                     });
                 }
                 else if (lDecDeuda > 0)
@@ -96,6 +100,7 @@ namespace UGRS.AddOn.Transports
                         TypeAux = "2",
                         Auxiliar = pObjCmsnDriverDTO.DriverId,
                         CostingCode = "TR_TRANS",
+                        CodeMov = pObjCmsnDriverDTO.Folio,
                     });
                     // lDecTotal = lDecTotal - 
                 }
@@ -111,6 +116,7 @@ namespace UGRS.AddOn.Transports
                         TypeAux = "2",
                         Auxiliar = pObjCmsnDriverDTO.DriverId,
                         CostingCode = "TR_TRANS",
+                        CodeMov = pObjCmsnDriverDTO.Folio,
                     });
                 }
 
@@ -129,6 +135,7 @@ namespace UGRS.AddOn.Transports
                         TypeAux = "2",
                         Auxiliar = pObjCmsnDriverDTO.DriverId,
                         CostingCode = "TR_TRANS",
+                        CodeMov = pObjCmsnDriverDTO.Folio,
                     });
 
                     lLstJounralLineDTO.Add(new JournalLineDTO
@@ -140,6 +147,7 @@ namespace UGRS.AddOn.Transports
                         TypeAux = "2",
                         Auxiliar = pObjCmsnDriverDTO.DriverId,
                         CostingCode = "TR_TRANS",
+                        CodeMov = pObjCmsnDriverDTO.Folio,
                     });
                 }
                 else
@@ -154,6 +162,7 @@ namespace UGRS.AddOn.Transports
                         TypeAux = "2",
                         Auxiliar = pObjCmsnDriverDTO.DriverId,
                         CostingCode = "TR_TRANS",
+                        CodeMov = pObjCmsnDriverDTO.Folio,
                     });
                 }
             }
