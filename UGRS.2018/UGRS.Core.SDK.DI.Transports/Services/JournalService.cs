@@ -46,6 +46,7 @@ namespace UGRS.Core.SDK.DI.Transports.Services
                         lObjJournalEntry.Lines.Credit = lObjLine.Credit;
                         lObjJournalEntry.Lines.Debit = lObjLine.Debit;
                         lObjJournalEntry.Lines.Reference1 = string.IsNullOrEmpty(lObjLine.Ref1) ? "" : lObjLine.Ref1;
+                        lObjJournalEntry.Lines.Reference2 = string.IsNullOrEmpty(lObjLine.Ref2) ? "" : lObjLine.Ref2;
                         lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_Auxiliar").Value = string.IsNullOrEmpty(lObjLine.Auxiliar) ? "" : lObjLine.Auxiliar;
                         lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_TypeAux").Value = string.IsNullOrEmpty(lObjLine.TypeAux) ? "" : lObjLine.TypeAux;
                         //lObjJournalEntry.Lines.UserFields.Fields.Item("U_SU_Folio").Value = pObjJournalEntry.Auction.Folio;
@@ -98,6 +99,10 @@ namespace UGRS.Core.SDK.DI.Transports.Services
                 lObjJournalEntry.GetByKey(GetTransId(pStrFolio, pStrTransCode));
                 //Cancel JournalEntry
                 lIntResult = lObjJournalEntry.Cancel();
+                if (lIntResult != 0)
+                {
+                    throw new SapBoException(string.Format("Error code: {0} \nError message: {1}", lIntResult, DIApplication.Company.GetLastErrorDescription()));
+                }
 
             }
             catch (Exception lObjException)

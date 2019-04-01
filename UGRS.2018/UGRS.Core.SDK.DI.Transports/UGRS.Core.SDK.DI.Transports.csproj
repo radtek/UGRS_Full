@@ -89,10 +89,12 @@
     <Compile Include="Services\CommissionDriverService.cs" />
     <Compile Include="Services\CommissionLineService.cs" />
     <Compile Include="Services\CommissionService.cs" />
+    <Compile Include="Services\CommissionsRowsService.cs" />
     <Compile Include="Services\JournalService.cs" />
     <Compile Include="Services\RoutesService.cs" />
     <Compile Include="Services\SetupService.cs" />
     <Compile Include="Services\VehiclesService.cs" />
+    <Compile Include="Tables\CommissionsRows.cs" />
     <Compile Include="Tables\StartDay.cs" />
     <Compile Include="Tables\CommissionLine.cs" />
     <Compile Include="Tables\Commissions.cs" />

@@ -94,25 +94,24 @@ namespace UGRS.Core.SDK.DI.Transports.DAO
                     {
                         lLstComissionDTO.Add(new CommissionDriverDTO()
                         {
-                            Type = lObjResults.Fields.Item("Type").Value.ToString(),
-                            Id = lObjResults.Fields.Item("Id").Value.ToString(),
-                            DocNum = lObjResults.Fields.Item("Id").Value.ToString(),
-                            DocDate = Convert.ToDateTime(lObjResults.Fields.Item("DocDate").Value.ToString()),
-                            DriverId = lObjResults.Fields.Item("empID").Value.ToString(),
-                            Driver = lObjResults.Fields.Item("SlpName").Value.ToString(),
-                            ItemName = lObjResults.Fields.Item("ItemName").Value.ToString(),
-                            Route = lObjResults.Fields.Item("Route").Value.ToString(),
-                            AF = lObjResults.Fields.Item("AF").Value.ToString(),
-                            TypLoad = lObjResults.Fields.Item("TypLoad").Value.ToString(),
-                            FrgAm = Convert.ToDouble(lObjResults.Fields.Item("LineTotal").Value.ToString()),
-                            InsAm = Convert.ToDouble(lObjResults.Fields.Item("U_Seguro").Value.ToString()),
-                            //LstDisc = Convert.ToDouble(lObjResults.Fields.Item("").Value.ToString()),
-                            WkDisc = Convert.ToDouble(lObjResults.Fields.Item("WkDisc").Value.ToString()),
-                            //TotDisc = Convert.ToDouble(lObjResults.Fields.Item("").Value.ToString()),
-                            Comm = Convert.ToDouble(lObjResults.Fields.Item("U_Commission").Value.ToString()),
+                           // Type = lObjResults.Fields.Item("Type").Value.ToString(),
+                            //Id = lObjResults.Fields.Item("Id").Value.ToString(),
+                            //DocNum = lObjResults.Fields.Item("Id").Value.ToString(),
+                            //DocDate = Convert.ToDateTime(lObjResults.Fields.Item("DocDate").Value.ToString()), 
+                            //ItemName = lObjResults.Fields.Item("ItemName").Value.ToString(),
+                            //Route = lObjResults.Fields.Item("Route").Value.ToString(),
+                            //AF = lObjResults.Fields.Item("AF").Value.ToString(),
+                            //TypLoad = lObjResults.Fields.Item("TypLoad").Value.ToString(),
 
-                            //TotComm = 
-                            // Doubt = Convert.ToDouble(lObjResults.Fields.Item("").Value.ToString()),
+                            DriverId = lObjResults.Fields.Item("U_DriverId").Value.ToString(),
+                            Driver = lObjResults.Fields.Item("U_Driver").Value.ToString(),
+                            FrgAm = Convert.ToDouble(lObjResults.Fields.Item("U_FrgAm").Value.ToString()),
+                            InsAm = Convert.ToDouble(lObjResults.Fields.Item("U_InsAm").Value.ToString()),
+                            LstDisc = Convert.ToDouble(lObjResults.Fields.Item("U_LstDisc").Value.ToString()),
+                            WkDisc = Convert.ToDouble(lObjResults.Fields.Item("U_WkDisc").Value.ToString()),
+                            Comm = Convert.ToDouble(lObjResults.Fields.Item("U_Comm").Value.ToString()),
+                            TotDisc = Convert.ToDouble(lObjResults.Fields.Item("U_TotComm").Value.ToString()),
+                            Doubt = Convert.ToDouble(lObjResults.Fields.Item("U_Doubt").Value.ToString()),
                         });
                         lObjResults.MoveNext();
                     }
@@ -378,7 +377,7 @@ namespace UGRS.Core.SDK.DI.Transports.DAO
                         mObjSalesOrderLines.ItemCode = lObjResults.Fields.Item("ItemCode").Value.ToString();
                         mObjSalesOrderLines.Description = lObjResults.Fields.Item("ItemName").Value.ToString();
                         mObjSalesOrderLines.Folio = lObjResults.Fields.Item("U_GLO_Ticket").Value.ToString();
-                        mObjSalesOrderLines.Shared = lObjResults.Fields.Item("U_TR_Compartido").Value.ToString() == "N" ? false : true;
+                        mObjSalesOrderLines.Shared = lObjResults.Fields.Item("U_TR_Shared").Value.ToString() == "N" ? false : true;
                         mObjSalesOrderLines.PayloadType = lObjResults.Fields.Item("U_TR_LoadType").Value.ToString();
                         mObjSalesOrderLines.VehicleType = lObjResults.Fields.Item("U_TR_VehicleType").Value.ToString();
 

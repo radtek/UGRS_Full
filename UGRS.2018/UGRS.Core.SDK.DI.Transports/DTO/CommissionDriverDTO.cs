@@ -5,8 +5,6 @@ namespace UGRS.Core.SDK.DI.Transports.DTO
 {
     public class CommissionDriverDTO
     {
-
-        
         /// <summary>
         /// Chofer
         /// </summary>

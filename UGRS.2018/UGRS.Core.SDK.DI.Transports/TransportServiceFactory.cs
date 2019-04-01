@@ -63,5 +63,10 @@ namespace UGRS.Core.SDK.DI.Transports
         {
             return new AttachmentDI();
         }
+
+        public CommissionsRowsService GetCmsnRowService()
+        {
+            return new CommissionsRowsService();
+        }
     }
 }

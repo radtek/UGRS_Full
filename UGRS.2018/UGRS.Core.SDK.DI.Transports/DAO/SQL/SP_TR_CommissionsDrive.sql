@@ -54,7 +54,7 @@ BEGIN
 		and OINV.DocDate between @StartDate and @EndDate
 		and OINV.Canceled = 'N'
 		and CMSN.U_DocEntry is null
-		and OITM.QryGroup33 = 'Y'
+		--and OITM.QryGroup33 = 'Y'
 union all
 
 	--Consulta de asiento

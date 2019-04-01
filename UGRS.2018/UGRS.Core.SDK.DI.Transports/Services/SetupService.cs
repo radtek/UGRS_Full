@@ -10,6 +10,7 @@ namespace UGRS.Core.SDK.DI.Transports.Services
        private TableDAO<Commissions> mObjCommissionsDAO;
        private TableDAO<CommissionLine> mObjCommissionLineDAO;
        private TableDAO<StartDay> mObjStartDay;
+       private TableDAO<CommissionsRows> mObjCommissionsRows;
 
        public SetupService()
        {
@@ -18,6 +19,7 @@ namespace UGRS.Core.SDK.DI.Transports.Services
            mObjCommissionsDAO = new TableDAO<Commissions>();
            mObjCommissionLineDAO = new TableDAO<CommissionLine>();
            mObjStartDay = new TableDAO<StartDay>();
+           mObjCommissionsRows = new TableDAO<CommissionsRows>();
            
        }
 
@@ -28,6 +30,7 @@ namespace UGRS.Core.SDK.DI.Transports.Services
            mObjCommissionsDAO.Initialize();
            mObjCommissionLineDAO.Initialize();
            mObjStartDay.Initialize();
+           mObjCommissionsRows.Initialize();
        }
     }
 }

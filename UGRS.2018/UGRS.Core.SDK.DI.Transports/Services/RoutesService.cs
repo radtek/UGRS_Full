@@ -139,5 +139,10 @@ namespace UGRS.Core.SDK.DI.Transports.Services
         {
             return mObjRouteListDAO.GetTypePayload(pStrCode);
         }
+
+        public string ValidateSinKM(string pStrItemCode)
+        {
+            return mObjRouteListDAO.ValidateItemSinKM(pStrItemCode);
+        }
     }
 }
