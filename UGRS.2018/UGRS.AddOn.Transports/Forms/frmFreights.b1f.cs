@@ -58,6 +58,7 @@ namespace UGRS.AddOn.Transports.Forms
         SAPbouiCOM.Form SO_FrmSalesOrder;
         SAPbouiCOM.Form SO_FrmFields;
         SAPbouiCOM.EditText SO_TxtFolio;
+        SAPbouiCOM.EditText SO_TxtShared;
 
         SAPbouiCOM.Matrix SO_MtxSO;
         SAPbouiCOM.ComboBox SO_CboPyloadType;
@@ -705,6 +706,18 @@ namespace UGRS.AddOn.Transports.Forms
                         .Cells.Item(mModalFrmCFL.mIntRow).Specific).Value.ToString();
                     txtDesc.Value = ((SAPbouiCOM.EditText)mModalFrmCFL.pObjMtxCFL.Columns.Item("cDesc")
                         .Cells.Item(mModalFrmCFL.mIntRow).Specific).Value.ToString();
+
+                    string lStrValidate = mObjTransportsFactory.GetRouteService().ValidateSinKM(txtArticle.Value);
+
+                    if (lStrValidate == "N")
+                    {
+                        txtAmountKm.Item.Enabled = true;
+                    }
+                    else
+                    {
+                        txtAmountKm.Item.Enabled = false;
+                    }
+
                     break;
                 case "txtEcNum":
                     txtEcNum.Value = ((SAPbouiCOM.EditText)mModalFrmCFL.pObjMtxCFL.Columns.Item("cItem")
@@ -943,6 +956,7 @@ namespace UGRS.AddOn.Transports.Forms
                 Employee = txtDriver.Value,
                 Asset = txtEcNum.Value,
                 Extra = txtExtra.Value,
+                Origin = txtOrigin.Value,
                 Destination = txtDestination.Value,
                 AnotherPyld = mStrType == "O" ? txtVarios.Value : "",
                 Bags = mStrType == "A" ? txtVarios.Value : "",
@@ -1002,6 +1016,7 @@ namespace UGRS.AddOn.Transports.Forms
                 SO_FrmFields = SAPbouiCOM.Framework.Application.SBO_Application.Forms.GetFormByTypeAndCount(-mIntFormType, -1);
 
                 SO_TxtFolio = (SAPbouiCOM.EditText)SO_FrmFields.Items.Item("U_GLO_Ticket").Specific;
+                SO_TxtShared = (SAPbouiCOM.EditText)SO_FrmFields.Items.Item("U_TR_Shared").Specific;
 
                 SO_MtxSO = (SAPbouiCOM.Matrix)SO_FrmSalesOrder.Items.Item("38").Specific;
                 return true;
@@ -1092,10 +1107,9 @@ namespace UGRS.AddOn.Transports.Forms
                 SO_TxtExtra.Value = pLstSalesOrderLines[i - 1].Extra;
 
                 SO_TxtDestination = (SAPbouiCOM.EditText)SO_MtxSO.Columns.Item("U_TR_Destination").Cells.Item(i).Specific;
-                SO_TxtDestination.Value = pLstSalesOrderLines[i - 1].Destination;
+                SO_TxtDestination.Value = pLstSalesOrderLines[i - 1].Origin + " - "+ pLstSalesOrderLines[i - 1].Destination;
 
-                SO_TxtDestination = (SAPbouiCOM.EditText)SO_MtxSO.Columns.Item("U_TR_Compartido").Cells.Item(i).Specific;
-                SO_TxtDestination.Value = pLstSalesOrderLines[i - 1].Shared == true ? "Y" : "N";
+               
 
                 if (!string.IsNullOrEmpty(pLstSalesOrderLines[i - 1].Employee))
                 {
@@ -1129,8 +1143,10 @@ namespace UGRS.AddOn.Transports.Forms
                 {
                     mBolWT = true;
                 }
+
+                SO_TxtShared.Value = pLstSalesOrderLines[i - 1].Shared == true ? "Y" : "N";
             }
-           
+
  
             if (SO_TxtFolio != null && SO_TxtFolio.Item.Enabled)
             {
@@ -1704,16 +1720,15 @@ namespace UGRS.AddOn.Transports.Forms
         {
             try
             {
-               
-                    if (!string.IsNullOrEmpty(cboShared.Value) && (SharedEnum)Convert.ToInt32(cboShared.Value) == SharedEnum.Yes)
-                    {
-                        SharedConfig(true);
-                    }
-                    else
-                    {
-                        SharedConfig(false);
-                    }
-                
+                if (!string.IsNullOrEmpty(cboShared.Value) && (SharedEnum)Convert.ToInt32(cboShared.Value) == SharedEnum.Yes)
+                {
+                    SharedConfig(true);
+                }
+                else
+                {
+                    SharedConfig(false);
+                }
+
             }
             catch (Exception ex)
             {
@@ -1727,8 +1742,6 @@ namespace UGRS.AddOn.Transports.Forms
         {
             try
             {
-
-
                 if (pVal.CharPressed == 13)
                 {
                     if (!mBoolSearchMode)

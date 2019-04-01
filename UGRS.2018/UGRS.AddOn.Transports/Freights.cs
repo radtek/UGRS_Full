@@ -168,8 +168,9 @@ namespace UGRS.AddOn.Transports
 
             mObjSalesOrderLines.ItemCode = ((SAPbouiCOM.EditText)mObjMtxSO.Columns.Item("1").Cells.Item(pIntRow).Specific).Value;
             mObjSalesOrderLines.Description = ((SAPbouiCOM.EditText)mObjMtxSO.Columns.Item("3").Cells.Item(pIntRow).Specific).Value;
+            mObjSalesOrderLines.Shared = ((SAPbouiCOM.EditText)mObjUFForm.Items.Item("U_TR_Shared").Specific).Value == "N" ? false : true;
             mObjSalesOrderLines.Folio = ((SAPbouiCOM.EditText)mObjUFForm.Items.Item("U_GLO_Ticket").Specific).Value;
-            mObjSalesOrderLines.Shared = ((SAPbouiCOM.EditText)mObjMtxSO.Columns.Item("U_TR_Compartido").Cells.Item(pIntRow).Specific).Value == "N" ? false : true; //mObjTransportService.GetRouteService().CheckIfShared(mObjSalesOrderLines.Folio) ? true : false;
+            //mObjSalesOrderLines.Shared = ((SAPbouiCOM.EditText)mObjMtxSO.Columns.Item("U_TR_Compartido").Cells.Item(pIntRow).Specific).Value == "N" ? false : true; //mObjTransportService.GetRouteService().CheckIfShared(mObjSalesOrderLines.Folio) ? true : false;
             mObjSalesOrderLines.PayloadType = ((SAPbouiCOM.ComboBox)mObjMtxSO.Columns.Item("U_TR_LoadType").Cells.Item(pIntRow).Specific).Value;
             mObjSalesOrderLines.VehicleType = ((SAPbouiCOM.ComboBox)mObjMtxSO.Columns.Item("U_TR_VehicleType").Cells.Item(pIntRow).Specific).Value;
             string lStrRoute = ((SAPbouiCOM.EditText)mObjMtxSO.Columns.Item("U_TR_Paths").Cells.Item(pIntRow).Specific).Value;
