@@ -320,7 +320,6 @@ namespace UGRS.AddOn.Transports.Forms
                 if (lObjCommissionHeader == null || lObjCommissionHeader.Status == (int)StatusEnum.CANCELED)
                 {
                     SetControlsNew();
-                   
                     if (lObjCommissionHeader != null)
                     {
                         SetTxtStatus((StatusEnum)lObjCommissionHeader.Status);
@@ -328,7 +327,6 @@ namespace UGRS.AddOn.Transports.Forms
                 }
                 else
                 {
-                    
                     lLstCmsnLn = mObjTransportsFactory.GetCommissionService().GetCommissionLine(lObjCommissionHeader.RowCode).ToList();
                     SetControlsLoad(lObjCommissionHeader);
                 }
@@ -460,6 +458,10 @@ namespace UGRS.AddOn.Transports.Forms
             if (lBolSuccess)
             {
                 mObjBtnSearch.Item.Click();
+            }
+            else
+            {
+                UIApplication.ShowMessageBox("No fue posible realizar la cancelación");
             }
         }
 
@@ -651,6 +653,7 @@ namespace UGRS.AddOn.Transports.Forms
                 lLstDebt = GetCommissionDebt(mObjTxtFolio.Value, lObjDriverDTO.DriverId);
                 lObjDriverDTO.ListDebt = lLstDebt;
                 lObjDriverDTO.LstDisc = lLstDebt.Sum(x => x.Debit) - lLstDebt.Sum(x => x.Credit);
+                lObjDriverDTO.LstDisc = lObjDriverDTO.LstDisc < 0 ? 0 : lObjDriverDTO.LstDisc;
                 mObjProgressBar.NextPosition();
             }
 
@@ -666,7 +669,7 @@ namespace UGRS.AddOn.Transports.Forms
                 TotDisc = y.First().LstDisc + y.First().WkDisc,
                 Comm = y.Sum(s => s.Comm),
                 NoGenerate = y.First().NoGenerate,
-                TotComm = y.Sum(s => s.Comm) - y.First().LstDisc - y.First().WkDisc > 0 ? y.Sum(s => s.Comm) - y.First().LstDisc - y.First().WkDisc : 0,
+                TotComm = y.Sum(s => s.Comm) - (y.First().LstDisc + y.First().WkDisc) > 0 ? y.Sum(s => s.Comm) - y.First().LstDisc - y.First().WkDisc : 0,
                 Doubt = y.Sum(s => s.Comm) - (y.First().LstDisc + y.First().WkDisc) < 0 ? (y.First().LstDisc + y.First().WkDisc) - y.Sum(s => s.Comm) : 0,
             }).ToList();
             mObjProgressBar.NextPosition();
@@ -871,32 +874,40 @@ namespace UGRS.AddOn.Transports.Forms
         {
             bool lBolSuccess = false;
              Commissions lObjCommissionHeader =  GetCommisionHeader(mObjTxtFolio.Value);
-             
+            
+
              if (lObjCommissionHeader == null || lObjCommissionHeader.Status == (int) StatusEnum.CANCELED)
              {
                 
                  Commissions lObjCommission = GetCommissionData();
                  lObjCommission.Status = (int)StatusEnum.OPEN;
                  lObjCommission.HasDriverCms = "N";
-                 //Guardado de encabezado
+                
+                      //Guardado de encabezado
                  if (mObjTransportsFactory.GetCommissionService().AddCommission(lObjCommission) == 0)
                  {
-                     //Guardado de lineas
-                     mObjProgressBar = new ProgressBarManager(UIApplication.GetApplication(), "Guardando comisiones", lObjCommission.LstCommissionLine.Count);
-                     string lStrCommissionId = mObjTransportsFactory.GetCommissionService().GetLastCommissionId();
-                     bool lBolsuccessLine = true;
-                     foreach (CommissionLine lObjCommisionLine in lObjCommission.LstCommissionLine)
+                     List<CommissionsRows> lObjCommisssionRows = GetcommissionRows(GetCommissionDriverMatrix());
+                     //Guardado de rows
+                     if (SaveCmsnRow(lObjCommisssionRows))
                      {
-                         lObjCommisionLine.CommisionId = lStrCommissionId;
-                         if (mObjTransportsFactory.GetCommissionLineService().AddCommissionLine(lObjCommisionLine) != 0)
+
+                         //Guardado de lineas
+                         mObjProgressBar = new ProgressBarManager(UIApplication.GetApplication(), "Guardando comisiones", lObjCommission.LstCommissionLine.Count);
+                         string lStrCommissionId = mObjTransportsFactory.GetCommissionService().GetLastCommissionId();
+                         bool lBolsuccessLine = true;
+                         foreach (CommissionLine lObjCommisionLine in lObjCommission.LstCommissionLine.Where(x => x.Amount > 0))
                          {
-                             lBolsuccessLine = false;
+                             lObjCommisionLine.CommisionId = lStrCommissionId;
+                             if (mObjTransportsFactory.GetCommissionLineService().AddCommissionLine(lObjCommisionLine) != 0)
+                             {
+                                 lBolsuccessLine = false;
+                             }
+                             mObjProgressBar.NextPosition();
                          }
                          mObjProgressBar.NextPosition();
-                     }
-                     mObjProgressBar.NextPosition();
 
-                     lBolSuccess = lBolsuccessLine;
+                         lBolSuccess = lBolsuccessLine;
+                     }
                  }
 
                  mObjProgressBar.Dispose();
@@ -931,6 +942,20 @@ namespace UGRS.AddOn.Transports.Forms
                  }
              }
             return lBolSuccess;
+        }
+
+        private bool SaveCmsnRow(List<CommissionsRows> pLstCmsnRow)
+        {
+            bool lBolSuccessRow = true;
+            foreach (CommissionsRows lObjCmsnRow in pLstCmsnRow)
+            {
+                if (mObjTransportsFactory.GetCmsnRowService().AddCmsnRow(lObjCmsnRow) != 0)
+                {
+                    lBolSuccessRow = false;
+                }
+               
+            }
+            return lBolSuccessRow;
         }
 
         private bool GenerateJournalEntry()
@@ -997,6 +1022,7 @@ namespace UGRS.AddOn.Transports.Forms
             foreach (var item in lLstCommisssionDriverDTO)
             {
                 int i = lLstMatrix.Where(x => x.DriverId == item.DriverId).ToList().Count();
+                
                 item.NoGenerate = lLstMatrix.Where(x => x.DriverId == item.DriverId).Count() > 0 ? false : true;
             }
            
@@ -1012,6 +1038,7 @@ namespace UGRS.AddOn.Transports.Forms
                 lObjCommisionLine.Amount = lObjLine.FrgAm;
                 lObjCommisionLine.NoGenerate = lObjLine.NoGenerate;
                 lObjCommisionLine.Type = lObjLine.Type;
+                lObjCommisionLine.CmsnAmount = lObjLine.Comm;
                 lLstCommissionsLine.Add(lObjCommisionLine);
             }
             return lLstCommissionsLine;
@@ -1042,7 +1069,7 @@ namespace UGRS.AddOn.Transports.Forms
                     lObjCommissionDriver.Comm = Convert.ToDouble(mDtMatrixDrv.GetValue("cComm", i).ToString());
                     lObjCommissionDriver.TotComm = Convert.ToDouble(mDtMatrixDrv.GetValue("cTotComm", i).ToString());
                     lObjCommissionDriver.Doubt = Convert.ToDouble(mDtMatrixDrv.GetValue("cDoubt", i).ToString());
-                    lObjCommissionDriver.NoGenerate = false;//((SAPbouiCOM.CheckBox)mObjMtxDrv.Columns.Item("cGenerate").Cells.Item(i + 1).Specific).Checked;
+                    lObjCommissionDriver.NoGenerate = ((SAPbouiCOM.CheckBox)mObjMtxDrv.Columns.Item("cGenerate").Cells.Item(i + 1).Specific).Checked;
 
                     if (lObjCommissionDriver.Driver != "TOTAL")
                     {
@@ -1658,6 +1685,35 @@ namespace UGRS.AddOn.Transports.Forms
             }
 
             return null;
+        }
+
+        private List<CommissionsRows> GetcommissionRows(List<CommissionDriverDTO> pLstCommissionDriver)
+        {
+            List<CommissionsRows> lLstCmsRow = new List<CommissionsRows>();
+            string lStrCommissionId = mObjTransportsFactory.GetCommissionService().GetLastCommissionId();
+            foreach (var lObjCms in pLstCommissionDriver)
+            {
+                CommissionsRows lObjCmsRow = new CommissionsRows();
+                lObjCmsRow.Id = lStrCommissionId;
+                lObjCmsRow.Folio = lObjCms.Folio;
+                lObjCmsRow.Driver = lObjCms.Driver;
+                lObjCmsRow.DriverId = lObjCms.DriverId;
+                lObjCmsRow.FrgAm = lObjCms.FrgAm;
+                lObjCmsRow.InsAm = lObjCms.InsAm;
+                lObjCmsRow.LstDisc = lObjCms.LstDisc;
+                lObjCmsRow.WkDisc = lObjCms.WkDisc;
+                lObjCmsRow.TotDisc = lObjCms.TotDisc;
+                lObjCmsRow.Doubt = lObjCms.Doubt;
+                lObjCmsRow.NoGenerate = lObjCms.NoGenerate;
+                lObjCmsRow.DocDate = lObjCms.DocDate;
+                lObjCmsRow.Comm = lObjCms.Comm;
+                lObjCmsRow.TotComm = lObjCms.TotComm;
+                lObjCmsRow.Doubt = lObjCms.Doubt;
+                lLstCmsRow.Add(lObjCmsRow);
+            }
+
+
+            return lLstCmsRow;
         }
 
         private void LoadFirstDay()
