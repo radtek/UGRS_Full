@@ -987,5 +987,23 @@ namespace UGRS.Core.SDK.DI.Transports.DAO
 
             return lLstAssetsDTO;
         }
+
+
+        public string ValidateItemSinKM(string pStrItemCode)
+        {
+            try
+            {
+                string lStrReturn = mObjQueryManager.GetValue("QryGroup33", "ItemCode", pStrItemCode, "OITM");
+
+                return lStrReturn;
+            }
+            catch (Exception ex)
+            {
+                UIApplication.ShowError(string.Format("GetRetention: {0}", ex.Message));
+                LogService.WriteError("RouteListDAO (GetRetention): " + ex.Message);
+                LogService.WriteError(ex);
+                return "0";
+            }
+        }
     }
 }
