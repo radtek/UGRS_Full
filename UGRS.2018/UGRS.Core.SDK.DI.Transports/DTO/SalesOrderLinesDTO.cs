@@ -39,7 +39,7 @@ namespace UGRS.Core.SDK.DI.Transports.DTO
        public string Varios { get; set; }
        public string Heads { get; set; }
        public string Bags { get; set; }
-       public float AmountKG { get; set; }
+       public float KG { get; set; }
 
     }
 }
