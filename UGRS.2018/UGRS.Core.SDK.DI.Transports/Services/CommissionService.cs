@@ -30,6 +30,12 @@ namespace UGRS.Core.SDK.DI.Transports.Services
         {
             return mObjCommissionDAO.GetComissionsDriverSaved(pStrCommissionId);
         }
+
+        public List<CommissionDriverDTO> GetCommissionDriverLine(string pStrFolio)
+        {
+            return mObjCommissionDAO.GetComissionsDriversLineSaved(pStrFolio);
+        }
+
         public List<CommissionDTO> GetCommission(string pStrDriverId, string pStrDateStart, string pStrDateEnd)
         {
             return mObjCommissionDAO.GetComission(pStrDriverId, pStrDateStart, pStrDateEnd);

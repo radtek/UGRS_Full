@@ -1,34 +1,15 @@
-USE [UGRS_TEST]
-GO
-/****** Object:  StoredProcedure [dbo].[SP_TR_GetCommissionDriver]    Script Date: 07-Mar-19 10:51:57 AM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
--- =============================================
--- Author:		<Author,,Name>
--- Create date: <Create Date,,>
--- Description:	<Description,,>
--- =============================================
+--Empleado por facturas
 
+declare @CommissionID varchar(50);
 
-CREATE PROCEDURE [dbo].[SP_TR_GetCommissionDriverSaved] 
-	-- Add the parameters for the stored procedure here
-	@CommissionID varchar(50)
-	
-AS
-BEGIN
-	
-	-- En codigo se realiza un group by por empleado y realiza los calculos correspondientes
-	
-	--Empleado por facturas
+set @CommissionID = '{Folio}'
 	 select 
 		'INV' as Type, 
 		OINV.DocEntry as Id, 
 		OINV.DocNum as DocNum,
 		OINV.DocDate, 
-		OHEM.empID, 
-		OSLP.SlpName, 
+		OHEM.empID as U_DriverId, 
+		OSLP.SlpName U_Driver, 
 		OITM.ItemName,
 		INV1.U_TR_Paths as Route, 
 		OOCR.OcrName as AF, 
@@ -49,10 +30,10 @@ BEGIN
 	left join [@UG_TR_TRTY] TYP with (nolock) on TYP.Code = INV1.U_TR_LoadType
 	left join [@UG_TR_VETY]  with(nolock) on [@UG_TR_VETY].U_EquipType = INV1.U_TR_VehicleType
 
-	where U_CommisionId = @CommissionID 
+	where U_Folio = @CommissionID 
 	and CMLN.U_Type = 'INV'
 	and (OITB.ItmsGrpNam = 'FLETES')
-
+	and CMLN.U_Status != '3' --No cancleado
 		union all
 		--Consulta de asiento
 	 select 
@@ -89,9 +70,7 @@ BEGIN
 		and OUDP.Name = 'TRANSPORTES' 
 		and [@UG_Config].Name = 'TR_FLETE_INT'
 		 and OJDT.AutoStorno='N' and T2.TransId is null 
-		 and CMLN.U_CommisionId = @CommissionID 
+		 and CMLN.U_Folio = @CommissionID 
+		 and CMLN.U_Status != '3' --No cancleado
 		 and CMLN.U_Type = 'JDT'
 		and OJDT.TransCode = 'TR/F' and OJDT.StornoToTr is null  
-
-
-END

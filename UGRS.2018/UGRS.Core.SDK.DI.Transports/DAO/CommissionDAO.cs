@@ -10,6 +10,7 @@ using UGRS.Core.Utility;
 using UGRS.Core.SDK.DI.Transports.DTO;
 using UGRS.Core.SDK.DI.DAO;
 using UGRS.Core.SDK.DI.Transports.Tables;
+using System.Linq;
 
 namespace UGRS.Core.SDK.DI.Transports.DAO
 {
@@ -94,14 +95,14 @@ namespace UGRS.Core.SDK.DI.Transports.DAO
                     {
                         lLstComissionDTO.Add(new CommissionDriverDTO()
                         {
-                           // Type = lObjResults.Fields.Item("Type").Value.ToString(),
-                            //Id = lObjResults.Fields.Item("Id").Value.ToString(),
-                            //DocNum = lObjResults.Fields.Item("Id").Value.ToString(),
-                            //DocDate = Convert.ToDateTime(lObjResults.Fields.Item("DocDate").Value.ToString()), 
-                            //ItemName = lObjResults.Fields.Item("ItemName").Value.ToString(),
-                            //Route = lObjResults.Fields.Item("Route").Value.ToString(),
-                            //AF = lObjResults.Fields.Item("AF").Value.ToString(),
-                            //TypLoad = lObjResults.Fields.Item("TypLoad").Value.ToString(),
+                            Type = lObjResults.Fields.Item("Type").Value.ToString(),
+                            Id = lObjResults.Fields.Item("Id").Value.ToString(),
+                            DocNum = lObjResults.Fields.Item("Id").Value.ToString(),
+                            DocDate = Convert.ToDateTime(lObjResults.Fields.Item("DocDate").Value.ToString()),
+                            ItemName = lObjResults.Fields.Item("ItemName").Value.ToString(),
+                            Route = lObjResults.Fields.Item("Route").Value.ToString(),
+                            AF = lObjResults.Fields.Item("AF").Value.ToString(),
+                            TypLoad = lObjResults.Fields.Item("TypLoad").Value.ToString(),
 
                             DriverId = lObjResults.Fields.Item("U_DriverId").Value.ToString(),
                             Driver = lObjResults.Fields.Item("U_Driver").Value.ToString(),
@@ -112,7 +113,9 @@ namespace UGRS.Core.SDK.DI.Transports.DAO
                             Comm = Convert.ToDouble(lObjResults.Fields.Item("U_Comm").Value.ToString()),
                             TotDisc = Convert.ToDouble(lObjResults.Fields.Item("U_TotComm").Value.ToString()),
                             Doubt = Convert.ToDouble(lObjResults.Fields.Item("U_Doubt").Value.ToString()),
+                            NoGenerate = lObjResults.Fields.Item("U_NoGenerate").Value.ToString() == "Y" ? true : false,
                         });
+                        //var ss = lObjResults.Fields.Item("U_NoGenerate").Value.ToString() == "Y" ? true : false,
                         lObjResults.MoveNext();
                     }
                 }
@@ -130,6 +133,60 @@ namespace UGRS.Core.SDK.DI.Transports.DAO
             return lLstComissionDTO;
         }
 
+        public List<CommissionDriverDTO> GetComissionsDriversLineSaved(string pStrCommissionSaved)
+        {
+            List<CommissionDriverDTO> lLstComissionDTO = new List<CommissionDriverDTO>();
+            SAPbobsCOM.Recordset lObjResults = (SAPbobsCOM.Recordset)DIApplication.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.BoRecordset);
+            try
+            {
+                Dictionary<string, string> lLstParams = new Dictionary<string, string>();
+
+                lLstParams.Add("Folio", pStrCommissionSaved);
+
+                string lStrQuery = this.GetSQL("GetCommissionDriverLine").Inject(lLstParams);
+
+                lObjResults.DoQuery(lStrQuery);
+
+                if (lObjResults.RecordCount > 0)
+                {
+                    for (int i = 0; i < lObjResults.RecordCount; i++)
+                    {
+                        lLstComissionDTO.Add(new CommissionDriverDTO()
+                        {
+                            Type = lObjResults.Fields.Item("Type").Value.ToString(),
+                            Id = lObjResults.Fields.Item("Id").Value.ToString(),
+                            DocNum = lObjResults.Fields.Item("Id").Value.ToString(),
+                            DocDate = Convert.ToDateTime(lObjResults.Fields.Item("DocDate").Value.ToString()),
+                            ItemName = lObjResults.Fields.Item("ItemName").Value.ToString(),
+                            Route = lObjResults.Fields.Item("Route").Value.ToString(),
+                            AF = lObjResults.Fields.Item("AF").Value.ToString(),
+                            TypLoad = lObjResults.Fields.Item("TypLoad").Value.ToString(),
+
+                            DriverId = lObjResults.Fields.Item("U_DriverId").Value.ToString(),
+                            Driver = lObjResults.Fields.Item("U_Driver").Value.ToString(),
+                            FrgAm = Convert.ToDouble(lObjResults.Fields.Item("LineTotal").Value.ToString()),
+                            InsAm = Convert.ToDouble(lObjResults.Fields.Item("U_Seguro").Value.ToString()),
+                            WkDisc = Convert.ToDouble(lObjResults.Fields.Item("WkDisc").Value.ToString()),
+                            Comm = Convert.ToDouble(lObjResults.Fields.Item("U_Commission").Value.ToString()),
+                          
+                        });
+                        //var ss = lObjResults.Fields.Item("U_NoGenerate").Value.ToString() == "Y" ? true : false,
+                        lObjResults.MoveNext();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LogService.WriteError("CommissionDAO (GetComissionsDrivers): " + ex.Message);
+                LogService.WriteError(ex);
+                UIApplication.ShowError(string.Format("GetComissionsDrivers: {0}", ex.Message));
+            }
+            finally
+            {
+                MemoryUtility.ReleaseComObject(lObjResults);
+            }
+            return lLstComissionDTO;
+        }
 
         public List<CommissionDTO> GetComission(string pStrDriverId, string pStrDateStart, string pStrDateEnd)
         {
