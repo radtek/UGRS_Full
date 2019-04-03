@@ -51,6 +51,7 @@ namespace UGRS.Core.SDK.DI.Transports.Services
                         lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_TypeAux").Value = string.IsNullOrEmpty(lObjLine.TypeAux) ? "" : lObjLine.TypeAux;
                         //lObjJournalEntry.Lines.UserFields.Fields.Item("U_SU_Folio").Value = pObjJournalEntry.Auction.Folio;
                         lObjJournalEntry.Lines.UserFields.Fields.Item("U_GLO_CodeMov").Value = string.IsNullOrEmpty(lObjLine.CodeMov) ? "" : lObjLine.CodeMov;
+                        lObjJournalEntry.Lines.UserFields.Fields.Item("U_TR_Paths").Value = string.IsNullOrEmpty(lObjLine.Paths) ? "" : lObjLine.Paths;
                         lObjJournalEntry.Lines.Add();
                     }
                 }

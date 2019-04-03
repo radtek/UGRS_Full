@@ -13,5 +13,6 @@
         public string Ref1 { get; set; }
         public string Ref2 { get; set; }
         public string CodeMov { get; set; }
+        public string Paths { get; set; }
     }
 }
