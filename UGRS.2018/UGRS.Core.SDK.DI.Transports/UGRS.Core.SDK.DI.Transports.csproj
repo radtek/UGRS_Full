@@ -206,6 +206,7 @@
     <EmbeddedResource Include="DAO\SQL\GetCommissionsDriverSaved.sql" />
     <EmbeddedResource Include="DAO\SQL\GetTax.sql" />
     <EmbeddedResource Include="DAO\SQL\GetSOLines.sql" />
+    <EmbeddedResource Include="DAO\SQL\GetCommissionDriverLine.sql" />
     <Content Include="DAO\SQL\GetJounalDebt.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
