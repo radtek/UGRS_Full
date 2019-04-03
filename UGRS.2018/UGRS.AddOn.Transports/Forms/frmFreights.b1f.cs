@@ -184,7 +184,7 @@ namespace UGRS.AddOn.Transports.Forms
             this.txtExtra.LostFocusAfter += this.lObjTxt_LostFocusAfter;
             this.txtAmountEns.LostFocusAfter += this.lObjTxt_LostFocusAfter;
             this.txtAmountKm.LostFocusAfter += lObjTxtTotKM_LostAfter;
-            this.chkEnsm.ClickAfter += new _ICheckBoxEvents_ClickAfterEventHandler(this.lObjChkIns_ClickAfter);
+            this.chkEnsm.PressedBefore += chkEnsm_PressedBefore;
             this.btnAccept.ClickBefore += new _IButtonEvents_ClickBeforeEventHandler(this.lObjBtnAccept_ClickBefore);
             this.btnAccept.ClickAfter += new _IButtonEvents_ClickAfterEventHandler(this.lObjBtnAccept_ClickAfter);
             this.btnExit.ClickAfter += lObjBtnExit_ClickAfter;
@@ -208,6 +208,9 @@ namespace UGRS.AddOn.Transports.Forms
             //}
 
         }
+
+      
+     
 
         private void txtTotalFreight_ValidateBefore(object sboObject, SBOItemEventArg pVal, out bool BubbleEvent)
         {
@@ -242,7 +245,8 @@ namespace UGRS.AddOn.Transports.Forms
             this.txtKmF.LostFocusAfter -= this.lObjTxt_LostFocusAfter;
             this.txtExtra.LostFocusAfter -= this.lObjTxt_LostFocusAfter;
             this.txtAmountEns.LostFocusAfter -= this.lObjTxt_LostFocusAfter;
-            this.chkEnsm.ClickAfter -= new _ICheckBoxEvents_ClickAfterEventHandler(this.lObjChkIns_ClickAfter);
+            this.chkEnsm.ClickBefore -= chkEnsm_ClickBefore;
+            this.chkEnsm.PressedBefore -= chkEnsm_PressedBefore;
             //this.lObjBtnAccept.ClickAfter -= new _IButtonEvents_ClickAfterEventHandler(this.lObjBtnAccept_ClickAfter);
             this.btnCancel.ClickAfter -= lObjBtnCancel_ClickAfter;
             this.btnExit.ClickAfter -= lObjBtnExit_ClickAfter;
@@ -273,17 +277,20 @@ namespace UGRS.AddOn.Transports.Forms
         {
             InitializeForm();
             KmEnableDisable(true);
-            LoadLine();
+            LoadLine(false);
         }
 
-        private void LoadLine()
+        private void LoadLine(bool LoadShared)
         {
             this.UIAPIRawForm.Freeze(true);
             //textboxes
             if (mObjSalesOrderLines != null)
             {
                 int lIntShrd = (int)(mObjSalesOrderLines.Shared ? SharedEnum.Yes : SharedEnum.NO);
-                txtArticle.Value = mObjSalesOrderLines.ItemCode;
+                if (!LoadShared)
+                {
+                    txtArticle.Value = mObjSalesOrderLines.ItemCode;
+                }
                 txtDesc.Value = mObjSalesOrderLines.Description;
                 cboPayload.Select(mObjSalesOrderLines.PayloadType, BoSearchKey.psk_ByValue);
                 cboVehicleType.Select(mObjSalesOrderLines.VehicleType, BoSearchKey.psk_ByValue);
@@ -296,7 +303,7 @@ namespace UGRS.AddOn.Transports.Forms
                 txtRetentions.Value = mObjSalesOrderLines.TaxWT.ToString();
                 mObjRoutes = RoutesToDTO(mObjTransportsFactory.GetRouteService().GetRoute((long)mObjSalesOrderLines.Route));
                 txtKg.Value = mObjSalesOrderLines.TotKg;
-                txtAmountKm.Value = mObjSalesOrderLines.AmountKG.ToString();
+                txtAmountKm.Value = mObjSalesOrderLines.UnitPrice.ToString();
 
                 LoadVarious();
 
@@ -371,6 +378,7 @@ namespace UGRS.AddOn.Transports.Forms
                 mObjRoutes.KmD = mObjInternalFreight != null ? mObjInternalFreight.UserFields.Fields.Item("U_KmD").Value.ToString() : string.Empty;
                 mObjRoutes.KmE = mObjInternalFreight != null ? mObjInternalFreight.UserFields.Fields.Item("U_KmE").Value.ToString() : string.Empty;
                 mObjRoutes.KmF = mObjInternalFreight != null ? mObjInternalFreight.UserFields.Fields.Item("U_KmF").Value.ToString() : string.Empty;
+                mIntActualRoute = mObjInternalFreight != null ? Convert.ToInt32(mObjInternalFreight.UserFields.Fields.Item("Code").Value.ToString()) : 0;
 
                 SetRoutesTextsBoxes();
                 mStrDriverId = mObjInternalFreight != null ? mObjInternalFreight.UserFields.Fields.Item("U_Driver").Value.ToString() : string.Empty;
@@ -549,6 +557,8 @@ namespace UGRS.AddOn.Transports.Forms
             txtVarios.Value = string.Empty;
             txtKg.Value = string.Empty;
             txtFolio.Value = string.Empty;
+            txtKg.Value = string.Empty;
+            txtVarios.Value = string.Empty;
 
             cboShared.Item.Enabled = true;
             txtFolio.Item.Enabled = true;
@@ -571,6 +581,8 @@ namespace UGRS.AddOn.Transports.Forms
             chkEnsm.Item.Enabled = true;
             btnRoute.Item.Enabled = true;
             btnAccept.Item.Enabled = true;
+            txtKg.Item.Enabled = true;
+            txtVarios.Item.Enabled = true;
 
             if (mBoolInternal)
             {
@@ -743,7 +755,7 @@ namespace UGRS.AddOn.Transports.Forms
                      {
                          SalesOrderLinesDTO lObjSOLinesDTO = mObjTransportsFactory.GetCommissionService().SalesOrdeLines(lStrName, txtFolio.Value);
                          mObjSalesOrderLines = lObjSOLinesDTO;
-                         LoadLine();
+                         LoadLine(true);
                      }
                      else
                      {
@@ -822,17 +834,24 @@ namespace UGRS.AddOn.Transports.Forms
         {
             this.UIAPIRawForm.Freeze(true);
             SetKilometers();
-            SetKilometerAmount();
+           
+                SetKilometerAmount();
+            
             this.UIAPIRawForm.Freeze(false);
         }
 
         private void SetCashAmounts()
         {
             this.UIAPIRawForm.Freeze(true);
-            if (float.Parse(txtAmountEns.Value) != 0)
+            if (txtTotalFreight.Item.Enabled)
             {
-                LoadInsuranceAmount(true);
-            }
+                if (float.Parse(txtAmountEns.Value) != 0)
+                {
+                    LoadInsuranceAmount(true);
+                }
+               
+              
+            } 
             SetRetentions();
             SetTotalAmount();
             this.UIAPIRawForm.Freeze(false);
@@ -974,6 +993,10 @@ namespace UGRS.AddOn.Transports.Forms
                     Quantity = 1,
                     UnitPrice = float.Parse(txtAmountEns.Value),
                     Asset = txtEcNum.Value,
+                    AnotherPyld = mStrType == "O" ? txtVarios.Value : "",
+                    Bags = mStrType == "A" ? txtVarios.Value : "",
+                    Heads = mStrType == "G" ? txtVarios.Value : "",
+                    TotKg = txtKg.Value,
                 });
             }
             return lLstSalesOrderLines;
@@ -1362,6 +1385,7 @@ namespace UGRS.AddOn.Transports.Forms
                 Credit = double.Parse(txtTotalFreight.Value),
                 CostingCode2 = txtEcNum.Value,
                 Debit = 0,
+                Paths = mIntActualRoute.ToString(),
 
             });
 
@@ -1372,7 +1396,8 @@ namespace UGRS.AddOn.Transports.Forms
                 CostingCode = cboArea.Value,
                 CostingCode2 = txtEcNum.Value,
                 Credit = 0,
-                Debit = double.Parse(txtTotalFreight.Value)
+                Debit = double.Parse(txtTotalFreight.Value),
+                Paths = mIntActualRoute.ToString(),
             });
 
             return lLstJournalLines;
@@ -1392,8 +1417,9 @@ namespace UGRS.AddOn.Transports.Forms
                 ContraAccount = pStrDebitAccount,
                 CostingCode = mObjTransportsFactory.GetRouteService().GetCostingCode(mIntUserSignature), 
                 CostingCode2 = txtEcNum.Value,
-                Debit = double.Parse(txtTotalFreight.Value),
-                 Credit = 0,
+                Debit = 0,
+                 Credit = double.Parse(txtTotalFreight.Value),
+                Paths = mIntActualRoute.ToString(),
             });
 
             lLstJournalLines.Add(new JournalLineDTO()
@@ -1402,9 +1428,9 @@ namespace UGRS.AddOn.Transports.Forms
                 ContraAccount = lStrCreditAccount,
                 CostingCode = cboArea.Value,
                 CostingCode2 = txtEcNum.Value,
-             
-                Debit = 0,
-                Credit = double.Parse(txtTotalFreight.Value)
+                Debit = double.Parse(txtTotalFreight.Value),
+                Credit = 0,
+                Paths = mIntActualRoute.ToString(),
             });
 
             return lLstJournalLines;
@@ -1611,6 +1637,91 @@ namespace UGRS.AddOn.Transports.Forms
         #endregion
 
         #region Events
+        private void SBO_Application_ItemEvent(string FormUID, ref ItemEvent pVal, out bool BubbleEvent)
+        {
+            BubbleEvent = true;
+            try
+            {
+
+                if (FormUID.Equals(this.UIAPIRawForm.UniqueID))
+                {
+                    if (pVal.BeforeAction)
+                    {
+                        switch (pVal.EventType)
+                        {
+                            case SAPbouiCOM.BoEventTypes.et_FORM_CLOSE:
+                                pBoolFreightsModal = false;
+                                UnloadEvents();
+                                break;
+                        }
+                    }
+                }
+
+                #region CFL
+                else if (mModalFrmCFL != null && (FormUID.Equals(mModalFrmCFL.mStrFrmName) && mModalFrmCFL.mIntRow > 0))
+                {
+                    if (!pVal.BeforeAction)
+                    {
+                        switch (pVal.EventType)
+                        {
+                            case SAPbouiCOM.BoEventTypes.et_CLICK:
+                                if (pVal.ItemUID.Equals(mModalFrmCFL.pObjBtnSelect.Item.UniqueID))
+                                {
+                                    SetCFLTextBoxes();
+                                }
+                                break;
+
+                            case SAPbouiCOM.BoEventTypes.et_DOUBLE_CLICK:
+                                if (pVal.ItemUID.Equals(CFL_Mtx.Item.UniqueID.ToString()))
+                                {
+                                    SetCFLTextBoxes();
+                                }
+                                break;
+                            case BoEventTypes.et_FORM_CLOSE:
+                                mModalFrmCFL.UnloadEvents();
+                                break;
+                        }
+                    }
+                }
+
+                #endregion
+                #region Routes
+                else if (mModalFrmRouteFinder != null
+                    && (FormUID.Equals(mModalFrmRouteFinder.mStrFrmName)))
+                {
+                    if (!pVal.BeforeAction)
+                    {
+                        switch (pVal.EventType)
+                        {
+                            case SAPbouiCOM.BoEventTypes.et_CLICK:
+
+                                if (mModalFrmRouteFinder != null)
+                                {
+                                    CFL_Btn = mModalFrmRouteFinder.pObjBtnSelect;
+                                    if (pVal.ItemUID.Equals(CFL_Btn.Item.UniqueID.ToString()))
+                                    {
+                                        SetRoutes();
+                                    }
+                                }
+                                break;
+                            case BoEventTypes.et_FORM_CLOSE:
+                                mModalFrmRouteFinder.UnloadEvents();
+                                break;
+                        }
+                    }
+                }
+                #endregion
+            }
+            catch (Exception ex)
+            {
+                this.UIAPIRawForm.Freeze(false);
+                LogService.WriteError(ex.Message);
+                LogService.WriteError(ex);
+                UIApplication.ShowMessageBox(ex.Message);
+            }
+
+        }
+
         private void lObjTxt_Validate(object sboObject, SBOItemEventArg pVal, out bool BubbleEvent)
         {
             BubbleEvent = true;
@@ -1762,90 +1873,7 @@ namespace UGRS.AddOn.Transports.Forms
             }
         }
 
-        private void SBO_Application_ItemEvent(string FormUID, ref ItemEvent pVal, out bool BubbleEvent)
-        {
-             BubbleEvent = true;
-             try
-             {
-
-                 if (FormUID.Equals(this.UIAPIRawForm.UniqueID))
-                 {
-                     if (pVal.BeforeAction)
-                     {
-                         switch (pVal.EventType)
-                         {
-                             case SAPbouiCOM.BoEventTypes.et_FORM_CLOSE:
-                                 pBoolFreightsModal = false;
-                                 UnloadEvents();
-                                 break;
-                         }
-                     }
-                 }
-
-                 #region CFL
-                 else if (mModalFrmCFL != null && (FormUID.Equals(mModalFrmCFL.mStrFrmName) && mModalFrmCFL.mIntRow > 0))
-                 {
-                     if (!pVal.BeforeAction)
-                     {
-                         switch (pVal.EventType)
-                         {
-                             case SAPbouiCOM.BoEventTypes.et_CLICK:
-                                 if (pVal.ItemUID.Equals(mModalFrmCFL.pObjBtnSelect.Item.UniqueID))
-                                 {
-                                     SetCFLTextBoxes();
-                                 }
-                                 break;
-
-                             case SAPbouiCOM.BoEventTypes.et_DOUBLE_CLICK:
-                                     if (pVal.ItemUID.Equals(CFL_Mtx.Item.UniqueID.ToString()))
-                                     {
-                                         SetCFLTextBoxes();
-                                     }
-                                 break;
-                             case BoEventTypes.et_FORM_CLOSE:
-                                 mModalFrmCFL.UnloadEvents();
-                                 break;
-                         }
-                     }
-                 }
-
-                 #endregion
-                 #region Routes
-                 else if (mModalFrmRouteFinder != null
-                     && (FormUID.Equals(mModalFrmRouteFinder.mStrFrmName)))
-                 {
-                     if (!pVal.BeforeAction)
-                     {
-                         switch (pVal.EventType)
-                         {
-                             case SAPbouiCOM.BoEventTypes.et_CLICK:
-
-                                 if (mModalFrmRouteFinder != null)
-                                 {
-                                     CFL_Btn = mModalFrmRouteFinder.pObjBtnSelect;
-                                     if (pVal.ItemUID.Equals(CFL_Btn.Item.UniqueID.ToString()))
-                                     {
-                                         SetRoutes();
-                                     }
-                                 }
-                                 break;
-                             case BoEventTypes.et_FORM_CLOSE:
-                                 mModalFrmRouteFinder.UnloadEvents();
-                                 break;
-                         }
-                     }
-                 }
-                 #endregion
-             }
-             catch (Exception ex)
-             {
-                 this.UIAPIRawForm.Freeze(false);
-                 LogService.WriteError(ex.Message);
-                 LogService.WriteError(ex);
-                 UIApplication.ShowMessageBox(ex.Message);
-             }
-
-        }
+     
 
         private void lObjCboVehicleType_ComboSelectAfter(object sboObject, SBOItemEventArg pVal)
         {
@@ -1917,20 +1945,28 @@ namespace UGRS.AddOn.Transports.Forms
             }
         }
 
-        private void lObjChkIns_ClickAfter(object sboObject, SBOItemEventArg pVal)
+        private void chkEnsm_ClickBefore(object sboObject, SBOItemEventArg pVal, out bool BubbleEvent)
         {
+            BubbleEvent = true;
+         
+            
+        }
+
+        private void chkEnsm_PressedBefore(object sboObject, SBOItemEventArg pVal, out bool BubbleEvent)
+        {
+            BubbleEvent = true;
             try
             {
                 if (chkEnsm.Item.Enabled)
                 {
                     if (chkEnsm.Checked)
                     {
-                        LoadInsuranceAmount(false);
+                        LoadInsuranceAmount(true);
                         SetCashAmounts();
                     }
                     else
                     {
-                        LoadInsuranceAmount(true);
+                        LoadInsuranceAmount(false);
                         SetCashAmounts();
                     }
                 }
@@ -1942,6 +1978,7 @@ namespace UGRS.AddOn.Transports.Forms
                 UIApplication.ShowMessageBox(ex.Message);
             }
         }
+
 
         private void lObjBtnAccept_ClickBefore(object sboObject, SBOItemEventArg pVal, out bool BubbleEvent)
         {
@@ -2004,7 +2041,7 @@ namespace UGRS.AddOn.Transports.Forms
                 {
                     if (!mBoolInternal)
                     {
-                        if (!txtTotalFreight.Item.Enabled)
+                        if (txtTotalFreight.Item.Enabled)
                         {
                             SetKmAmounts();
                             SetCashAmounts();

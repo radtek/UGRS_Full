@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using UGRS.Core.SDK.DI;
 using UGRS.Core.SDK.DI.Transports;
@@ -192,7 +193,10 @@ namespace UGRS.AddOn.Transports
             mObjSalesOrderLines.Heads = ((SAPbouiCOM.EditText)mObjMtxSO.Columns.Item("U_TR_Heads").Cells.Item(pIntRow).Specific).Value;
             mObjSalesOrderLines.Bags = ((SAPbouiCOM.EditText)mObjMtxSO.Columns.Item("U_GLO_BagsBales").Cells.Item(pIntRow).Specific).Value;
             mObjSalesOrderLines.Varios = ((SAPbouiCOM.EditText)mObjMtxSO.Columns.Item("U_TR_OtherLoad").Cells.Item(pIntRow).Specific).Value;
-
+            
+            string lStrUnitPrice = ((SAPbouiCOM.EditText)mObjMtxSO.Columns.Item("14").Cells.Item(pIntRow).Specific).Value;
+            lStrUnitPrice = Regex.Replace(lStrUnitPrice, "[^0-9.]", "");
+            mObjSalesOrderLines.UnitPrice = float.Parse(lStrUnitPrice);
 
         }
 

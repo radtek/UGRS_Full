@@ -37,7 +37,7 @@ namespace UGRS.AddOn.Transports.Forms
         const int mIntColorGray = 14869218;
         StatusEnum mEnumStatus;
         AuthorizerEnum mAuthorizerEnum;
-        List<CommissionDriverDTO> mLstCommissionDriverDTO = new List<CommissionDriverDTO>();
+        List<CommissionDriverDTO> mLstCmsnDriverDTO = new List<CommissionDriverDTO>();
         #endregion
       
         #region Constructor
@@ -188,7 +188,6 @@ namespace UGRS.AddOn.Transports.Forms
                     BindMatrixInv();
                     LoadDtCommissionInfo();
                 }
-               
             }
             catch (Exception ex)
             {
@@ -237,16 +236,16 @@ namespace UGRS.AddOn.Transports.Forms
         {
             try
             {
-                mDtMatrixCommisssion = this.UIAPIRawForm.DataSources.DataTables.Item("Dt_Cmsn");
-                string lStrDocEntry = mDtMatrixCommisssion.GetValue("cDocEntry", pVal.Row - 1).ToString();
-                string lStrType = mDtMatrixCommisssion.GetValue("cOpType", pVal.Row - 1).ToString();
+                mDtMatrixCmsn = this.UIAPIRawForm.DataSources.DataTables.Item("Dt_Cmsn");
+                string lStrDocEntry = mDtMatrixCmsn.GetValue("cDocEntry", pVal.Row - 1).ToString();
+                string lStrType = mDtMatrixCmsn.GetValue("cOpType", pVal.Row - 1).ToString();
                 if (lStrType == "FI")
                 {
                     SAPbouiCOM.Framework.Application.SBO_Application.OpenForm(BoFormObjectEnum.fo_JournalPosting, "", lStrDocEntry);
                 }
                 else
                 {
-                    SAPbouiCOM.Framework.Application.SBO_Application.OpenForm(BoFormObjectEnum.fo_Invoice, "", lStrDocEntry);
+                    SAPbouiCOM.Framework.Application.SBO_Application.OpenForm(BoFormObjectEnum.fo_Invoice, "Inv", lStrDocEntry);
                 }
                 //
             }
@@ -361,7 +360,7 @@ namespace UGRS.AddOn.Transports.Forms
 
                 mDtmFirstDay = new DateTime(lIntYear+2000, 1, 1);
                 mDtmFirstDay = mDtmFirstDay.AddDays(((lIntWeek - 1) * 7));
-                mDtmLastDay = mDtmFirstDay.AddDays(7);
+                mDtmLastDay = mDtmFirstDay.AddDays(6);
 
                 mStrFolio = lIntWeek.ToString("00") + "-" + lIntYear.ToString("00");
                 lblDates.Caption = " Fechas:   Del " + mDtmFirstDay.ToString("dd/MM/yyyy") + "   Al   " + mDtmLastDay.ToString("dd/MM/yyyy");
@@ -584,32 +583,24 @@ namespace UGRS.AddOn.Transports.Forms
         #region Loads
         private void SetMatrixLoad(List<CommissionLine> pLstCmsnLn, Commissions pObjCmsnHeader)
         {
-            List<CommissionDriverDTO> lLstCommisssionDriverDTO = new List<CommissionDriverDTO>();
+            List<CommissionDriverDTO> lLstCmsnDriverDTO = new List<CommissionDriverDTO>();
            
             if (pObjCmsnHeader == null || pObjCmsnHeader.Status == (int) StatusEnum.CANCELED)
             {
-               lLstCommisssionDriverDTO = mObjTransportsFactory.GetCommissionService().GetCommissionDriver(mDtmFirstDay.ToString("yyyyMMdd"), mDtmLastDay.ToString("yyyyMMdd"));
+                lLstCmsnDriverDTO = mObjTransportsFactory.GetCommissionService().GetCommissionDriver(mDtmFirstDay.ToString("yyyyMMdd"), mDtmLastDay.ToString("yyyyMMdd"));
+                if (lLstCmsnDriverDTO.Count > 0)
+               {
+                   lLstCmsnDriverDTO = GetComisssionDriverList(lLstCmsnDriverDTO);
+                   LoadDtDivInfo(AddCommissionDebt(lLstCmsnDriverDTO));
+               }
             }
             else
             {
-                lLstCommisssionDriverDTO = mObjTransportsFactory.GetCommissionService().GetCommissionDriverSaved(pObjCmsnHeader.Folio);
+                lLstCmsnDriverDTO = mObjTransportsFactory.GetCommissionService().GetCommissionDriverSaved(pObjCmsnHeader.Folio);
+                lLstCmsnDriverDTO = GetComisssionDriverList(lLstCmsnDriverDTO);
+                LoadDtDivInfo(lLstCmsnDriverDTO);
             }
-            lLstCommisssionDriverDTO = GetComisssionDriverList(lLstCommisssionDriverDTO);
-
-            //Colocar el checkbutton de no generar
-            foreach (var item in lLstCommisssionDriverDTO)
-            {
-                item.NoGenerate = pLstCmsnLn.Where(x => x.DriverId == item.DriverId).Select(y => y.NoGenerate).FirstOrDefault();
-            }
-            if (lLstCommisssionDriverDTO.Count > 0)
-            {
-                //Agrega la deuda de la semana anterior
-                LoadDtDivInfo(AddCommissionDebt(lLstCommisssionDriverDTO));
-            }
-            else
-            {
-                UIApplication.ShowMessageBox("No se encontraron registros");
-            }
+          
         }
 
         private void SetControlsNew()
@@ -718,16 +709,15 @@ namespace UGRS.AddOn.Transports.Forms
         {
             mDtMatrixDrv = this.UIAPIRawForm.DataSources.DataTables.Item("Dt_Driv");
             mDtMatrixDrv.Rows.Clear();
-            mLstCommissionDriverDTO = pLstCmsnDrv;// mObjTransportsFactory.GetCommissionService().GetCommissionDriver(mDtmFirstDay.ToString("yyyyMMdd"), mDtmLastDay.ToString("yyyyMMdd"));
-            mLstCommissionDriverDTO.AddRange(GetListDrivers().Where(d => !mLstCommissionDriverDTO.Any(x => x.DriverId == d.DriverId)));
+            mLstCmsnDriverDTO = pLstCmsnDrv;// mObjTransportsFactory.GetCommissionService().GetCommissionDriver(mDtmFirstDay.ToString("yyyyMMdd"), mDtmLastDay.ToString("yyyyMMdd"));
+            mLstCmsnDriverDTO.AddRange(GetListDrivers().Where(d => !mLstCmsnDriverDTO.Any(x => x.DriverId == d.DriverId)));
             
             List<CommissionDriverDTO> lLstCommisssionDriverDTO = new List<CommissionDriverDTO>();
-            lLstCommisssionDriverDTO = (mLstCommissionDriverDTO as IEnumerable<CommissionDriverDTO>).ToList();
+            lLstCommisssionDriverDTO = (mLstCmsnDriverDTO as IEnumerable<CommissionDriverDTO>).ToList();
            
 
             lLstCommisssionDriverDTO = lLstCommisssionDriverDTO.GroupBy(x => x.DriverId).Select(y => new CommissionDriverDTO
             {
-                
                 DriverId = y.First().DriverId,
                 Driver = y.First().Driver,
                 FrgAm = y.Sum(s => s.FrgAm),
@@ -738,14 +728,15 @@ namespace UGRS.AddOn.Transports.Forms
                 Comm = y.Sum(s => s.Comm),
                 TotComm = y.Sum(s => s.Comm) - (y.First().LstDisc + y.First().WkDisc) > 0 ? y.Sum(s => s.Comm) - (y.First().LstDisc + y.First().WkDisc) : 0,
                 Doubt = y.Sum(s => s.Comm) - (y.First().LstDisc + y.First().WkDisc) < 0 ? (y.First().LstDisc + y.First().WkDisc) - y.Sum(s => s.Comm) : 0,
+                NoGenerate = y.First().NoGenerate,
             }).OrderBy(z => Convert.ToInt32(z.DriverId)).ToList();
 
 
-            foreach (var item in lLstCommisssionDriverDTO)
-            {
+            //foreach (var item in lLstCommisssionDriverDTO)
+            //{
                
 
-            }
+            //}
 
 
             return lLstCommisssionDriverDTO;
@@ -833,37 +824,43 @@ namespace UGRS.AddOn.Transports.Forms
 
         private void LoadDtCommissionInfo()
         {
-            mDtMatrixCommisssion = this.UIAPIRawForm.DataSources.DataTables.Item("Dt_Cmsn");
+            mDtMatrixCmsn = this.UIAPIRawForm.DataSources.DataTables.Item("Dt_Cmsn");
             string lStrDriverId = mDtMatrixDrv.GetValue("cDrvrId", mIntSelectedRow - 1).ToString();
-            List<CommissionDriverDTO> lLstCommisssionDTO = mLstCommissionDriverDTO.Where(x => x.DriverId == lStrDriverId).ToList(); //mObjTransportsFactory.GetCommissionService().GetCommission(lStrDriverId, mDtmFirstDay.ToString("yyyyMMdd"), mDtmLastDay.ToString("yyyyMMdd"));
+            List<CommissionDriverDTO> lLstCommisssionDTO = mLstCmsnDriverDTO.Where(x => x.DriverId == lStrDriverId).ToList(); //mObjTransportsFactory.GetCommissionService().GetCommission(lStrDriverId, mDtmFirstDay.ToString("yyyyMMdd"), mDtmLastDay.ToString("yyyyMMdd"));
             int i = 0;
 
             mObjProgressBar = new ProgressBarManager(UIApplication.GetApplication(), "Consultando comisiones", lLstCommisssionDTO.Count + 1);
-            mDtMatrixCommisssion.Rows.Clear();
-            foreach (CommissionDriverDTO CommissionDTO in lLstCommisssionDTO)
+            mDtMatrixCmsn.Rows.Clear();
+            if (lLstCommisssionDTO.Count > 0 && string.IsNullOrEmpty(lLstCommisssionDTO[0].DocNum))
             {
-                if (!string.IsNullOrEmpty(CommissionDTO.DocNum))
+                lLstCommisssionDTO = mObjTransportsFactory.GetCommissionService().GetCommissionDriverLine(mObjTxtFolio.Value).Where(x => x.DriverId == lStrDriverId).ToList();
+            }
+
+            foreach (CommissionDriverDTO lObjCmsnDTO in lLstCommisssionDTO)
+            {
+                if (!string.IsNullOrEmpty(lObjCmsnDTO.DocNum))
                 {
-                    mDtMatrixCommisssion.Rows.Add();
-                    mDtMatrixCommisssion.SetValue("#", i, i + 1);
-                    mDtMatrixCommisssion.SetValue("cDate", i, CommissionDTO.DocDate);
-                    mDtMatrixCommisssion.SetValue("cInvFol", i, CommissionDTO.DocNum);
-                    mDtMatrixCommisssion.SetValue("cOpType", i, CommissionDTO.Type == "INV" ? "FE" : "FI");
-                    mDtMatrixCommisssion.SetValue("cRoute", i, CommissionDTO.Route);
-                    mDtMatrixCommisssion.SetValue("cVcle", i, CommissionDTO.AF);
-                    mDtMatrixCommisssion.SetValue("cPyld", i, CommissionDTO.TypLoad);
-                    mDtMatrixCommisssion.SetValue("cAmnt", i, CommissionDTO.FrgAm);
-                    mDtMatrixCommisssion.SetValue("cIns", i, CommissionDTO.InsAm);
-                    mDtMatrixCommisssion.SetValue("cCmsn", i, CommissionDTO.Comm);
-                    mDtMatrixCommisssion.SetValue("cDocEntry", i, CommissionDTO.Id);
+                    mDtMatrixCmsn.Rows.Add();
+                    mDtMatrixCmsn.SetValue("#", i, i + 1);
+                    mDtMatrixCmsn.SetValue("cDate", i, lObjCmsnDTO.DocDate);
+                    mDtMatrixCmsn.SetValue("cInvFol", i, lObjCmsnDTO.DocNum);
+                    mDtMatrixCmsn.SetValue("cOpType", i, lObjCmsnDTO.Type == "INV" ? "FE" : "FI");
+                    mDtMatrixCmsn.SetValue("cRoute", i, lObjCmsnDTO.Route);
+                    mDtMatrixCmsn.SetValue("cVcle", i, lObjCmsnDTO.AF);
+                    mDtMatrixCmsn.SetValue("cPyld", i, lObjCmsnDTO.TypLoad);
+                    mDtMatrixCmsn.SetValue("cAmnt", i, lObjCmsnDTO.FrgAm);
+                    mDtMatrixCmsn.SetValue("cIns", i, lObjCmsnDTO.InsAm);
+                    mDtMatrixCmsn.SetValue("cCmsn", i, lObjCmsnDTO.Comm);
+                    mDtMatrixCmsn.SetValue("cDocEntry", i, lObjCmsnDTO.Id);
                 }
+
                 i++;
                 mObjProgressBar.NextPosition();
             }
             mObjMtxCommission.LoadFromDataSource();
             mObjProgressBar.NextPosition();
-            
         }
+       
 
         #endregion
 
@@ -963,7 +960,7 @@ namespace UGRS.AddOn.Transports.Forms
             bool lBolSuccess = false;
             //Guardando asientos
             AccountsJournalEntryDTO lObjAccount = GetAcountDTO();
-            List<CommissionDriverDTO> lLstCmsDriverDTO = GetCommissionDriverMatrix();
+            List<CommissionDriverDTO> lLstCmsDriverDTO = GetCommissionDriverMatrix().Where(x => x.NoGenerate == false).ToList();
             List<JournalLineDTO> lLstJournalLine = new List<JournalLineDTO>();
             mObjProgressBar = new ProgressBarManager(UIApplication.GetApplication(), "Guardando asientos", lLstCmsDriverDTO.Count + 1);
             foreach (CommissionDriverDTO lObjCommisionLine in lLstCmsDriverDTO)
@@ -1015,7 +1012,7 @@ namespace UGRS.AddOn.Transports.Forms
             List<CommissionLine> lLstCommissionsLine = new List<CommissionLine>();
             ///variable global
             /// comparacion de la matriz guardada y la seleccion de checkbox
-            List<CommissionDriverDTO> lLstCommisssionDriverDTO = (mLstCommissionDriverDTO as IEnumerable<CommissionDriverDTO>).ToList();
+            List<CommissionDriverDTO> lLstCommisssionDriverDTO = (mLstCmsnDriverDTO as IEnumerable<CommissionDriverDTO>).ToList();
             List<CommissionDriverDTO> lLstMatrix = GetCommissionDriverMatrix();
 
 
@@ -1053,29 +1050,28 @@ namespace UGRS.AddOn.Transports.Forms
             for (int i = 0; i < mDtMatrixDrv.Rows.Count; i++)
             {
                 string ss = mDtMatrixDrv.GetValue("cGenerate", i).ToString();
-                   bool ssef = ((SAPbouiCOM.CheckBox)mObjMtxDrv.Columns.Item("cGenerate").Cells.Item(i+1).Specific).Checked;
+                bool ssef = ((SAPbouiCOM.CheckBox)mObjMtxDrv.Columns.Item("cGenerate").Cells.Item(i + 1).Specific).Checked;
                 //if (mDtMatrixDrv.GetValue("cGenerate", i).ToString() == "N")
-                if(((SAPbouiCOM.CheckBox)mObjMtxDrv.Columns.Item("cGenerate").Cells.Item(i + 1).Specific).Checked == false)
-                {
-                    CommissionDriverDTO lObjCommissionDriver = new CommissionDriverDTO();
-                    lObjCommissionDriver.Folio = mObjTxtFolio.Value;
-                    lObjCommissionDriver.Driver = mDtMatrixDrv.GetValue("cDrvr", i).ToString(); //
-                    lObjCommissionDriver.DriverId = mDtMatrixDrv.GetValue("cDrvrId", i).ToString();
-                    lObjCommissionDriver.FrgAm = Convert.ToDouble(mDtMatrixDrv.GetValue("cFrgAm", i).ToString());
-                    lObjCommissionDriver.InsAm = Convert.ToDouble(mDtMatrixDrv.GetValue("cInsAm", i).ToString());
-                    lObjCommissionDriver.LstDisc = Convert.ToDouble(mDtMatrixDrv.GetValue("cLstDisc", i).ToString());
-                    lObjCommissionDriver.WkDisc = Convert.ToDouble(mDtMatrixDrv.GetValue("cWkDisc", i).ToString());
-                    lObjCommissionDriver.TotDisc = Convert.ToDouble(mDtMatrixDrv.GetValue("cTotDisc", i).ToString());
-                    lObjCommissionDriver.Comm = Convert.ToDouble(mDtMatrixDrv.GetValue("cComm", i).ToString());
-                    lObjCommissionDriver.TotComm = Convert.ToDouble(mDtMatrixDrv.GetValue("cTotComm", i).ToString());
-                    lObjCommissionDriver.Doubt = Convert.ToDouble(mDtMatrixDrv.GetValue("cDoubt", i).ToString());
-                    lObjCommissionDriver.NoGenerate = ((SAPbouiCOM.CheckBox)mObjMtxDrv.Columns.Item("cGenerate").Cells.Item(i + 1).Specific).Checked;
 
-                    if (lObjCommissionDriver.Driver != "TOTAL")
-                    {
-                        lLstCommissionDriver.Add(lObjCommissionDriver);
-                    }
+                CommissionDriverDTO lObjCommissionDriver = new CommissionDriverDTO();
+                lObjCommissionDriver.Folio = mObjTxtFolio.Value;
+                lObjCommissionDriver.Driver = mDtMatrixDrv.GetValue("cDrvr", i).ToString(); //
+                lObjCommissionDriver.DriverId = mDtMatrixDrv.GetValue("cDrvrId", i).ToString();
+                lObjCommissionDriver.FrgAm = Convert.ToDouble(mDtMatrixDrv.GetValue("cFrgAm", i).ToString());
+                lObjCommissionDriver.InsAm = Convert.ToDouble(mDtMatrixDrv.GetValue("cInsAm", i).ToString());
+                lObjCommissionDriver.LstDisc = Convert.ToDouble(mDtMatrixDrv.GetValue("cLstDisc", i).ToString());
+                lObjCommissionDriver.WkDisc = Convert.ToDouble(mDtMatrixDrv.GetValue("cWkDisc", i).ToString());
+                lObjCommissionDriver.TotDisc = Convert.ToDouble(mDtMatrixDrv.GetValue("cTotDisc", i).ToString());
+                lObjCommissionDriver.Comm = Convert.ToDouble(mDtMatrixDrv.GetValue("cComm", i).ToString());
+                lObjCommissionDriver.TotComm = Convert.ToDouble(mDtMatrixDrv.GetValue("cTotComm", i).ToString());
+                lObjCommissionDriver.Doubt = Convert.ToDouble(mDtMatrixDrv.GetValue("cDoubt", i).ToString());
+                lObjCommissionDriver.NoGenerate = ((SAPbouiCOM.CheckBox)mObjMtxDrv.Columns.Item("cGenerate").Cells.Item(i + 1).Specific).Checked;
+
+                if (lObjCommissionDriver.Driver != "TOTAL")
+                {
+                    lLstCommissionDriver.Add(lObjCommissionDriver);
                 }
+
             }
             return lLstCommissionDriver;
         }
@@ -1762,7 +1758,7 @@ namespace UGRS.AddOn.Transports.Forms
         private SAPbouiCOM.EditText mObjTxtCmnt;
         private SAPbouiCOM.Button mObjBtnCancel;
         private SAPbouiCOM.DataTable mDtMatrixDrv = null;
-        private SAPbouiCOM.DataTable mDtMatrixCommisssion = null;
+        private SAPbouiCOM.DataTable mDtMatrixCmsn = null;
         private SAPbouiCOM.StaticText lblDates;
         private EditText txtAuOp;
         private StaticText lblAuOp;
