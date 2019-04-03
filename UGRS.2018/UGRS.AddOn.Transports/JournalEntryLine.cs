@@ -173,7 +173,7 @@ namespace UGRS.AddOn.Transports
         private List<JournalLineDTO> AddAsset(List<JournalLineDTO> pLstJELine, CommissionDriverDTO pObjInvoices)
         {
             List<CommissionDriverDTO> lLstCmsDriverDTO = new List<CommissionDriverDTO>();
-            lLstCmsDriverDTO = mObjTransportsFactory.GetCommissionService().GetCommissionDriverSaved(pObjInvoices.Folio);
+            lLstCmsDriverDTO = mObjTransportsFactory.GetCommissionService().GetCommissionDriverLine(pObjInvoices.Folio);
             foreach (JournalLineDTO lObjLine in pLstJELine)
             {
                 lLstCmsDriverDTO = lLstCmsDriverDTO.Where(x => x.DriverId == lObjLine.Auxiliar).GroupBy(g => g.AF).Select( y => new CommissionDriverDTO {
