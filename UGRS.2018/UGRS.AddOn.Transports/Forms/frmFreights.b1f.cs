@@ -280,16 +280,21 @@ namespace UGRS.AddOn.Transports.Forms
             LoadLine(false);
         }
 
-        private void LoadLine(bool LoadShared)
+        private void LoadLine(bool pBolLoadShared)
         {
             this.UIAPIRawForm.Freeze(true);
             //textboxes
             if (mObjSalesOrderLines != null)
             {
                 int lIntShrd = (int)(mObjSalesOrderLines.Shared ? SharedEnum.Yes : SharedEnum.NO);
-                if (!LoadShared)
+                if (!pBolLoadShared)
                 {
                     txtArticle.Value = mObjSalesOrderLines.ItemCode;
+                    txtAmountKm.Item.Enabled = false;
+                }
+                else
+                {
+                    txtAmountKm.Item.Enabled = true;
                 }
                 txtDesc.Value = mObjSalesOrderLines.Description;
                 cboPayload.Select(mObjSalesOrderLines.PayloadType, BoSearchKey.psk_ByValue);
@@ -303,11 +308,22 @@ namespace UGRS.AddOn.Transports.Forms
                 txtRetentions.Value = mObjSalesOrderLines.TaxWT.ToString();
                 mObjRoutes = RoutesToDTO(mObjTransportsFactory.GetRouteService().GetRoute((long)mObjSalesOrderLines.Route));
                 txtKg.Value = mObjSalesOrderLines.TotKg;
+                SetRoutesTextsBoxes();
                 txtAmountKm.Value = mObjSalesOrderLines.UnitPrice.ToString();
 
                 LoadVarious();
+                string lStrValidate = mObjTransportsFactory.GetRouteService().ValidateSinKM(txtArticle.Value);
 
-                SetRoutesTextsBoxes();
+                if (lStrValidate == "Y" || pBolLoadShared)
+                {
+                    txtAmountKm.Item.Enabled = true;
+                }
+                else
+                {
+                    txtAmountKm.Item.Enabled = false;
+                }
+
+              
                 lnkJournal.Item.Visible = false;
                 lnkCancel.Item.Visible = false;
             }
@@ -378,7 +394,7 @@ namespace UGRS.AddOn.Transports.Forms
                 mObjRoutes.KmD = mObjInternalFreight != null ? mObjInternalFreight.UserFields.Fields.Item("U_KmD").Value.ToString() : string.Empty;
                 mObjRoutes.KmE = mObjInternalFreight != null ? mObjInternalFreight.UserFields.Fields.Item("U_KmE").Value.ToString() : string.Empty;
                 mObjRoutes.KmF = mObjInternalFreight != null ? mObjInternalFreight.UserFields.Fields.Item("U_KmF").Value.ToString() : string.Empty;
-                mIntActualRoute = mObjInternalFreight != null ? Convert.ToInt32(mObjInternalFreight.UserFields.Fields.Item("Code").Value.ToString()) : 0;
+                mIntActualRoute = mObjInternalFreight != null ? Convert.ToInt32(mObjInternalFreight.UserFields.Fields.Item("U_Route").Value.ToString()) : 0;
 
                 SetRoutesTextsBoxes();
                 mStrDriverId = mObjInternalFreight != null ? mObjInternalFreight.UserFields.Fields.Item("U_Driver").Value.ToString() : string.Empty;
@@ -422,11 +438,20 @@ namespace UGRS.AddOn.Transports.Forms
                     lnkCancel.Item.Visible = true;
                     mStrJounralEntryId = mObjInternalFreight != null ? mObjInternalFreight.UserFields.Fields.Item("U_JournalEntryId").Value.ToString() : string.Empty;
                     txtInternal.Value = mObjInternalFreight != null ? mObjInternalFreight.UserFields.Fields.Item("U_InternalFolio").Value.ToString() : mObjTransportsFactory.GetRouteService().GetFolio(pStrFolio);
-                    SetInitialInternalConfig(txtInternal.Value);
-                    
+                   SetInitialInternalConfig(txtInternal.Value); 
+                    if (lStrShared == "2")
+                    {
+                         txtAmountKm.Value = mObjInternalFreight.UserFields.Fields.Item("U_AmountKM").Value.ToString();
+                       
+                    }
+                    else
+                    {
+                        SetKilometers(); 
+                        SetKilometerAmount();
+                    }
                 }
-                SetKilometers();
-                SetKilometerAmount();
+               
+              
                 SetTotalAmount();
                 LoadInsuranceAmount(lStrInsurance.Equals("Y") ? true : false);
                 SetCashAmounts();
@@ -455,15 +480,12 @@ namespace UGRS.AddOn.Transports.Forms
 
         private SalesOrderLinesDTO RoutesToDTO(Routes pObjRoutes)
         {
-            if (mObjSalesOrderLines != null)
-            {
-                mIntActualRoute = mObjSalesOrderLines.Route;
-            }
-            else
+            if (mObjSalesOrderLines == null)
             {
                 mObjSalesOrderLines = new SalesOrderLinesDTO();
-                mIntActualRoute = Convert.ToInt32(pObjRoutes.RowCode);
             }
+            mIntActualRoute = Convert.ToInt32(pObjRoutes.RowCode);
+            
             if (pObjRoutes == null) return null;
 
             return new SalesOrderLinesDTO()
@@ -721,7 +743,7 @@ namespace UGRS.AddOn.Transports.Forms
 
                     string lStrValidate = mObjTransportsFactory.GetRouteService().ValidateSinKM(txtArticle.Value);
 
-                    if (lStrValidate == "N")
+                    if (lStrValidate == "Y")
                     {
                         txtAmountKm.Item.Enabled = true;
                     }
@@ -1291,7 +1313,7 @@ namespace UGRS.AddOn.Transports.Forms
                 lObjInternalFreight.UserFields.Fields.Item("U_Shared").Value = cboShared.Value;
                 lObjInternalFreight.UserFields.Fields.Item("U_Insurance").Value = chkEnsm.Checked ? "Y" : "N";
                 lObjInternalFreight.UserFields.Fields.Item("U_Status").Value = StatusEnum.CLOSED.GetDescription();
-                lObjInternalFreight.UserFields.Fields.Item("U_Route").Value = mObjRoutes.Route;
+                lObjInternalFreight.UserFields.Fields.Item("U_Route").Value = mIntActualRoute.ToString();
                 lObjInternalFreight.UserFields.Fields.Item("U_VehicleType").Value = cboVehicleType.Value;
                 lObjInternalFreight.UserFields.Fields.Item("U_Ticket").Value = txtFolio.Value;
                 lObjInternalFreight.UserFields.Fields.Item("U_Comments").Value = string.Format("FI {0}: {1} ", mObjRoutes.RouteName, txtComment.Value);
@@ -1315,6 +1337,8 @@ namespace UGRS.AddOn.Transports.Forms
                 lObjInternalFreight.UserFields.Fields.Item("U_Heads").Value = mStrType == "G" ? txtVarios.Value: string.Empty;
                 lObjInternalFreight.UserFields.Fields.Item("U_Bags").Value = mStrType == "A" ? txtVarios.Value : string.Empty;
                 lObjInternalFreight.UserFields.Fields.Item("U_Varios").Value = mStrType == "O" ? txtVarios.Value : string.Empty;
+                lObjInternalFreight.UserFields.Fields.Item("U_AmountKM").Value = txtAmountKm.Value;
+                
 
                 if (lObjInternalFreight.Add() == 0)
                 {
@@ -1764,7 +1788,7 @@ namespace UGRS.AddOn.Transports.Forms
                 {
                     lObjTxt.Value = "0";
                 }
-                if (!txtTotalFreight.Item.Enabled || txtTotalFreight.Value == "0.0")
+                if (!txtAmountKm.Item.Enabled || txtAmountKm.Value == "0.0")
                 {
                     SetKmAmounts();
                 }
