@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using SAPbouiCOM.Framework;
 using UGRS.Core.SDK.UI;
 using UGRS.Core.Services;
@@ -9,11 +8,9 @@ using SAPbouiCOM;
 using UGRS.Core.SDK.DI.Transports;
 using UGRS.Core.SDK.DI.Transports.DTO;
 using UGRS.Core.SDK.DI.Transports.Tables;
-using System.Globalization;
 using UGRS.Core.SDK.DI;
 using UGRS.Core.SDK.UI.ProgressBar;
 using UGRS.Core.SDK.DI.Tramsport.DTO;
-using System.Drawing;
 using UGRS.Core.SDK.DI.Transports.Enums;
 using UGRS.Core.Extension.Enum;
 using System.Collections;
@@ -285,7 +282,10 @@ namespace UGRS.AddOn.Transports.Forms
                         mObjProgressBar.Dispose();
                         CommitTransaction(lBolSuccess);
                         this.UIAPIRawForm.Freeze(false);
-                        mObjBtnSearch.Item.Click();
+                        if (lBolSuccess)
+                        {
+                            mObjBtnSearch.Item.Click();
+                        }
                     }
                 }
             }
@@ -363,7 +363,7 @@ namespace UGRS.AddOn.Transports.Forms
                 mDtmLastDay = mDtmFirstDay.AddDays(6);
 
                 mStrFolio = lIntWeek.ToString("00") + "-" + lIntYear.ToString("00");
-                lblDates.Caption = " Fechas:   Del " + mDtmFirstDay.ToString("dd/MM/yyyy") + "   Al   " + mDtmLastDay.ToString("dd/MM/yyyy");
+                lblDates.Caption = " Fechas: Del " + mDtmFirstDay.ToString("dd/MM/yyyy") + " Al " + mDtmLastDay.ToString("dd/MM/yyyy");
 
             }
             catch (Exception ex )
@@ -588,7 +588,7 @@ namespace UGRS.AddOn.Transports.Forms
             if (pObjCmsnHeader == null || pObjCmsnHeader.Status == (int) StatusEnum.CANCELED)
             {
                 lLstCmsnDriverDTO = mObjTransportsFactory.GetCommissionService().GetCommissionDriver(mDtmFirstDay.ToString("yyyyMMdd"), mDtmLastDay.ToString("yyyyMMdd"));
-                if (lLstCmsnDriverDTO.Count > 0)
+                if (lLstCmsnDriverDTO != null)
                {
                    lLstCmsnDriverDTO = GetComisssionDriverList(lLstCmsnDriverDTO);
                    LoadDtDivInfo(AddCommissionDebt(lLstCmsnDriverDTO));
@@ -608,7 +608,7 @@ namespace UGRS.AddOn.Transports.Forms
             mEnumStatus = StatusEnum.OPEN;
             VisibleAuthControls(false);
             VisibleStatusControls(false);
-            
+            SetTxtStatus(mEnumStatus);
             mObjBtnOk.Item.Enabled = true;
             mObjBtnOk.Caption = "Guardar";
             mObjMtxDrv.Columns.Item("cGenerate").Editable = true;
@@ -671,33 +671,57 @@ namespace UGRS.AddOn.Transports.Forms
 
         private string GetLastFolio(string pStrCurrentFolio, int lIntWeeksBef)
         {
-            string lStrFolio = string.Empty;
+           
+            //Format WW-YY
+            string lStrLastFolio = string.Empty;
+            int lIntWeek = Convert.ToInt16(pStrCurrentFolio.Substring(0, 2));
+            int lIntYear = Convert.ToInt16(pStrCurrentFolio.Substring(3, 2));
 
-            List<Commissions> lObjCommission = mObjTransportsFactory.GetCommissionService().GetCommissionByFolio(pStrCurrentFolio).ToList();
-            List<Commissions> lObjCommissionLast = new List<Commissions>();
-            if (lObjCommission.Count > 0)
+            lIntWeek = lIntWeek - lIntWeeksBef;
+            if (lIntWeek  <= 0)
             {
-                int lIntRowCode = Convert.ToInt16(lObjCommission[0].RowCode) - lIntWeeksBef;
-                lObjCommissionLast = mObjTransportsFactory.GetCommissionService().GetCommissionByRowCode(lIntRowCode.ToString()).ToList();
+                var lLstCmsn = mObjTransportsFactory.GetCommissionService().GetCmsnByYear(lIntYear - 1).Where(y => y.Status != 3).ToList();
+                if (lLstCmsn != null && lLstCmsn.Count > 0)
+                {
+                    lStrLastFolio = lLstCmsn.OrderByDescending(x => x.Week).FirstOrDefault().Folio;
+                }
+                //lIntYear = lIntYear - 1;
+                //lIntWeek
             }
             else
             {
-                int lIntRowcode = Convert.ToInt32(mObjTransportsFactory.GetCommissionService().GetLastCommissionId()) - lIntWeeksBef + 1;
-                lObjCommissionLast = mObjTransportsFactory.GetCommissionService().GetCommissionByRowCode(lIntRowcode.ToString()).ToList();
+                lStrLastFolio = lIntWeek.ToString("00") + "-" + lIntYear.ToString("00"); ;
             }
+                return lStrLastFolio;
 
-            if (lObjCommissionLast.Count > 0)
-            {
-                lStrFolio = lObjCommissionLast.First().Folio;
-            }
-            return lStrFolio;
-            //Format WW-YY
-            //string lStrLastFolio = string.Empty;
-            //int lIntWeek = Convert.ToInt16(pStrCurrentFolio.Substring(0, 2));
-            //int lIntYear = Convert.ToInt16(pStrCurrentFolio.Substring(3, 2));
 
-            //if(lIntWeek - lIntWeeksBef)
-            //return lStrLastFolio;
+            //List<Commissions> lLstCmsn= mObjTransportsFactory.GetCommissionService().GetCommissionByFolio(pStrCurrentFolio).ToList();
+            //List<Commissions> lLstCmsnLast = new List<Commissions>();
+            //if (lLstCmsn.Count > 0)
+            //{
+            //    int lIntRowCode = Convert.ToInt16(lLstCmsn[0].RowCode) - lIntWeeksBef;
+            //    lLstCmsnLast = mObjTransportsFactory.GetCommissionService().GetCommissionByRowCode(lIntRowCode.ToString()).ToList();
+            //}
+            //else
+            //{
+            //    int lIntRowcode = Convert.ToInt32(mObjTransportsFactory.GetCommissionService().GetLastCommissionId()) - lIntWeeksBef;
+            //    lLstCmsnLast = mObjTransportsFactory.GetCommissionService().GetCommissionByRowCode(lIntRowcode.ToString()).ToList();
+            //}
+
+            //if (lLstCmsnLast.Count > 0)
+            //{
+            //    lStrFolio = lLstCmsnLast.First().Folio;
+            //}
+
+            ////Liquidacion cancelada
+            //if (lLstCmsnLast.First().Status == 3)
+            //{
+            //    lStrFolio = "";
+            //}
+
+            //return lStrFolio;
+
+          
         }
 
         private List<CommissionDriverDTO> GetListDrivers()
@@ -791,9 +815,7 @@ namespace UGRS.AddOn.Transports.Forms
 
         private void LoadDtDivInfo(List<CommissionDriverDTO> lLstCommisssionDriverDTO)
         {
-
             int i = 0;
-
             mObjProgressBar = new ProgressBarManager(UIApplication.GetApplication(), "Consultando comisiones", lLstCommisssionDriverDTO.Count + 2);
             foreach (CommissionDriverDTO lObjCommissionDrvierDTO in lLstCommisssionDriverDTO)
             {
@@ -816,7 +838,6 @@ namespace UGRS.AddOn.Transports.Forms
             mDtMatrixDrv.Rows.Add();
             AddTotalLine(i, lLstCommisssionDriverDTO);
             mObjProgressBar.NextPosition();
-
             mObjMtxDrv.LoadFromDataSource();
             mObjMtxDrv.AutoResizeColumns();
             mObjProgressBar.Dispose();
@@ -828,14 +849,12 @@ namespace UGRS.AddOn.Transports.Forms
             string lStrDriverId = mDtMatrixDrv.GetValue("cDrvrId", mIntSelectedRow - 1).ToString();
             List<CommissionDriverDTO> lLstCommisssionDTO = mLstCmsnDriverDTO.Where(x => x.DriverId == lStrDriverId).ToList(); //mObjTransportsFactory.GetCommissionService().GetCommission(lStrDriverId, mDtmFirstDay.ToString("yyyyMMdd"), mDtmLastDay.ToString("yyyyMMdd"));
             int i = 0;
-
             mObjProgressBar = new ProgressBarManager(UIApplication.GetApplication(), "Consultando comisiones", lLstCommisssionDTO.Count + 1);
             mDtMatrixCmsn.Rows.Clear();
             if (lLstCommisssionDTO.Count > 0 && string.IsNullOrEmpty(lLstCommisssionDTO[0].DocNum))
             {
                 lLstCommisssionDTO = mObjTransportsFactory.GetCommissionService().GetCommissionDriverLine(mObjTxtFolio.Value).Where(x => x.DriverId == lStrDriverId).ToList();
             }
-
             foreach (CommissionDriverDTO lObjCmsnDTO in lLstCommisssionDTO)
             {
                 if (!string.IsNullOrEmpty(lObjCmsnDTO.DocNum))
@@ -884,15 +903,15 @@ namespace UGRS.AddOn.Transports.Forms
                  if (mObjTransportsFactory.GetCommissionService().AddCommission(lObjCommission) == 0)
                  {
                      List<CommissionsRows> lObjCommisssionRows = GetcommissionRows(GetCommissionDriverMatrix());
+                     string lStrCommissionId = mObjTransportsFactory.GetCommissionService().GetLastCommissionId();
                      //Guardado de rows
-                     if (SaveCmsnRow(lObjCommisssionRows))
+                     if (SaveCmsnRow(lObjCommisssionRows, lStrCommissionId))
                      {
-
                          //Guardado de lineas
                          mObjProgressBar = new ProgressBarManager(UIApplication.GetApplication(), "Guardando comisiones", lObjCommission.LstCommissionLine.Count);
-                         string lStrCommissionId = mObjTransportsFactory.GetCommissionService().GetLastCommissionId();
+                        
                          bool lBolsuccessLine = true;
-                         foreach (CommissionLine lObjCommisionLine in lObjCommission.LstCommissionLine.Where(x => x.Amount > 0))
+                         foreach (CommissionLine lObjCommisionLine in lObjCommission.LstCommissionLine.Where(x => x.NoGenerate == false && x.Amount > 0))
                          {
                              lObjCommisionLine.CommisionId = lStrCommissionId;
                              if (mObjTransportsFactory.GetCommissionLineService().AddCommissionLine(lObjCommisionLine) != 0)
@@ -905,6 +924,14 @@ namespace UGRS.AddOn.Transports.Forms
 
                          lBolSuccess = lBolsuccessLine;
                      }
+                     else
+                     {
+                         lBolSuccess = false;
+                     }
+                 }
+                 else
+                 {
+                     lBolSuccess = false;
                  }
 
                  mObjProgressBar.Dispose();
@@ -941,11 +968,12 @@ namespace UGRS.AddOn.Transports.Forms
             return lBolSuccess;
         }
 
-        private bool SaveCmsnRow(List<CommissionsRows> pLstCmsnRow)
+        private bool SaveCmsnRow(List<CommissionsRows> pLstCmsnRow, string pStrCmsnId)
         {
             bool lBolSuccessRow = true;
             foreach (CommissionsRows lObjCmsnRow in pLstCmsnRow)
             {
+                lObjCmsnRow.Id = pStrCmsnId;
                 if (mObjTransportsFactory.GetCmsnRowService().AddCmsnRow(lObjCmsnRow) != 0)
                 {
                     lBolSuccessRow = false;
@@ -997,12 +1025,18 @@ namespace UGRS.AddOn.Transports.Forms
         {
             List<CommissionLine> lLstComissionList = GetCommissionsLineData();
             Commissions lObjCommission = new Commissions();
-            lObjCommission.Amount = lLstComissionList.Sum(x => x.Amount);
+            lObjCommission.Amount = Convert.ToDouble(lLstComissionList.Sum(x => Convert.ToDecimal(x.Amount)));
             lObjCommission.Folio = lLstComissionList.First().Folio;
             lObjCommission.Status =(int) StatusEnum.OPEN;
             lObjCommission.User = DIApplication.Company.UserName;
             lObjCommission.LstCommissionLine = lLstComissionList;
             lObjCommission.Coments = mObjTxtCmnt.Value;
+
+              int lIntWeek = Convert.ToInt16(lObjCommission.Folio.Substring(0, 2));
+            int lIntYear = Convert.ToInt16(lObjCommission.Folio.Substring(3, 2));
+            lObjCommission.Year = lIntYear;
+            lObjCommission.Week = lIntWeek;
+
             return lObjCommission;
         }
 
@@ -1020,7 +1054,7 @@ namespace UGRS.AddOn.Transports.Forms
             {
                 int i = lLstMatrix.Where(x => x.DriverId == item.DriverId).ToList().Count();
                 
-                item.NoGenerate = lLstMatrix.Where(x => x.DriverId == item.DriverId).Count() > 0 ? false : true;
+                item.NoGenerate = lLstMatrix.Where(x => x.DriverId == item.DriverId).First().NoGenerate;
             }
            
 
@@ -1092,9 +1126,19 @@ namespace UGRS.AddOn.Transports.Forms
                     string lStrAccountFunEmp = mObjTransportsFactory.GetCommissionService().GetAccountConfig("TR_ACC_FUNCEMPL");
                    
                     lLstCommissionDebt = mObjTransportsFactory.GetCommissionService().GetCommissionDebtDTO(lStrLastFolio, lStrAccountFunEmp, "2", pStrAux);
-
-                    lLstDebt.AddRange(lLstCommissionDebt);
+                    if (lLstCommissionDebt.Sum(x => x.Debit) > lLstCommissionDebt.Sum(y => y.Credit))
+                    {
+                        CommissionDebtDTO lObjCmsDebt = new CommissionDebtDTO();
+                        lObjCmsDebt.Id = i;
+                        lObjCmsDebt.Auxiliar = pStrAux;
+                        lObjCmsDebt.Credit = 0;
+                        lObjCmsDebt.Debit = Convert.ToDouble(Convert.ToDecimal(lLstCommissionDebt.Sum(x => x.Debit)) - Convert.ToDecimal(lLstCommissionDebt.Sum(y => y.Credit)));
+                        lObjCmsDebt.Folio = lStrLastFolio;
+                        lObjCmsDebt.Importe = Convert.ToDecimal(lLstCommissionDebt.Sum(x => x.Debit)) - Convert.ToDecimal(lLstCommissionDebt.Sum(y => y.Credit));
+                        lLstDebt.Add(lObjCmsDebt);
+                    }
                 }
+               
             } while (lLstCommissionDebt.Sum(x => x.Debit) > lLstCommissionDebt.Sum(y => y.Credit));
             return lLstDebt;
         }
