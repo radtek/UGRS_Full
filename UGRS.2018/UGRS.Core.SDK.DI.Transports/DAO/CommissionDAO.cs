@@ -40,7 +40,7 @@ namespace UGRS.Core.SDK.DI.Transports.DAO
                         {
                             Type = lObjResults.Fields.Item("Type").Value.ToString(),
                             Id = lObjResults.Fields.Item("Id").Value.ToString(),
-                            DocNum = lObjResults.Fields.Item("Id").Value.ToString(),
+                            DocNum = lObjResults.Fields.Item("DocNum").Value.ToString(),
                             DocDate = Convert.ToDateTime(lObjResults.Fields.Item("DocDate").Value.ToString()),
                             DriverId = lObjResults.Fields.Item("empID").Value.ToString(),
                             Driver = lObjResults.Fields.Item("SlpName").Value.ToString(),
@@ -255,9 +255,18 @@ namespace UGRS.Core.SDK.DI.Transports.DAO
 
         public string GetLastComisionId()
         {
-            string lStrValue = mObjQueryManager.Max<string>("Code", "[@UG_TR_CMSN]");
+            string lStrValue = string.Empty;
+            //string lStrValue = mObjQueryManager.Max<string>("Code", "[@UG_TR_CMSN]");
+            var lLstCmsn = mObjQueryManager.GetObjectsList<Commissions>("U_Status", "1", "[@UG_TR_CMSN]").ToList();
+            if (lLstCmsn != null && lLstCmsn.Count > 0)
+            {
+                lStrValue = lLstCmsn.OrderByDescending(x => x.RowCode).First().RowCode;
+            }
             return lStrValue;
         }
+
+
+      
 
         public List<string> GetAuthorizers(string pStrConfigName)
         {
@@ -316,6 +325,11 @@ namespace UGRS.Core.SDK.DI.Transports.DAO
         public IList<Commissions> GetCommissionsByFolio(string pStrFolio)
         {
             return mObjQueryManager.GetObjectsList<Commissions>("U_Folio", pStrFolio, "[@UG_TR_CMSN]");
+        }
+
+        public IList<Commissions> GetCmsnByYear(int pIntYear)
+        {
+            return mObjQueryManager.GetObjectsList<Commissions>("U_Year", pIntYear.ToString(), "[@UG_TR_CMSN]").ToList();
         }
 
         public IList<CommissionLine> GetCommissionLine(string pStrCmsnId)
@@ -452,6 +466,7 @@ namespace UGRS.Core.SDK.DI.Transports.DAO
                         mObjSalesOrderLines.Heads = lObjResults.Fields.Item("U_TR_Heads").Value.ToString();
                         mObjSalesOrderLines.TotKg = lObjResults.Fields.Item("U_TR_TotKilos").Value.ToString();
                         mObjSalesOrderLines.Bags = lObjResults.Fields.Item("U_GLO_BagsBales").Value.ToString();
+                        mObjSalesOrderLines.UnitPrice = float.Parse(lObjResults.Fields.Item("Price").Value.ToString());
                     }
                 }
             }

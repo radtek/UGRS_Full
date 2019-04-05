@@ -41,6 +41,8 @@ namespace UGRS.Core.SDK.DI.Transports.Services
             return mObjCommissionDAO.GetComission(pStrDriverId, pStrDateStart, pStrDateEnd);
         }
 
+      
+
         public string GetFirstDay(int pIntYear)
         {
             return mObjCommissionDAO.GetFirstDay(pIntYear);
@@ -69,6 +71,11 @@ namespace UGRS.Core.SDK.DI.Transports.Services
         public IList<Commissions> GetCommissionByFolio(string pStrFolio)
         {
             return mObjCommissionDAO.GetCommissionsByFolio(pStrFolio);
+        }
+
+        public IList<Commissions> GetCmsnByYear(int pIntYear)
+        {
+            return mObjCommissionDAO.GetCmsnByYear(pIntYear);
         }
 
         public Commissions GetCommission(string pStrFolio)
