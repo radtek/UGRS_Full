@@ -2,7 +2,7 @@ SELECT
       [Name]
       ,[U_State]
       ,[U_Commite]
-  FROM [@UG_GLO_TOWN]
+  FROM [@UG_GLO_TOWN] with (Nolock)
   WHERE 
  Name = COALESCE(NULLIF('{Town}',''),Name) 
  AND

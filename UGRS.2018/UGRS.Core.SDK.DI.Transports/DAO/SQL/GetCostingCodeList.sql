@@ -1,1 +1,1 @@
-SELECT PrcCode,PrcName, U_TR_Account FROM OPRC WHERE DimCode = 1
+SELECT PrcCode,PrcName, U_TR_Account FROM OPRC with (Nolock) WHERE DimCode = 1

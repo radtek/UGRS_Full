@@ -89,7 +89,7 @@ union all
 		OHPS.Name = 'OPERADOR' 
 		and OUDP.Name = 'TRANSPORTES' 
 		and [@UG_Config].Name = 'TR_FLETE_INT'
-		and OJDT.AutoStorno='N' and T2.TransId is null 
+		and OJDT.AutoStorno='N' and T2.TransId is null and OJDT.StornoToTr is null 
 		and OJDT.RefDate between @StartDate and @EndDate
 		and OJDT.TransCode = 'TR/F' 
 		and OJDT.StornoToTr is null  

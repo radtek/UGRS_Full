@@ -1,7 +1,7 @@
 ﻿SELECT BankCode, BankName
-FROM ODSC
+FROM ODSC  with (Nolock)
 WHERE EXISTS (
 	SELECT *
-	FROM DSC1
+	FROM DSC1  with (Nolock)
 	WHERE ODSC.BankCode = DSC1.BankCode
 )

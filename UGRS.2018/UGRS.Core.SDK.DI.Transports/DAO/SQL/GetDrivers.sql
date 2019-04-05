@@ -5,8 +5,8 @@
 --AND pager = 'N'
 --AND (lastName+' '+firstName like '%{Search}%' or sex like '%{Search}%' or type like '%{Search}%')
 
-SELECT (t0.lastName+' '+t0.firstName) as Name,t0.sex,T0.empID as Type FROM OHEM T0
-inner join OHPS T1 on t0.position = t1.posID
+SELECT (t0.lastName+' '+t0.firstName) as Name,t0.sex,T0.empID as Type FROM OHEM T0 with (Nolock)
+inner join OHPS T1 with (Nolock) on t0.position = t1.posID
 WHERE 
 T0.CostCenter = '{CostingCode}'
 AND (t0.lastName+' '+t0.firstName) = COALESCE(NULLIF('{Name}',''),(t0.lastName+' '+t0.firstName)) 
