@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UGRS.Core.SDK.DI.Transports;
 using UGRS.Core.SDK.DI.Transports.DTO;
+using UGRS.Core.Services;
 
 namespace UGRS.AddOn.Transports
 {
@@ -28,7 +29,7 @@ namespace UGRS.AddOn.Transports
                 {
                     lDecRemanente = lDecComision;
                     //pObjCmsnDriverDTO.ListDebt =  pLstListDebt;// GetCommissionDebt(pObjCmsnDriverDTO.Folio, pObjCmsnDriverDTO.DriverId);
-                    foreach (CommissionDebtDTO DebtDTO in pObjCmsnDriverDTO.ListDebt)
+                    foreach (CommissionDebtDTO DebtDTO in pObjCmsnDriverDTO.ListDebt.OrderByDescending(x => x.Id))
                     {
                         if (lDecRemanente <= 0)
                         {
@@ -43,7 +44,7 @@ namespace UGRS.AddOn.Transports
                                 {
                                     AccountCode = pObjAccounts.AccountFuncEmpl,
                                     Debit = 0,
-                                    Credit = Convert.ToDouble(DebtDTO.Importe - lDecRemanente),
+                                    Credit = Convert.ToDouble(lDecRemanente),//Convert.ToDouble(DebtDTO.Importe - lDecRemanente),
                                     TypeAux = "2",
                                     Auxiliar = pObjCmsnDriverDTO.DriverId,
                                     Ref1 = DebtDTO.Folio,
@@ -51,7 +52,7 @@ namespace UGRS.AddOn.Transports
                                     //Ref2 = DebtDTO.
                                     CodeMov = DebtDTO.Folio,
                                 });
-                                lDecRemanente -= DebtDTO.Importe;
+                                lDecRemanente = 0;
                             }
                             else
                             {
@@ -66,7 +67,8 @@ namespace UGRS.AddOn.Transports
                                     CostingCode = "TR_TRANS",
                                     CodeMov = DebtDTO.Folio,
                                 });
-                                lDecRemanente = 0;
+                                lDecRemanente -= DebtDTO.Importe;
+                                //lDecRemanente -= DebtDTO.Importe;
                             }
 
                         }
@@ -121,7 +123,12 @@ namespace UGRS.AddOn.Transports
                 }
 
                 lDecTotal = Convert.ToDecimal(lLstJounralLineDTO.Sum(x => x.Credit)) - Convert.ToDecimal(lLstJounralLineDTO.Sum(x => x.Debit));
-
+                //decimal lDecDebit = 0;
+                //if (lDecTotal > 0)
+                //{
+                //    lDecTotal = Convert.ToDecimal(lLstJounralLineDTO.Sum(x => x.Credit)) * -1;
+                //   lDecDebit = 
+                //}
                 if (lDecTotal >= pObjAccounts.Tope || lDecTotal <= pObjAccounts.Tope * -1)
                 {
                     decimal lDec = lDecTotal < 0 ? -1 : 1;
@@ -152,7 +159,7 @@ namespace UGRS.AddOn.Transports
                 }
                 else
                 {
-                    decimal lDec = lDecTotal < 0 ? -1 : 1;
+                    //decimal lDec = lDecTotal < 0 ? -1 : 1;
                     lLstJounralLineDTO.Add(new JournalLineDTO
                     {
                         AccountCode = pObjAccounts.AccountViat,
@@ -167,6 +174,11 @@ namespace UGRS.AddOn.Transports
                 }
             }
             lLstJounralLineDTO = AddAsset(lLstJounralLineDTO, pObjCmsnDriverDTO);
+
+            foreach (var item in lLstJounralLineDTO)
+            {
+                LogService.WriteInfo(item.AccountCode + "|  Debito: |" + item.Debit + "| Credito: |" + item.Credit + "| Chofer: |" + item.Auxiliar + "| CodeMov |" + item.CodeMov);
+            }
             return lLstJounralLineDTO;
         }
 
