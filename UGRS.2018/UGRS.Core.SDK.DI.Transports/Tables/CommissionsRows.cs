@@ -28,49 +28,49 @@ namespace UGRS.Core.SDK.DI.Transports.Tables
         /// <summary> 
         /// Imp Flete
         /// </summary>
-        [Field(Description = "Imp Flete", Type = BoFieldTypes.db_Numeric)]
+        [Field(Description = "Imp Flete", Type = BoFieldTypes.db_Float, SubType = BoFldSubTypes.st_Price)]
         public double FrgAm { get; set; }
 
         /// <summary> 
         /// Importe Seguro
         /// </summary>
-        [Field(Description = "Importe Seguro", Type = BoFieldTypes.db_Numeric)]
+        [Field(Description = "Importe Seguro", Type = BoFieldTypes.db_Float, SubType = BoFldSubTypes.st_Price)]
         public double InsAm { get; set; }
 
         /// <summary> 
         /// Descuento Anterior
         /// </summary>
-        [Field(Description = "Descuento Anterior", Type = BoFieldTypes.db_Numeric)]
+        [Field(Description = "Descuento Anterior", Type = BoFieldTypes.db_Float, SubType = BoFldSubTypes.st_Price)]
         public double LstDisc { get; set; }
 
         /// <summary> 
         /// Descuento Semana
         /// </summary>
-        [Field(Description = "Descuento Semana", Type = BoFieldTypes.db_Numeric)]
+        [Field(Description = "Descuento Semana", Type = BoFieldTypes.db_Float, SubType = BoFldSubTypes.st_Price)]
         public double WkDisc { get; set; }
 
         /// <summary> 
         /// Total Descuento
         /// </summary>
-        [Field(Description = "Total Descuento", Type = BoFieldTypes.db_Numeric)]
+        [Field(Description = "Total Descuento", Type = BoFieldTypes.db_Float, SubType = BoFldSubTypes.st_Price)]
         public double TotDisc { get; set; }
 
         /// <summary> 
         /// Comisión
         /// </summary>
-        [Field(Description = "Comisión", Type = BoFieldTypes.db_Numeric)]
+        [Field(Description = "Comisión", Type = BoFieldTypes.db_Float, SubType = BoFldSubTypes.st_Price)]
         public double Comm { get; set; }
 
         /// <summary> 
         /// Total Comision
         /// </summary>
-        [Field(Description = "Total Comision", Type = BoFieldTypes.db_Numeric)]
+        [Field(Description = "Total Comision", Type = BoFieldTypes.db_Float, SubType = BoFldSubTypes.st_Price)]
         public double TotComm { get; set; }
 
         /// <summary> 
         /// Adeudo
         /// </summary>
-        [Field(Description = "Adeudo", Type = BoFieldTypes.db_Numeric)]
+        [Field(Description = "Adeudo", Type = BoFieldTypes.db_Float, SubType = BoFldSubTypes.st_Price)]
         public double Doubt { get; set; }
 
         [Field(Description = "Tipo", Type = BoFieldTypes.db_Alpha, Size = 30)]

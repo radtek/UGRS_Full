@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UGRS.Core.SDK.DI.Models;
+﻿using UGRS.Core.SDK.DI.Models;
 using UGRS.Core.SDK.Attributes;
 using SAPbobsCOM;
 
@@ -61,6 +56,9 @@ namespace UGRS.Core.SDK.DI.Transports.Tables
 
        [Field(Description = "Total Kilos", Type = BoFieldTypes.db_Alpha, Size = 30)]
        public string TotKG { get; set; }
+
+       [Field(Description = "Importe KM", Type = BoFieldTypes.db_Float, SubType = BoFldSubTypes.st_Quantity)]
+       public double AmountKM { get; set; }
 
        [Field(Description = "Cabezas", Type = BoFieldTypes.db_Alpha, Size = 30)]
        public string Heads { get; set; }

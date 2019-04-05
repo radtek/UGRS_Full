@@ -20,10 +20,10 @@ namespace UGRS.Core.SDK.DI.Transports.Tables
         [Field(Description = "DocEntry", Type = BoFieldTypes.db_Alpha, Size = 30)]
         public string DocEntry { get; set; }
 
-        [Field(Description = "Amount", Type = BoFieldTypes.db_Numeric)]
+        [Field(Description = "Amount", Type = BoFieldTypes.db_Float, SubType = BoFldSubTypes.st_Price)]
         public double Amount { get; set; }
 
-        [Field(Description = "Comision", Type = BoFieldTypes.db_Numeric)]
+        [Field(Description = "Comision", Type = BoFieldTypes.db_Float, SubType = BoFldSubTypes.st_Price)]
         public double CmsnAmount { get; set; }
         
         [Field(Description = "NoGenerate", Size = 1)]
