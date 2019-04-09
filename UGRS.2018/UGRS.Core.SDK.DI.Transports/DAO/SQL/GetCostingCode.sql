@@ -1,2 +1,2 @@
 select U_GLO_CostCenter
-from OUSR where USERID = '{UsrId}'
+from OUSR with (nolock) where USERID = '{UsrId}'

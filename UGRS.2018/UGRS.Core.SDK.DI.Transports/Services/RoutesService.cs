@@ -124,5 +124,25 @@ namespace UGRS.Core.SDK.DI.Transports.Services
         {
             return mObjRouteListDAO.GetLastRouteId() + 1;
         }
+
+        public float GetTax(string pStrItemCode)
+        {
+            return mObjRouteListDAO.GetTax(pStrItemCode);
+        }
+
+        public float GetTaxWT(string pStrItemCode)
+        {
+            return mObjRouteListDAO.GetTaxWT(pStrItemCode);
+        }
+
+        public string GetTypeTRTY(string pStrCode)
+        {
+            return mObjRouteListDAO.GetTypePayload(pStrCode);
+        }
+
+        public string ValidateSinKM(string pStrItemCode)
+        {
+            return mObjRouteListDAO.ValidateItemSinKM(pStrItemCode);
+        }
     }
 }

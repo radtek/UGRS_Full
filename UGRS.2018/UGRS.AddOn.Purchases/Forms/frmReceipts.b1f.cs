@@ -1817,29 +1817,27 @@ namespace UGRS.AddOn.Purchases.Forms {
                                 return;
                             }
                         }
-                   
+
                     }
                 }
                 if (lLstVoucherDetail.Count > 0)
                 {
-                    UpdateTotal(lLstVouchersDetail[0].CodeVoucher);
-                   
+                   lBolIsSuccess = UpdateTotal(lLstVouchersDetail[0].CodeVoucher);
+
                 }
 
                 foreach (VouchersDetail lObjVoucherDetail in lLstVouchersDetail)
                 {
                     if (string.IsNullOrEmpty(lObjVoucherDetail.Line))
                     {
-                        AddVoucherDetail(lObjVoucherDetail);
+                       lBolIsSuccess = AddVoucherDetail(lObjVoucherDetail);
+                       if (!lBolIsSuccess)
+                       {
+                           break;
+                       }
                     }
                 }
-
-
-
-
-                UIApplication.ShowMessageBox("Proceso de pagos realizado con exito");
-
-                
+               
             }
             catch (Exception ex)
             {
@@ -1847,10 +1845,47 @@ namespace UGRS.AddOn.Purchases.Forms {
                 LogService.WriteError(ex);
                 return;
             }
-           
-            DIApplication.Company.EndTransaction(SAPbobsCOM.BoWfTransOpt.wf_Commit);
-            FillMatrixInvoice();
+            finally
+            {
+                CommitTransaction(lBolIsSuccess);
+                      FillMatrixInvoice();
+                      UIApplication.ShowMessageBox("Proceso de pagos realizado con exito");
+            }
+            
+          
         }
+
+
+        private void CommitTransaction(bool pBolSuccess)
+        {
+            try
+            {
+                if (pBolSuccess)
+                {
+                    DIApplication.Company.EndTransaction(SAPbobsCOM.BoWfTransOpt.wf_Commit);
+                    UIApplication.ShowMessageBox(string.Format("Proceso realizado correctamente"));
+
+                }
+                else
+                {
+                    //mStrCodeVoucher = string.Empty;
+                    if (DIApplication.Company.InTransaction)
+                    {
+                        DIApplication.Company.EndTransaction(SAPbobsCOM.BoWfTransOpt.wf_RollBack);
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                mObjProgressBar.Dispose();
+                this.UIAPIRawForm.Freeze(false);
+                UIApplication.ShowMessageBox(ex.Message);
+                LogService.WriteError("(btnSave_ClickBefore): " + ex.Message);
+                LogService.WriteError(ex);
+            }
+        } 
+        
 
         /// <summary>
         /// Agregar detalles al comprobante

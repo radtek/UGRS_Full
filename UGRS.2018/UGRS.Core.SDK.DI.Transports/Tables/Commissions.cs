@@ -12,7 +12,7 @@ namespace UGRS.Core.SDK.DI.Transports.Tables
         [Field(Description = "FolioComission", Type = BoFieldTypes.db_Alpha, Size = 30)]
         public string Folio { get; set; }
 
-        [Field(Description = "Importe", Type = BoFieldTypes.db_Numeric)]
+        [Field(Description = "Importe", Type = BoFieldTypes.db_Float, SubType = BoFldSubTypes.st_Price)]
         public double Amount { get; set; }
 
         [Field(Description = "Autorizado Transporte", Size = 1)]
@@ -26,6 +26,21 @@ namespace UGRS.Core.SDK.DI.Transports.Tables
 
         [Field(Description = "Estatus", Type=  BoFieldTypes.db_Numeric)]
         public int Status { get; set; }
+
+        [Field(Description = "Usuario",  Type = BoFieldTypes.db_Alpha, Size = 50)]
+        public string User { get; set; }
+
+        [Field(Description = "Pago Chofer", Type = BoFieldTypes.db_Alpha, Size = 1)]
+        public string HasDriverCms { get; set; }
+
+        [Field(Description = "Comentario", Type = BoFieldTypes.db_Alpha, Size = 50)]
+        public string Coments { get; set; }
+
+        [Field(Description = "Año", Type = BoFieldTypes.db_Numeric)]
+        public int Year { get; set; }
+
+        [Field(Description = "Semana", Type = BoFieldTypes.db_Numeric)]
+        public int Week { get; set; }
 
         public List<CommissionLine> LstCommissionLine;
 

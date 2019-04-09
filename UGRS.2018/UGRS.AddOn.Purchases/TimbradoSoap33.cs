@@ -23,8 +23,12 @@ namespace UGRS.AddOn.Purchases
 
         public string GetCFDI(string pStrContract, string pStrUser, string pStrPassw, string pStrUUID)
         {
+
             string lStrCFDI = mObjTimbradorp.cfdiPorUUID(pStrContract, pStrUser, pStrPassw, pStrUUID);
             return lStrCFDI;
+
+
+         
         }
     
         private Byte[] FileToBytesArray(FileStream file)

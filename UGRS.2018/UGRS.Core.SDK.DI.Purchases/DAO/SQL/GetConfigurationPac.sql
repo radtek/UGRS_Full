@@ -1,0 +1,1 @@
+﻿SELECT U_Contract, U_Pass, U_User FROM "@CONFPAC"

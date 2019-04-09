@@ -74,20 +74,33 @@
     <Reference Include="SAPBusinessOneSDK" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Forms\frmCFLFolios.b1f.cs">
+      <DependentUpon>frmCFLFolios.b1f</DependentUpon>
+    </Compile>
     <Compile Include="Forms\frmCommissions.b1f.cs">
       <DependentUpon>frmCommissions.b1f</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\frmDriversCommissions.b1f.cs">
+      <DependentUpon>frmDriversCommissions.b1f</DependentUpon>
     </Compile>
     <Compile Include="Forms\frmFreights.b1f.cs">
       <DependentUpon>frmFreights.b1f</DependentUpon>
     </Compile>
     <Compile Include="Freights.cs" />
+    <Compile Include="JournalEntryLine.cs" />
     <Compile Include="ModalForms\mfrmCFL.cs" />
     <Compile Include="ModalForms\mfrmFreights.cs" />
     <Compile Include="ModalForms\mfrmRouteFinder.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Menu.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <None Include="Forms\frmCFLFolios.b1f">
+      <FormCategory>UserForm</FormCategory>
+    </None>
     <None Include="Forms\frmCommissions.b1f">
+      <FormCategory>UserForm</FormCategory>
+    </None>
+    <None Include="Forms\frmDriversCommissions.b1f">
       <FormCategory>UserForm</FormCategory>
     </None>
     <None Include="Forms\frmFreights.b1f">

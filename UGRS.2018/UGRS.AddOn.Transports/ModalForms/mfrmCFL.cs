@@ -8,6 +8,8 @@ using UGRS.Core.SDK.DI;
 using UGRS.Core.SDK.DI.Transports;
 using UGRS.Core.SDK.DI.Transports.DTO;
 using UGRS.Core.SDK.DI.Transports.Utility;
+using UGRS.Core.SDK.UI;
+using UGRS.Core.Services;
 using UGRS.Core.Utility;
 
 namespace UGRS.AddOn.Transports.ModalForms
@@ -34,7 +36,7 @@ namespace UGRS.AddOn.Transports.ModalForms
         private string mStrCardCode = string.Empty;
         public string mStrCFLType = string.Empty;
         public string mStrFrmName = string.Empty;
-        public int pIntRow = 0;
+        public int mIntRow = 0;
 
         #endregion
 
@@ -65,25 +67,55 @@ namespace UGRS.AddOn.Transports.ModalForms
         private void lObjBtnCancel_ClickBefore(object sboObject, SAPbouiCOM.SBOItemEventArg pVal, out bool BubbleEvent)
         {
             BubbleEvent = true;
-            CloseForm();
+            try
+            {
+                CloseForm();
+            }
+            catch (Exception ex)
+            {
+                LogService.WriteError(ex.Message);
+                LogService.WriteError(ex);
+                UIApplication.ShowMessageBox(ex.Message);
+            }
+            
         }
 
 
         private void lObjBtnSearch_ClickBefore(object sboObject, SAPbouiCOM.SBOItemEventArg pVal, out bool BubbleEvent)
         {
             BubbleEvent = true;
-            SelectMtxDataSource(lObjTxtSearch.Value);
+            try
+            {
+                SelectMtxDataSource(lObjTxtSearch.Value);
+            }
+            catch (Exception ex)
+            {
+                LogService.WriteError(ex.Message);
+                LogService.WriteError(ex);
+                UIApplication.ShowMessageBox(ex.Message);
+            }
+          
         }
 
 
         private void pObjMtxCFL_ClickBefore(object sboObject, SAPbouiCOM.SBOItemEventArg pVal, out bool BubbleEvent)
         {
             BubbleEvent = true;
-            if (pVal.Row > 0)
+            try
             {
-                pIntRow = pVal.Row > 0 ? pVal.Row : 0;
-                pObjMtxCFL.SelectRow(pVal.Row, true, false);
+                if (pVal.Row > 0)
+                {
+                    mIntRow = pVal.Row > 0 ? pVal.Row : 0;
+                    pObjMtxCFL.SelectRow(pVal.Row, true, false);
+                }
             }
+            catch (Exception ex)
+            {
+                LogService.WriteError(ex.Message);
+                LogService.WriteError(ex);
+                UIApplication.ShowMessageBox(ex.Message);
+            }
+           
         }
         #endregion
 
@@ -132,6 +164,7 @@ namespace UGRS.AddOn.Transports.ModalForms
             SetItems();
             InitializeEvents();
             SelectMtxDataSource();
+
             lObjCFLModalForm.Freeze(false);
         }
 
@@ -159,10 +192,17 @@ namespace UGRS.AddOn.Transports.ModalForms
                     SetCFLFolios();
                     break;
             }
+
+            if (pObjMtxCFL.RowCount > 0)
+            {
+                mIntRow = 1;
+                pObjMtxCFL.SelectRow(1, true, false);
+            }
         }
 
         private void SetCFLFolios()
         {
+            string ss = mObjTransportFactory.GetCFLService().GetCFLFoliosQuery();
             lObjCFLModalForm.DataSources.DataTables.Item("DsItems").ExecuteQuery(mObjTransportFactory.GetCFLService().GetCFLFoliosQuery());
             LoadFoliosMatrix();
         }
@@ -222,6 +262,8 @@ namespace UGRS.AddOn.Transports.ModalForms
 
             pObjMtxCFL.LoadFromDataSource();
             pObjMtxCFL.AutoResizeColumns();
+
+            
         }
 
         private void LoadFoliosMatrix()
@@ -232,15 +274,18 @@ namespace UGRS.AddOn.Transports.ModalForms
                 pObjMtxCFL.Columns.Add("cFolio", SAPbouiCOM.BoFormItemTypes.it_EDIT);
                 pObjMtxCFL.Columns.Add("cDocNum", SAPbouiCOM.BoFormItemTypes.it_EDIT);
                 pObjMtxCFL.Columns.Add("cStat", SAPbouiCOM.BoFormItemTypes.it_EDIT);
+                pObjMtxCFL.Columns.Add("cType", SAPbouiCOM.BoFormItemTypes.it_EDIT);
 
                 //Setup clumns
                 pObjMtxCFL.Columns.Item("cFolio").TitleObject.Caption = "Folio";
                 pObjMtxCFL.Columns.Item("cDocNum").TitleObject.Caption = "Documento";
                 pObjMtxCFL.Columns.Item("cStat").TitleObject.Caption = "Doc. estatus";
+                pObjMtxCFL.Columns.Item("cType").TitleObject.Caption = "Tipo";
 
                 pObjMtxCFL.Columns.Item("cFolio").Editable = false;
                 pObjMtxCFL.Columns.Item("cDocNum").Editable = false;
                 pObjMtxCFL.Columns.Item("cStat").Editable = false;
+                pObjMtxCFL.Columns.Item("cType").Editable = false;
 
                 pObjMtxCFL.SelectionMode = SAPbouiCOM.BoMatrixSelect.ms_Single;
             }
@@ -249,6 +294,7 @@ namespace UGRS.AddOn.Transports.ModalForms
             pObjMtxCFL.Columns.Item("cFolio").DataBind.Bind("DsItems", "U_GLO_Ticket");
             pObjMtxCFL.Columns.Item("cDocNum").DataBind.Bind("DsItems", "DocNum");
             pObjMtxCFL.Columns.Item("cStat").DataBind.Bind("DsItems", "Status");
+            pObjMtxCFL.Columns.Item("cType").DataBind.Bind("DsItems", "Type");
 
             pObjMtxCFL.LoadFromDataSource();
             pObjMtxCFL.AutoResizeColumns();
@@ -365,6 +411,7 @@ namespace UGRS.AddOn.Transports.ModalForms
             lObjBtnCancel.ClickBefore += new SAPbouiCOM._IButtonEvents_ClickBeforeEventHandler(this.lObjBtnCancel_ClickBefore);
             lObjBtnSearch.ClickBefore += new SAPbouiCOM._IButtonEvents_ClickBeforeEventHandler(this.lObjBtnSearch_ClickBefore);
             pObjMtxCFL.ClickBefore += new SAPbouiCOM._IMatrixEvents_ClickBeforeEventHandler(this.pObjMtxCFL_ClickBefore);
+
         }
 
         public void UnloadEvents()

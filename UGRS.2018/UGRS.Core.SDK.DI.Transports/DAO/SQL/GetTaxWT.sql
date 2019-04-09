@@ -1,0 +1,1 @@
+select (Rate / PrctBsAmnt) as Rate from OWHT with (Nolock) where WTCode = 'FV' 
