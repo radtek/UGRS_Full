@@ -70,10 +70,11 @@ namespace UGRS.AddOn.Machinery.Forms
                     StartSearchMode();
                 }
             }
-            catch (Exception lObjExpception)
+            catch (Exception lObjException)
             {
-                LogUtility.WriteError(string.Format("[MachineryForm - MachineryForm] Error: {0}", lObjExpception.Message));
-                throw lObjExpception;
+                UIApplication.ShowError(string.Format("Error: {0}", lObjException.Message));
+                LogUtility.WriteError(string.Format("[MachineryForm - MachineryForm] Error: {0}", lObjException.Message));
+                throw lObjException;
             }
             finally
             {
@@ -461,6 +462,7 @@ namespace UGRS.AddOn.Machinery.Forms
             catch (Exception ex)
             {
                 LogUtility.WriteError(string.Format("[MachineryForm - SBO_Application_ItemEvent] Error: {0}", ex.Message));
+                UIApplication.ShowError(string.Format("Error: {0}", ex.Message));
                 this.UIAPIRawForm.Freeze(false);
 
                 if (!ex.Message.Contains("Form - Invalid Form"))
@@ -2938,6 +2940,23 @@ namespace UGRS.AddOn.Machinery.Forms
             return lBolResult;
         }
 
+        public bool ExistItemOnValidValues(SAPbouiCOM.Column pObjColumn, string pStrValue)
+        {
+            bool lBolResult = false;
+
+            for (int i = 0; i < pObjColumn.ValidValues.Count; i++)
+            {
+                string lStrValueKey = pObjColumn.ValidValues.Item(i).Value;
+
+                if (lStrValueKey == pStrValue)
+                {
+                    lBolResult = true;
+                }
+            }
+
+            return lBolResult;
+        }
+
         private bool IsFirstTravelExpenses()
         {
             bool lBolResult = true;
@@ -3716,7 +3735,10 @@ namespace UGRS.AddOn.Machinery.Forms
                     {
                         if (!string.IsNullOrEmpty(dtEmployees.GetValue("EmpName", i).ToString()))
                         {
-                            lObjColumn.ValidValues.Add(dtEmployees.GetValue("EmpId", i).ToString(), dtEmployees.GetValue("EmpName", i).ToString());
+                            if (!ExistItemOnValidValues(lObjColumn, dtEmployees.GetValue("EmpId", i).ToString()))
+                            {
+                                lObjColumn.ValidValues.Add(dtEmployees.GetValue("EmpId", i).ToString(), dtEmployees.GetValue("EmpName", i).ToString());
+                            }
                         }
                     }
 
@@ -3748,7 +3770,10 @@ namespace UGRS.AddOn.Machinery.Forms
                     {
                         if (!string.IsNullOrEmpty(dtEmployees.GetValue("EmpName", i).ToString()))
                         {
-                            lObjColumn.ValidValues.Add(dtEmployees.GetValue("EmpId", i).ToString(), dtEmployees.GetValue("EmpName", i).ToString());
+                            if (!ExistItemOnValidValues(lObjColumn, dtEmployees.GetValue("EmpId", i).ToString()))
+                            {
+                                lObjColumn.ValidValues.Add(dtEmployees.GetValue("EmpId", i).ToString(), dtEmployees.GetValue("EmpName", i).ToString());
+                            }
                         }
                     }
 
@@ -3783,8 +3808,15 @@ namespace UGRS.AddOn.Machinery.Forms
                     {
                         if (!string.IsNullOrEmpty(dtEmployees.GetValue("EmpName", i).ToString()))
                         {
-                            lObjColumn.ValidValues.Add(dtEmployees.GetValue("EmpId", i).ToString(), dtEmployees.GetValue("EmpName", i).ToString());
-                            lObjColumn2.ValidValues.Add(dtEmployees.GetValue("EmpId", i).ToString(), dtEmployees.GetValue("EmpName", i).ToString());
+                            if (!ExistItemOnValidValues(lObjColumn, dtEmployees.GetValue("EmpId", i).ToString()))
+                            {
+                                lObjColumn.ValidValues.Add(dtEmployees.GetValue("EmpId", i).ToString(), dtEmployees.GetValue("EmpName", i).ToString());
+                            }
+
+                            if (!ExistItemOnValidValues(lObjColumn2, dtEmployees.GetValue("EmpId", i).ToString()))
+                            {
+                                lObjColumn2.ValidValues.Add(dtEmployees.GetValue("EmpId", i).ToString(), dtEmployees.GetValue("EmpName", i).ToString());
+                            }
                         }
                     }
 
@@ -3972,7 +4004,10 @@ namespace UGRS.AddOn.Machinery.Forms
 
                             if (lStrEqmType.ToUpper() == "MQ")
                             {
-                                lObjMachColumn.ValidValues.Add(dtInitialRcords.GetValue("ActCodIR", i).ToString(), dtInitialRcords.GetValue("ActNumIR", i).ToString());
+                                if (!ExistItemOnValidValues(lObjMachColumn, dtInitialRcords.GetValue("ActCodIR", i).ToString()))
+                                {
+                                    lObjMachColumn.ValidValues.Add(dtInitialRcords.GetValue("ActCodIR", i).ToString(), dtInitialRcords.GetValue("ActNumIR", i).ToString());
+                                }
                             }
                         }
                     }
@@ -3990,7 +4025,10 @@ namespace UGRS.AddOn.Machinery.Forms
 
                             if (lStrEqmType.ToUpper() == "MQ")
                             {
-                                lObjEcoNumColumn.ValidValues.Add(dtInitialRcords.GetValue("ActCodIR", i).ToString(), dtInitialRcords.GetValue("ActNumIR", i).ToString());
+                                if (!ExistItemOnValidValues(lObjEcoNumColumn, dtInitialRcords.GetValue("ActCodIR", i).ToString()))
+                                {
+                                    lObjEcoNumColumn.ValidValues.Add(dtInitialRcords.GetValue("ActCodIR", i).ToString(), dtInitialRcords.GetValue("ActNumIR", i).ToString());
+                                }
                             }
                         }
                     }
