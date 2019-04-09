@@ -45,7 +45,7 @@ namespace UGRS.AddOn.Transports.Forms
         private string mStrDriverId = string.Empty;
         private InsuranceDTO mObjInsurance;
         private string mStrType = string.Empty;
-        public string mStrTxtCFL = string.Empty;
+        private string mStrTxtCFL = string.Empty;
             //private List<SalesOrderLinesDTO> mLstSalesOrderLines = null;
 
         private CFLParamsDTO mObjCFLParameters = null;
@@ -157,9 +157,6 @@ namespace UGRS.AddOn.Transports.Forms
         {
             
             UIApplication.GetApplication().ItemEvent += new SAPbouiCOM._IApplicationEvents_ItemEventEventHandler(SBO_Application_ItemEvent);
-           
-            
-
             UIApplication.GetApplication().MenuEvent += frmFreights_MenuEvent;
             this.cboShared.ComboSelectAfter += new SAPbouiCOM._IComboBoxEvents_ComboSelectAfterEventHandler(this.lObjCboShared_ComboSelectAfter);
             this.cboVehicleType.ComboSelectAfter += new _IComboBoxEvents_ComboSelectAfterEventHandler(this.lObjCboVehicleType_ComboSelectAfter);
@@ -442,7 +439,7 @@ namespace UGRS.AddOn.Transports.Forms
                     if (lStrShared == "2")
                     {
                          txtAmountKm.Value = mObjInternalFreight.UserFields.Fields.Item("U_AmountKM").Value.ToString();
-                       
+                         SetKilometers(); 
                     }
                     else
                     {
@@ -483,10 +480,11 @@ namespace UGRS.AddOn.Transports.Forms
             if (mObjSalesOrderLines == null)
             {
                 mObjSalesOrderLines = new SalesOrderLinesDTO();
-            }
+            } 
+           if (pObjRoutes == null) return null;
             mIntActualRoute = Convert.ToInt32(pObjRoutes.RowCode);
             
-            if (pObjRoutes == null) return null;
+           
 
             return new SalesOrderLinesDTO()
             {
@@ -723,7 +721,7 @@ namespace UGRS.AddOn.Transports.Forms
 
         private void SetTextBox()
         {
-            this.UIAPIRawForm.Freeze(true);
+           
             string ss = mStrTxtCFL;
             switch (mStrTxtCFL)
             {
@@ -788,7 +786,6 @@ namespace UGRS.AddOn.Transports.Forms
                      KmEnableDisable(false);
                     break;
             }
-            this.UIAPIRawForm.Freeze(false);
         }
 
         private void KmSetZero()
@@ -799,6 +796,7 @@ namespace UGRS.AddOn.Transports.Forms
             txtKmD.Value = "0";
             txtKmE.Value = "0";
             txtKmF.Value = "0";
+            txtTotKm.Value = "0";
         }
 
         private void KmEnableDisable(bool pBolEnable)
@@ -1293,13 +1291,21 @@ namespace UGRS.AddOn.Transports.Forms
 
         public void SetRoutes()
         {
-            mObjRoutes = mModalFrmRouteFinder.pRoutes;
-            SetRoutesTextsBoxes();
-            mModalFrmRouteFinder.CloseForm();
-            mModalFrmRouteFinder = null;
-            mBoolRoadLoaded = true;
-            mIntActualRoute = mObjRoutes != null ? mObjRoutes.Route : 0;
-            txtDriver.Item.Click();
+
+            if (mObjRoutes != null || mModalFrmRouteFinder.pRoutes != null)
+            {
+                mObjRoutes = mModalFrmRouteFinder.pRoutes;
+                SetRoutesTextsBoxes();
+                mModalFrmRouteFinder.CloseForm();
+                mModalFrmRouteFinder = null;
+                mBoolRoadLoaded = true;
+                mIntActualRoute = mObjRoutes != null ? mObjRoutes.Route : 0;
+                txtDriver.Item.Click();
+            }
+            else
+            {
+                UIApplication.ShowMessageBox("Favor de seleccionar una ruta");
+            }
         }
 
         private bool SaveDetails()
@@ -1410,6 +1416,8 @@ namespace UGRS.AddOn.Transports.Forms
                 CostingCode2 = txtEcNum.Value,
                 Debit = 0,
                 Paths = mIntActualRoute.ToString(),
+                Auxiliar = mStrDriverId,
+                Comment = txtComment.Value,
 
             });
 
@@ -1422,6 +1430,8 @@ namespace UGRS.AddOn.Transports.Forms
                 Credit = 0,
                 Debit = double.Parse(txtTotalFreight.Value),
                 Paths = mIntActualRoute.ToString(),
+                Auxiliar = mStrDriverId,
+                Comment = txtComment.Value,
             });
 
             return lLstJournalLines;
@@ -1444,6 +1454,8 @@ namespace UGRS.AddOn.Transports.Forms
                 Debit = 0,
                  Credit = double.Parse(txtTotalFreight.Value),
                 Paths = mIntActualRoute.ToString(),
+                Auxiliar = mStrDriverId,
+                Comment = txtComment.Value,
             });
 
             lLstJournalLines.Add(new JournalLineDTO()
@@ -1455,6 +1467,8 @@ namespace UGRS.AddOn.Transports.Forms
                 Debit = double.Parse(txtTotalFreight.Value),
                 Credit = 0,
                 Paths = mIntActualRoute.ToString(),
+                Auxiliar = mStrDriverId,
+                Comment = txtComment.Value,
             });
 
             return lLstJournalLines;
@@ -1462,9 +1476,31 @@ namespace UGRS.AddOn.Transports.Forms
 
         public void SetCFLTextBoxes()
         {
-            SetTextBox();
-            mModalFrmCFL.CloseForm();
-            mModalFrmCFL = null;
+            try
+            {
+                this.UIAPIRawForm.Freeze(true);
+                SetTextBox();
+                mModalFrmCFL.CloseForm();
+                mModalFrmCFL = null;
+            }
+            catch (Exception ex)
+            {
+                this.UIAPIRawForm.Freeze(false);
+                LogService.WriteError(ex.Message);
+                LogService.WriteError(ex);
+                if (mModalFrmCFL != null)
+                {
+                    mModalFrmCFL.UnloadEvents();
+                    mModalFrmCFL.CloseForm();
+                    mModalFrmCFL = null;
+                }
+                
+            }
+            finally
+            {
+                this.UIAPIRawForm.Freeze(false);
+            }
+         
         }
 
         private int GetFirstFolio()
@@ -1741,8 +1777,9 @@ namespace UGRS.AddOn.Transports.Forms
                 this.UIAPIRawForm.Freeze(false);
                 LogService.WriteError(ex.Message);
                 LogService.WriteError(ex);
-                UIApplication.ShowMessageBox(ex.Message);
+                //UIApplication.ShowMessageBox(ex.Message);
             }
+         
 
         }
 
@@ -1862,8 +1899,17 @@ namespace UGRS.AddOn.Transports.Forms
                 else
                 {
                     SharedConfig(false);
-                }
+                    string lStrValidate = mObjTransportsFactory.GetRouteService().ValidateSinKM(txtArticle.Value);
 
+                    if (lStrValidate == "Y")
+                    {
+                        txtAmountKm.Item.Enabled = true;
+                    }
+                    else
+                    {
+                        txtAmountKm.Item.Enabled = false;
+                    }
+                }
             }
             catch (Exception ex)
             {
