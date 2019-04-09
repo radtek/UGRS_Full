@@ -57,7 +57,7 @@ set @CommissionID = '{Folio}'
 	 inner join OUDP with (Nolock) on OHEM.dept = OUDP.Code
 	inner join OSLP with (nolock) on OHEM.SalesPrson = OSLP.SlpCode
 	 inner join [@UG_TR_CMLN] CMLN with (nolock) on OHEM.empID = CMLN.U_DriverId
-	inner join JDT1 with (nolock) on JDT1.U_GLO_Auxiliar = OHEM.empID and JDT1.TransID = CMLN.U_DocEntry
+	inner join JDT1 with (nolock) on  JDT1.TransID = CMLN.U_DocEntry --and JDT1.U_GLO_Auxiliar = OHEM.empID
 	inner join OJDT with (nolock) on OJDT.TransID = JDT1.TransID 
 	full outer join OJDT T2 with (Nolock) on T2.StornoToTr = OJDT.TransId 
 	inner join [@UG_Config] with (nolock) on [@UG_Config].U_Value = JDT1.Account
