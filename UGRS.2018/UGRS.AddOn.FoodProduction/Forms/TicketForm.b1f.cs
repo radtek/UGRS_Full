@@ -1566,10 +1566,18 @@ namespace UGRS.AddOn.FoodProduction.Forms
 			LogService.WriteSuccess("********* Impresion de ticket **********");
 			foreach (string lStrLine in pLstLine)
 			{
-				mObjWritePort.WriteSerialPort(lStrLine);
-				LogService.WriteInfo(lStrLine);
+                string lStrValue = Truncate(lStrLine, 35);
+                mObjWritePort.WriteSerialPort(lStrValue);
+                LogService.WriteInfo(lStrValue);
 			}
 		}
+
+        private string Truncate(string pStrValue, int pIntMaxLength)
+        {
+            if (string.IsNullOrEmpty(pStrValue)) return pStrValue;
+            return pStrValue.Length <= pIntMaxLength ? pStrValue : pStrValue.Substring(0, pIntMaxLength);
+        }
+
 
 		private void PrintUpdate(List<string> pLstLine, int pIntPrintedLine)
 		{
