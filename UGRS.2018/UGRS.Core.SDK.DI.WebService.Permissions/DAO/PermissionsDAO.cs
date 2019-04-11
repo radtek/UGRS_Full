@@ -64,7 +64,7 @@ namespace UGRS.Core.SDK.DI.WebServicePermissions.DAO {
             try {
 
                
-                List<String> lLstRequest = GetALLRequest();
+                //List<String> lLstRequest = GetALLRequest();
               
                 //Quitar
                
