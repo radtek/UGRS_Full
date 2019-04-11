@@ -1662,6 +1662,16 @@ namespace UGRS.AddOn.Transports.Forms
             {
                 lLstmssingFields.Add("Seleccione o agregue una ruta");
             }
+
+            if (string.IsNullOrEmpty(txtMorign.Value))
+            {
+                lLstmssingFields.Add("Seleccione un municipio origen");
+            }
+             if (string.IsNullOrEmpty(txtMDest.Value))
+            {
+                lLstmssingFields.Add("Seleccione un municipio destino");
+            }
+
             //if (string.IsNullOrEmpty(mStrDriverId))
             //{
             //    lLstmssingFields.Add("Seleccione un chofer");
