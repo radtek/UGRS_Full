@@ -57,7 +57,7 @@ namespace UGRS.Core.SDK.DI.Transports.Tables
        [Field(Description = "Total Kilos", Type = BoFieldTypes.db_Alpha, Size = 30)]
        public string TotKG { get; set; }
 
-       [Field(Description = "Importe KM", Type = BoFieldTypes.db_Float, SubType = BoFldSubTypes.st_Quantity)]
+       [Field(Description = "Importe KM", Type = BoFieldTypes.db_Float, SubType = BoFldSubTypes.st_Price)]
        public double AmountKM { get; set; }
 
        [Field(Description = "Cabezas", Type = BoFieldTypes.db_Alpha, Size = 30)]
