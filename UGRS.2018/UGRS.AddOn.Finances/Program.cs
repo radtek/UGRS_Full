@@ -69,7 +69,7 @@ namespace UGRS.AddOn.Finances
 
                     if (pVal.FormTypeEx.Equals(Constants.STR_EXTERNAL_STATEMENT_FORM))
                     {
-                        new BankExtractsImporting(UIApplication.GetCompany(), lObjForm);
+                        //new BankExtractsImporting(UIApplication.GetCompany(), lObjForm);
                     }
                 }
             }
