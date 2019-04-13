@@ -358,7 +358,7 @@ namespace UGRS.AddOn.Transports.Forms
                 int lIntWeek = Convert.ToInt32(lStrFolio.Substring(0, 2));
                 int lIntYear = Convert.ToInt32(lStrFolio.Substring(3, 2));
 
-                mDtmFirstDay = new DateTime(lIntYear+2000, 1, 1);
+                mDtmFirstDay = new DateTime(lIntYear+2000, 1, mIntFirstDay);
                 mDtmFirstDay = mDtmFirstDay.AddDays(((lIntWeek - 1) * 7));
                 mDtmLastDay = mDtmFirstDay.AddDays(6);
 
@@ -1773,10 +1773,11 @@ namespace UGRS.AddOn.Transports.Forms
 
        private string GetFolioWeek()
         {
+            LoadFirstDay();
             DateTime lDtmNow = DateTime.Now;
             int lIntQtyDays = lDtmNow.DayOfYear;
             int lIntWeek = ((int)(lIntQtyDays - mIntFirstDay) / 7) + 1;
-            mDtmFirstDay = new DateTime(DateTime.Now.Year, 1, 1);
+            mDtmFirstDay = new DateTime(DateTime.Now.Year, 1, mIntFirstDay);
             mDtmFirstDay = mDtmFirstDay.AddDays(((lIntWeek - 1) * 7));
             mDtmLastDay = mDtmFirstDay.AddDays(6);
 

@@ -83,6 +83,8 @@ namespace UGRS.AddOn.Transports.Forms
         SAPbouiCOM.EditText SO_TxtHeads;
         SAPbouiCOM.EditText SO_TxtSacos;
         SAPbouiCOM.EditText SO_TxtVarios;
+        SAPbouiCOM.EditText SO_TxtAFDesc;
+        SAPbouiCOM.EditText SO_TxtKilometers;
 
         SAPbobsCOM.UserTable mObjInternalFreight;
 
@@ -299,6 +301,7 @@ namespace UGRS.AddOn.Transports.Forms
                 cboShared.Select(lIntShrd.ToString(), BoSearchKey.psk_ByValue);
                 txtDriver.Value = mObjSalesOrderLines.Employee;
                 txtEcNum.Value = mObjSalesOrderLines.Asset;
+                lblAFDesc.Caption = mObjSalesOrderLines.AssetDesc;
                 txtExtra.Value = mObjSalesOrderLines.Extra;
                 txtFolio.Value = mObjSalesOrderLines.Folio;
                 txtTax.Value = mObjSalesOrderLines.Tax.ToString();
@@ -754,6 +757,9 @@ namespace UGRS.AddOn.Transports.Forms
                 case "txtEcNum":
                     txtEcNum.Value = ((SAPbouiCOM.EditText)mModalFrmCFL.pObjMtxCFL.Columns.Item("cItem")
                         .Cells.Item(mModalFrmCFL.mIntRow).Specific).Value.ToString();
+                    lblAFDesc.Caption = ((SAPbouiCOM.EditText)mModalFrmCFL.pObjMtxCFL.Columns.Item("cFrgN")
+                        .Cells.Item(mModalFrmCFL.mIntRow).Specific).Value.ToString();
+
                     break;
                 case "txtDriv":
                     mStrDriverId = ((SAPbouiCOM.EditText)mModalFrmCFL.pObjMtxCFL.Columns.Item("cType").Cells.Item(mModalFrmCFL.mIntRow).Specific).Value.ToString();
@@ -1003,6 +1009,8 @@ namespace UGRS.AddOn.Transports.Forms
                 TotKg = txtKg.Value,
                 TaxWT = float.Parse(txtRetentions.Value),
                 Shared = cboShared.Value == "2" ? true : false,
+                AssetDesc = lblAFDesc.Caption,
+
             });
 
             if (chkEnsm.Checked)
@@ -1181,6 +1189,12 @@ namespace UGRS.AddOn.Transports.Forms
 
                 SO_TxtVarios = (SAPbouiCOM.EditText)SO_MtxSO.Columns.Item("U_TR_OtherLoad").Cells.Item(i).Specific;
                 SO_TxtVarios.Value = pLstSalesOrderLines[i - 1].AnotherPyld;
+
+                SO_TxtAFDesc = (SAPbouiCOM.EditText)SO_MtxSO.Columns.Item("U_MQ_AFDesc").Cells.Item(i).Specific;
+                SO_TxtAFDesc.Value = pLstSalesOrderLines[i - 1].AssetDesc;
+
+                SO_TxtKilometers = (SAPbouiCOM.EditText)SO_MtxSO.Columns.Item("U_MQ_Kilometers").Cells.Item(i).Specific;
+                SO_TxtKilometers.Value = pLstSalesOrderLines[i - 1].TotKm;
 
                 if (pLstSalesOrderLines[i - 1].TaxWT > 0)
                 {
@@ -2345,6 +2359,7 @@ namespace UGRS.AddOn.Transports.Forms
             this.txtKg = ((SAPbouiCOM.EditText)(this.GetItem("txtKg").Specific));
             this.txtVarios = ((SAPbouiCOM.EditText)(this.GetItem("txtVarios").Specific));
             this.lblVarios = ((SAPbouiCOM.StaticText)(this.GetItem("lblVarios").Specific));
+            this.lblAFDesc = ((SAPbouiCOM.StaticText)(this.GetItem("lblAFDesc").Specific));
             this.OnCustomInitialize();
 
         }
@@ -2515,6 +2530,8 @@ namespace UGRS.AddOn.Transports.Forms
             }
            
         }
+
+        private StaticText lblAFDesc;
 
        
 

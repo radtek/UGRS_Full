@@ -40,6 +40,7 @@ namespace UGRS.Core.SDK.DI.Transports.DTO
        public string Heads { get; set; }
        public string Bags { get; set; }
        public float KG { get; set; }
+       public string AssetDesc { get; set; }
 
     }
 }
