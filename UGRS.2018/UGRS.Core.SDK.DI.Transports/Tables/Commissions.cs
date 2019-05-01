@@ -42,6 +42,9 @@ namespace UGRS.Core.SDK.DI.Transports.Tables
         [Field(Description = "Semana", Type = BoFieldTypes.db_Numeric)]
         public int Week { get; set; }
 
+        [Field(Description = "PagoLimpieza", Size = 1)]
+        public bool PagoLimpieza { get; set; }
+
         public List<CommissionLine> LstCommissionLine;
 
     }

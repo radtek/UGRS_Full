@@ -234,13 +234,13 @@ namespace UGRS.Core.SDK.DI.Transports.DAO
             return lLstComissionDTO;
         }
 
-        public string GetFirstDay(int pIntYear)
+        public StartDay GetFirstDay(int pIntYear)
         {
-            string lStrFirstDay = "";
-
+            StartDay lObjStartDay = new StartDay();
             try
             {
-                lStrFirstDay = mObjQueryManager.GetValue("U_FirstDay", "U_Year", pIntYear.ToString(), "[@UG_TR_DAY]");
+                lObjStartDay = mObjQueryManager.GetObjectsList<StartDay>("Name", pIntYear.ToString(), "[@UG_TR_DAY]").FirstOrDefault();
+                //lStrFirstDay = mObjQueryManager.GetValue("U_FirstDay", "U_Year", pIntYear.ToString(), "[@UG_TR_DAY]");
 
             }
             catch (Exception lObjException)
@@ -250,7 +250,7 @@ namespace UGRS.Core.SDK.DI.Transports.DAO
                 LogService.WriteError(lObjException);
                 UIApplication.ShowError(string.Format("GetFirstDay: {0}", lObjException.Message));
             }
-            return lStrFirstDay;
+            return lObjStartDay;
         }
 
         public string GetLastComisionId()

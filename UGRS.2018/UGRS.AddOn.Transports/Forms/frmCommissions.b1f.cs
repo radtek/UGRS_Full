@@ -24,7 +24,7 @@ namespace UGRS.AddOn.Transports.Forms
         int mIntSelectedRow;
         int mIntSelectedComissionRow;
         TransportServiceFactory mObjTransportsFactory = new TransportServiceFactory();
-        int mIntFirstDay;
+        //int mIntFirstDay;
         DateTime mDtmFirstDay;
         DateTime mDtmLastDay;
         string mStrFolio;
@@ -81,13 +81,14 @@ namespace UGRS.AddOn.Transports.Forms
             this.lblAuOp = ((SAPbouiCOM.StaticText)(this.GetItem("lblAuOp").Specific));
             this.lblAuFz = ((SAPbouiCOM.StaticText)(this.GetItem("lblAuFz").Specific));
             this.txtAuFz = ((SAPbouiCOM.EditText)(this.GetItem("txtAuFz").Specific));
-            //      this.EditText2 = ((SAPbouiCOM.EditText)(this.GetItem("Item_4").Specific));
+            //       this.EditText2 = ((SAPbouiCOM.EditText)(this.GetItem("Item_4").Specific));
             this.mObjBtnReject = ((SAPbouiCOM.Button)(this.GetItem("BtnRej").Specific));
             this.mObjBtnReject.ClickAfter += new SAPbouiCOM._IButtonEvents_ClickAfterEventHandler(this.mObjBtnReject_ClickAfter);
             this.cboWeek = ((SAPbouiCOM.ComboBox)(this.GetItem("cboWeek").Specific));
             this.lblWeek = ((SAPbouiCOM.StaticText)(this.GetItem("lblWeek").Specific));
             this.lblYear = ((SAPbouiCOM.StaticText)(this.GetItem("lblYear").Specific));
             this.cboYear = ((SAPbouiCOM.ComboBox)(this.GetItem("cboYear").Specific));
+            this.chkAdd = ((SAPbouiCOM.CheckBox)(this.GetItem("chkAdd").Specific));
             this.OnCustomInitialize();
 
         }
@@ -111,7 +112,7 @@ namespace UGRS.AddOn.Transports.Forms
                 
                 mStrFolio = GetFolioWeek();
                 mObjTxtFolio.Value = mStrFolio;
-                LoadFirstDay();
+                LoadFirstDay(DateTime.Now.Year);
                 VisibleAuthControls(false);
                 VisibleStatusControls(false);
                 
@@ -354,11 +355,12 @@ namespace UGRS.AddOn.Transports.Forms
         {
             try
             {
+                
                 string lStrFolio =  mObjTxtFolio.Value;
                 int lIntWeek = Convert.ToInt32(lStrFolio.Substring(0, 2));
                 int lIntYear = Convert.ToInt32(lStrFolio.Substring(3, 2));
-
-                mDtmFirstDay = new DateTime(lIntYear+2000, 1, mIntFirstDay);
+                LoadFirstDay(lIntYear + 2000);
+               // mDtmFirstDay = new DateTime(lIntYear+2000, 1, mIntFirstDay);
                 mDtmFirstDay = mDtmFirstDay.AddDays(((lIntWeek - 1) * 7));
                 mDtmLastDay = mDtmFirstDay.AddDays(6);
 
@@ -591,7 +593,12 @@ namespace UGRS.AddOn.Transports.Forms
                 if (lLstCmsnDriverDTO != null)
                {
                    lLstCmsnDriverDTO = GetComisssionDriverList(lLstCmsnDriverDTO);
-                   LoadDtDivInfo(AddCommissionDebt(lLstCmsnDriverDTO));
+                   double lDblAdd = 0;
+                    if (chkAdd.Checked)
+                   {
+                       lDblAdd = 1500;
+                   }
+                   LoadDtDivInfo(AddCommissionDebt(lLstCmsnDriverDTO, lDblAdd));
                }
             }
             else
@@ -635,7 +642,7 @@ namespace UGRS.AddOn.Transports.Forms
 
         #region Matrix
 
-        private List<CommissionDriverDTO> AddCommissionDebt(List<CommissionDriverDTO> pLstCommissionDriver)
+        private List<CommissionDriverDTO> AddCommissionDebt(List<CommissionDriverDTO> pLstCommissionDriver, double pDblPayAdd)
         {
             mObjProgressBar = new ProgressBarManager(UIApplication.GetApplication(), "Consultando deudas anteriores", pLstCommissionDriver.Count + 2);
             foreach (CommissionDriverDTO lObjDriverDTO in pLstCommissionDriver)
@@ -658,10 +665,10 @@ namespace UGRS.AddOn.Transports.Forms
                 LstDisc = y.First().LstDisc, //Pendiente
                 WkDisc = y.First().WkDisc,
                 TotDisc = y.First().LstDisc + y.First().WkDisc,
-                Comm = y.Sum(s => s.Comm),
+                Comm = y.Sum(s => s.Comm) + pDblPayAdd,
                 NoGenerate = y.First().NoGenerate,
-                TotComm = y.Sum(s => s.Comm) - (y.First().LstDisc + y.First().WkDisc) > 0 ? y.Sum(s => s.Comm) - y.First().LstDisc - y.First().WkDisc : 0,
-                Doubt = y.Sum(s => s.Comm) - (y.First().LstDisc + y.First().WkDisc) < 0 ? (y.First().LstDisc + y.First().WkDisc) - y.Sum(s => s.Comm) : 0,
+                TotComm = y.Sum(s => s.Comm) - (y.First().LstDisc + y.First().WkDisc) + pDblPayAdd > 0 ? y.Sum(s => s.Comm) - y.First().LstDisc - y.First().WkDisc + pDblPayAdd : 0,
+                Doubt = y.Sum(s => s.Comm) - (y.First().LstDisc + y.First().WkDisc) + pDblPayAdd < 0 ? (y.First().LstDisc + y.First().WkDisc) - y.Sum(s => s.Comm) - pDblPayAdd : 0,
             }).ToList();
             mObjProgressBar.NextPosition();
             mObjProgressBar.Dispose();
@@ -738,7 +745,8 @@ namespace UGRS.AddOn.Transports.Forms
             
             List<CommissionDriverDTO> lLstCommisssionDriverDTO = new List<CommissionDriverDTO>();
             lLstCommisssionDriverDTO = (mLstCmsnDriverDTO as IEnumerable<CommissionDriverDTO>).ToList();
-           
+
+            var ss = mEnumStatus;
 
             lLstCommisssionDriverDTO = lLstCommisssionDriverDTO.GroupBy(x => x.DriverId).Select(y => new CommissionDriverDTO
             {
@@ -749,9 +757,10 @@ namespace UGRS.AddOn.Transports.Forms
                 LstDisc = y.First().LstDisc, //Pendiente
                 WkDisc = y.First().WkDisc,
                 TotDisc = y.First().LstDisc + y.First().WkDisc,
+              //
                 Comm = y.Sum(s => s.Comm),
-                TotComm = y.Sum(s => s.Comm) - (y.First().LstDisc + y.First().WkDisc) > 0 ? y.Sum(s => s.Comm) - (y.First().LstDisc + y.First().WkDisc) : 0,
-                Doubt = y.Sum(s => s.Comm) - (y.First().LstDisc + y.First().WkDisc) < 0 ? (y.First().LstDisc + y.First().WkDisc) - y.Sum(s => s.Comm) : 0,
+                TotComm = y.Sum(s => s.Comm) - (y.First().LstDisc + y.First().WkDisc)  > 0 ? y.Sum(s => s.Comm) - (y.First().LstDisc + y.First().WkDisc)  : 0,
+                Doubt = y.Sum(s => s.Comm) - (y.First().LstDisc + y.First().WkDisc)  < 0 ? (y.First().LstDisc + y.First().WkDisc) - y.Sum(s => s.Comm)  : 0,
                 NoGenerate = y.First().NoGenerate,
             }).OrderBy(z => Convert.ToInt32(z.DriverId)).ToList();
 
@@ -1027,15 +1036,16 @@ namespace UGRS.AddOn.Transports.Forms
             Commissions lObjCommission = new Commissions();
             lObjCommission.Amount = Convert.ToDouble(lLstComissionList.Sum(x => Convert.ToDecimal(x.Amount)));
             lObjCommission.Folio = lLstComissionList.First().Folio;
-            lObjCommission.Status =(int) StatusEnum.OPEN;
+            lObjCommission.Status = (int)StatusEnum.OPEN;
             lObjCommission.User = DIApplication.Company.UserName;
             lObjCommission.LstCommissionLine = lLstComissionList;
             lObjCommission.Coments = mObjTxtCmnt.Value;
 
-              int lIntWeek = Convert.ToInt16(lObjCommission.Folio.Substring(0, 2));
+            int lIntWeek = Convert.ToInt16(lObjCommission.Folio.Substring(0, 2));
             int lIntYear = Convert.ToInt16(lObjCommission.Folio.Substring(3, 2));
             lObjCommission.Year = lIntYear;
             lObjCommission.Week = lIntWeek;
+            lObjCommission.PagoLimpieza = chkAdd.Checked ? true : false;
 
             return lObjCommission;
         }
@@ -1756,30 +1766,30 @@ namespace UGRS.AddOn.Transports.Forms
             return lLstCmsRow;
         }
 
-        private void LoadFirstDay()
+        private void LoadFirstDay(int pIntYear)
         {
-            string lStrFirstDay = mObjTransportsFactory.GetCommissionService().GetFirstDay(DateTime.Now.Year);
-            if (string.IsNullOrEmpty(lStrFirstDay))
+            StartDay lObjStartDay = mObjTransportsFactory.GetCommissionService().GetFirstDay(pIntYear);
+            if (lObjStartDay == null || string.IsNullOrEmpty(lObjStartDay.FirstDay.ToString()))
             {
-                UIApplication.ShowMessageBox("Favor de agregar el primer día del año a la tabla TR_Day");
-                LogService.WriteError("Favor de agregar el primer día del año a la tabla TR_Day");
+                UIApplication.ShowMessageBox("Favor de agregar el primer día del año '"+pIntYear+"' a la tabla TR_Day");
+                LogService.WriteError("Favor de agregar el primer día del año '" + pIntYear + "' a la tabla TR_Day");
             }
             else
             {
-                mIntFirstDay = Convert.ToInt32(lStrFirstDay);
+                mDtmFirstDay = new DateTime(lObjStartDay.Year, Convert.ToInt32(lObjStartDay.RowName) != lObjStartDay.Year ? 12 : 1, lObjStartDay.FirstDay);
                 lblDates.Caption = " Fechas: Del " + mDtmFirstDay.ToString("dd/MM/yyyy") + " Al " + mDtmLastDay.ToString("dd/MM/yyyy");
             }
         }
 
        private string GetFolioWeek()
         {
-            LoadFirstDay();
+            LoadFirstDay(DateTime.Now.Year);
             DateTime lDtmNow = DateTime.Now;
-            int lIntQtyDays = lDtmNow.DayOfYear;
-            int lIntWeek = ((int)(lIntQtyDays - mIntFirstDay) / 7) + 1;
-            mDtmFirstDay = new DateTime(DateTime.Now.Year, 1, mIntFirstDay);
+            int lIntQtyDays = (lDtmNow - mDtmFirstDay).Days;
+            int lIntWeek = ((int)(lIntQtyDays) / 7) + 1;
             mDtmFirstDay = mDtmFirstDay.AddDays(((lIntWeek - 1) * 7));
             mDtmLastDay = mDtmFirstDay.AddDays(6);
+         
 
             return lIntWeek.ToString("00") + "-" + DateTime.Now.ToString("yy");
         }
@@ -1815,8 +1825,10 @@ namespace UGRS.AddOn.Transports.Forms
         private StaticText lblWeek;
         private StaticText lblYear;
         private ComboBox cboYear;
+        private CheckBox chkAdd;
         private UGRS.Core.SDK.UI.ProgressBar.ProgressBarManager mObjProgressBar = null;
         #endregion
+       
 
       
 

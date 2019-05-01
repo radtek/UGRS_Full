@@ -43,7 +43,7 @@ namespace UGRS.Core.SDK.DI.Transports.Services
 
       
 
-        public string GetFirstDay(int pIntYear)
+        public StartDay GetFirstDay(int pIntYear)
         {
             return mObjCommissionDAO.GetFirstDay(pIntYear);
         }
