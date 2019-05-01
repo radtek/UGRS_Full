@@ -55,7 +55,7 @@ namespace UGRS.AddOn.Permissions
 
         private void UnLoadEvents()
         {
-            SAPbouiCOM.Framework.Application.SBO_Application.ItemEvent -= new SAPbouiCOM._IApplicationEvents_ItemEventEventHandler(SBO_Application_ItemEvent);
+           // SAPbouiCOM.Framework.Application.SBO_Application.ItemEvent -= new SAPbouiCOM._IApplicationEvents_ItemEventEventHandler(SBO_Application_ItemEvent);
         }
         #endregion
 
@@ -152,6 +152,17 @@ namespace UGRS.AddOn.Permissions
 
                                 }
                                 break;
+
+                            case SAPbouiCOM.BoEventTypes.et_VALIDATE:
+
+                                if (pVal.ColUID == "Desde" || pVal.ColUID == "Hasta")
+                                {
+                                    pObjMFrmEarringR.Update(pVal.Row);
+                                }
+                               
+
+                                break;
+
                             //pObjMFrmEarringR.ValidateOnlyNumbers(pVal.CharPressed, pVal.ItemUID);
 
                         }
@@ -182,7 +193,7 @@ namespace UGRS.AddOn.Permissions
               
                 mObjAddRank.Top = 120;
 
-                mObjAddRank.Left = mObjEarringsForm.Width - 200;
+                mObjAddRank.Left = mObjEarringsForm.Width - 400;
 
                 SAPbouiCOM.Button lBtnAddRank = ((SAPbouiCOM.Button)mObjEarringsForm.Items.Item("btnRank").Specific);
                 lBtnAddRank.ClickBefore += lBtnAddRank_ClickBefore;

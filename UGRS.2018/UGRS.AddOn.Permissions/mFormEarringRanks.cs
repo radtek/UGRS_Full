@@ -26,6 +26,7 @@ namespace UGRS.AddOn.Permissions
         SAPbouiCOM.EditText mObjtxtTo = null;
         SAPbouiCOM.EditText mObjtxtTotal = null;
         SAPbouiCOM.DataTable mObjDtRanks = null;
+        SAPbouiCOM.EditText mTxtCert = null;
         #endregion
 
         PermissionsFactory mObjPermissionFactory = new PermissionsFactory();
@@ -44,21 +45,22 @@ namespace UGRS.AddOn.Permissions
         #region variables
         string mStrBaseEntry = "";
         string mStrValue = "";
-        int mIntCertHeadsCounter = 0;
+       // int mIntCertHeadsCounter = 0;
         int mIntDocEntry = 0;
         int mIntHeadsInCertificate = 0;
-        int mIntEarrings = 0;
+        //int mIntEarrings = 0;
         #endregion
 
         public mFormEarringRanks(string pStrBaseEntry, int pIntTop, int pIntLeft)
         {
             try
             {
-
                 this.mStrBaseEntry = pStrBaseEntry;
                 this.mIntDocEntry = mObjPermissionFactory.GetPermissionsService().GetDocEntry(mStrBaseEntry);
                 this.mIntHeadsInCertificate = mObjPermissionFactory.GetPermissionsService().GetTotalCertHeads(mIntDocEntry);
+               
                 LoadFromXml("mFrmEarringRanks.xml", "mFrmEarringRanks", pIntTop, pIntLeft);
+                mTxtCert.Value = mIntHeadsInCertificate.ToString();
                 mObjtxtFrom.Item.Click();
                 SetPrefix();
             }
@@ -67,9 +69,7 @@ namespace UGRS.AddOn.Permissions
                 LogService.WriteError("mFormEarringRanks" + ex.Message);
                 LogService.WriteError(ex);
                 //UIApplication.ShowError(ex.Message);
-
             }
-
         }
 
         #region Initialize Modal Form
@@ -107,7 +107,6 @@ namespace UGRS.AddOn.Permissions
                     if (lObjForm.UniqueID == "mFrmEarringRanks")
                     {
                         SAPbouiCOM.Framework.Application.SBO_Application.Forms.Item("mFrmEarringRanks").Close();
-
                     }
                 }
 
@@ -118,7 +117,6 @@ namespace UGRS.AddOn.Permissions
                 mObjRanksForm.Top = pIntTop - mObjRanksForm.Height / 2;
                 mObjRanksForm.Mode = SAPbouiCOM.BoFormMode.fm_OK_MODE;
                 mObjRanksForm.Visible = true;
-
                 initFormXml();
             }
             else
@@ -137,22 +135,23 @@ namespace UGRS.AddOn.Permissions
                 mObjtxtFrom = ((SAPbouiCOM.EditText)mObjRanksForm.Items.Item("TxtFrom").Specific);
                 mObjtxtTo = ((SAPbouiCOM.EditText)mObjRanksForm.Items.Item("TxtTo").Specific);
                 mObjtxtTotal = ((SAPbouiCOM.EditText)mObjRanksForm.Items.Item("txtTotal").Specific);
+                mTxtCert = ((SAPbouiCOM.EditText)mObjRanksForm.Items.Item("txtCert").Specific);
                 mLstEarRnksT = new List<EarringRanksT>();
                 mLstDeletedRows = new List<EarringRanksT>();
                 mLstRowCodes = new List<int>();
 
-
+                mIntHeadsInCertificate = mObjPermissionFactory.GetPermissionsService().GetTotalCertHeads(mIntDocEntry);
                 if (!HasLines())
                 {
 
                     //int lIntTotalCertHeads = lObjEaRanksDAO.GetTotalCertHeads(lStrDocEntry);
-                    mIntCertHeadsCounter = mObjPermissionFactory.GetPermissionsService().GetTotalCertHeads(mIntDocEntry);
-                    mObjtxtTotal.Value = mIntEarrings.ToString();
+                 
+                    mObjtxtTotal.Value = "0";
                 }
                 else
                 {
                     ////initGrid();
-                    LoadCounter();
+                   mObjtxtTotal.Value = GetTotal().ToString();
                 }
                 mObjRanksGrid.AutoResizeColumns();
             }
@@ -167,8 +166,9 @@ namespace UGRS.AddOn.Permissions
             }
         }
 
-        private void LoadCounter()
+        private int GetTotal()
         {
+            int lIntCount = 0;
             for (int i = 0; i < mObjRanksGrid.DataTable.Rows.Count; i++)
             {
                 string lStrDesde = mObjRanksGrid.DataTable.Columns.Item("Desde").Cells.Item(i).Value.ToString().Substring(4);
@@ -187,19 +187,9 @@ namespace UGRS.AddOn.Permissions
 
                 int lIntHeadsPerLine = (Convert.ToInt32(lStrHasta) - Convert.ToInt32(lStrDesde)) + 1;
 
-                mIntCertHeadsCounter += lIntHeadsPerLine;
+                lIntCount += lIntHeadsPerLine;
             }
-            mIntEarrings = mIntCertHeadsCounter;
-            if (mIntCertHeadsCounter == mIntHeadsInCertificate)
-            {
-                mIntCertHeadsCounter = 0;
-            }
-            else
-            {
-                mIntCertHeadsCounter = mIntHeadsInCertificate - mIntCertHeadsCounter;
-            }
-
-            mObjtxtTotal.Value = mIntEarrings.ToString();
+            return lIntCount;
         }
 
         private void initGrid()
@@ -211,8 +201,8 @@ namespace UGRS.AddOn.Permissions
 
 
             mObjRanksGrid.Columns.Item("Code").Visible = false;
-            mObjRanksGrid.Columns.Item("Desde").Editable = false;
-            mObjRanksGrid.Columns.Item("Hasta").Editable = false;
+            mObjRanksGrid.Columns.Item("Desde").Editable = true;
+            mObjRanksGrid.Columns.Item("Hasta").Editable = true;
             mObjRanksGrid.Columns.Item("Prefi").Visible = false;
             mObjRanksGrid.Columns.Item("EFrom").Visible = false;
             mObjRanksGrid.Columns.Item("ETo").Visible = false;
@@ -234,7 +224,7 @@ namespace UGRS.AddOn.Permissions
                 lStrTo = lStrETActivePrefix + mObjtxtTo.Value;
             }
             int lastrow = 0;
-            if (ValidFields())
+            if (ValidFields(mObjtxtFrom.Value, mObjtxtTo.Value, false, 0))
             {
 
                 mObjEarringRanksT = new EarringRanksT();
@@ -247,9 +237,8 @@ namespace UGRS.AddOn.Permissions
                 mObjEarringRanksT.EarringFrom = mObjtxtFrom.Value;
                 mObjEarringRanksT.EarringTo = mObjtxtTo.Value;
                 mObjEarringRanksT.Prefix = lStrETActivePrefix;
-
+                mObjEarringRanksT.Row = lastrow;
                 mLstEarRnksT.Add(mObjEarringRanksT);
-
                 ClearFields();
             }
         }
@@ -355,7 +344,9 @@ namespace UGRS.AddOn.Permissions
                         mObjRanksGrid.DataTable.Rows.Remove(lIntSelRow);
 
                     }
-                    increaseHeadCounter(lStrEarringFrom.Substring(1), lStrEarringTo.Substring(1));
+
+                    mObjtxtTotal.Value = GetTotal().ToString();
+                   // increaseHeadCounter(lStrEarringFrom.Substring(1), lStrEarringTo.Substring(1));
 
                 }
 
@@ -381,15 +372,7 @@ namespace UGRS.AddOn.Permissions
             }
         }
 
-        private void increaseHeadCounter(string lStrEarringFrom, string lStrEarringTo)
-        {
-            int lIntHeads = (Convert.ToInt32(lStrEarringTo) - Convert.ToInt32(lStrEarringFrom)) + 1;
-
-            mIntCertHeadsCounter += lIntHeads;
-            mIntEarrings -= lIntHeads;
-            mObjtxtTotal.Value = mIntEarrings.ToString();
-        }
-
+      
 
         #endregion
 
@@ -503,8 +486,6 @@ namespace UGRS.AddOn.Permissions
 
             if (lObjETOnlyNumbers.Value.Length <= 5 && pCharPressed != 32)
             {
-
-
                 if (!Regex.IsMatch(lObjETOnlyNumbers.Value, "^-?\\d*(\\.\\d+)?$") || lStrIntToChar == "-")
                 {
                     lObjETOnlyNumbers.Value = new string(lObjETOnlyNumbers.Value.Where(c => char.IsDigit(c)).ToArray());
@@ -513,101 +494,119 @@ namespace UGRS.AddOn.Permissions
                 {
                     mStrValue = lObjETOnlyNumbers.Value;
                 }
-
             }
             else
             {
                 lObjETOnlyNumbers.Value = mStrValue;
             }
+        }
 
+        public void Update(int pIntRow)
+        {
+            try
+            {
+                string lStrFrom = mObjDtRanks.GetValue("Desde", pIntRow).ToString();
+                string lStrTo = mObjDtRanks.GetValue("Hasta", pIntRow).ToString();
+
+                string ss = lStrFrom.Substring(4, lStrFrom.Count() - 4);
+                if (ValidFields(lStrFrom.Substring(3, lStrFrom.Count() - 3), lStrTo.Substring(3, lStrTo.Count() - 3), true, pIntRow))
+                {
+                    EarringRanksT lObjEarringRanks = mLstEarRnksT.Where(x => x.Row == pIntRow).FirstOrDefault();
+
+                    lObjEarringRanks.EarringFrom = lStrFrom;
+                    lObjEarringRanks.EarringTo = lStrTo;
+                }
+            }
+
+            catch (Exception ex)
+            {
+                LogService.WriteError(ex.Message);
+                LogService.WriteError(ex);
+            }
 
         }
 
-        private bool ValidFields()
+        public bool ValidFields(string pStrFrom, string pStrTo, bool pBolIsGrid, int pIntRow)
         {
             bool lBoolValid = false;
-            if (mObjtxtFrom.Value != string.Empty )//&& mObjtxtTo.Value != string.Empty)
+            //if (mObjtxtFrom.Value != string.Empty )//&& mObjtxtTo.Value != string.Empty)
+            //{
+            //int lIntFrom = Convert.ToInt32(mObjtxtFrom.Value.Substring(1, mObjtxtFrom.Value.ToString().Count() - 1));
+            int lIntFrom = Convert.ToInt32(pStrFrom.Substring(1, pStrFrom.ToString().Count() - 1));
+            int lIntTo = 0;
+            string lStrPref;
+            char lStrFirstLeterFrom;
+            char lStrFirstLeterTo;
+
+            lStrFirstLeterFrom = pStrFrom[0];
+            if (!string.IsNullOrEmpty(pStrTo))
             {
-                int lIntFrom = Convert.ToInt32(mObjtxtFrom.Value.Substring(1, mObjtxtFrom.Value.ToString().Count() - 1));
-                int lIntTo = 0;
-                string lStrPref;
-                char lStrFirstLeterFrom;
-                char lStrFirstLeterTo;
+                lIntTo = Convert.ToInt32(pStrTo.Substring(1, pStrTo.Count() - 1));
+                lStrFirstLeterTo = (pStrTo[0]);
+                lStrPref = pStrTo.Substring(0, 1);
+            }
+            else
+            {
+                lIntTo = lIntFrom;
+                lStrFirstLeterTo = lStrFirstLeterFrom;
+                lStrPref = pStrFrom.Substring(0, 1);
+            }
 
-
-
-                lStrFirstLeterFrom = mObjtxtFrom.Value.ToString()[0];
-                if (!string.IsNullOrEmpty(mObjtxtTo.Value))
+            if (char.IsLetter(lStrFirstLeterFrom) && char.IsLetter(lStrFirstLeterTo))
+            {
+                if (lIntTo >= lIntFrom)
                 {
-                    lIntTo = Convert.ToInt32(mObjtxtTo.Value.Substring(1, mObjtxtTo.Value.ToString().Count() - 1));
-                    lStrFirstLeterTo = (mObjtxtTo.Value.ToString()[0]);
-                    lStrPref = mObjtxtTo.Value.ToString().Substring(0, 1);
-                   
-                }
-                else
-                {
-                    lIntTo = lIntFrom;
-                    lStrFirstLeterTo = lStrFirstLeterFrom;
-                    lStrPref = mObjtxtFrom.Value.ToString().Substring(0, 1);
-                }
-
-           
-                
-
-                if (char.IsLetter(lStrFirstLeterFrom) && char.IsLetter(lStrFirstLeterTo))
-                {
-                    if (lIntTo >= lIntFrom)
+                    if (CheckGridValues(lIntFrom, lIntTo, lStrPref, pBolIsGrid, pIntRow))
                     {
-                        if (CheckGridValues(lIntFrom, lIntTo, lStrPref))
+                        //if (ValidRanks(lIntFrom.ToString(), lIntTo.ToString()))
+                        //{
+                        if (CheckHeadQuantity(lIntFrom, lIntTo))
                         {
-                            //if (ValidRanks(lIntFrom.ToString(), lIntTo.ToString()))
-                            //{
-                            if (CheckHeadQuantity())
-                            {
-                                lBoolValid = true;
-                            }
-                            //}
-                            //else
-                            //{
-                            //    Application.SBO_Application.StatusBar.SetText("Ya se registro un rango similar"
-                            //    , SAPbouiCOM.BoMessageTime.bmt_Long, SAPbouiCOM.BoStatusBarMessageType.smt_Error);
-                            //    lBoolValid = false;
-                            //}
+                            lBoolValid = true;
                         }
-                        else
-                        {
-                            Application.SBO_Application.StatusBar.SetText("Los rangos son incorrectos"
-                            , SAPbouiCOM.BoMessageTime.bmt_Long, SAPbouiCOM.BoStatusBarMessageType.smt_Error);
-                            lBoolValid = false;
-                        }
+                        //}
+                        //else
+                        //{
+                        //    Application.SBO_Application.StatusBar.SetText("Ya se registro un rango similar"
+                        //    , SAPbouiCOM.BoMessageTime.bmt_Long, SAPbouiCOM.BoStatusBarMessageType.smt_Error);
+                        //    lBoolValid = false;
+                        //}
                     }
                     else
                     {
-                        Application.SBO_Application.StatusBar.SetText("Agregar rangos válidos"
+                        Application.SBO_Application.StatusBar.SetText("Los rangos son incorrectos"
                         , SAPbouiCOM.BoMessageTime.bmt_Long, SAPbouiCOM.BoStatusBarMessageType.smt_Error);
                         lBoolValid = false;
                     }
                 }
                 else
                 {
-                    Application.SBO_Application.StatusBar.SetText("Agregar la primera letra inicial"
+                    Application.SBO_Application.StatusBar.SetText("Agregar rangos válidos"
                     , SAPbouiCOM.BoMessageTime.bmt_Long, SAPbouiCOM.BoStatusBarMessageType.smt_Error);
                     lBoolValid = false;
                 }
             }
+            else
+            {
+                Application.SBO_Application.StatusBar.SetText("Agregar la primera letra inicial"
+                , SAPbouiCOM.BoMessageTime.bmt_Long, SAPbouiCOM.BoStatusBarMessageType.smt_Error);
+                lBoolValid = false;
+            }
+            // }
             return lBoolValid;
         }
 
-        private bool CheckHeadQuantity()
+        private bool CheckHeadQuantity(int pIntFrom, int pIntTo)
         {
-            bool valid = false;
-            int lIntFrom = Convert.ToInt32(mObjtxtFrom.Value.Substring(1, mObjtxtFrom.Value.ToString().Count() - 1));
+            bool lBolValid = false;
+            //int lIntFrom =  Convert.ToInt32(mObjtxtFrom.Value.Substring(1, mObjtxtFrom.Value.ToString().Count() - 1));
+            int lIntFrom = pIntFrom;// Convert.ToInt32(pStrFrom.Substring(1, pStrFrom.Count() - 1));
 
 
             int lIntTo = 0;
-            if (!string.IsNullOrEmpty(mObjtxtTo.Value))
+            if (pIntFrom != pIntTo)
             {
-                lIntTo = Convert.ToInt32(mObjtxtTo.Value.Substring(1, mObjtxtTo.Value.ToString().Count() - 1));
+                lIntTo = pIntTo; //Convert.ToInt32(pStrTo.Substring(1, pStrTo.Count() - 1));
             }
             else
             {
@@ -616,70 +615,74 @@ namespace UGRS.AddOn.Permissions
 
 
             int lIntRankQuantity = (lIntTo - lIntFrom) + 1;
-
-            if (mIntCertHeadsCounter >= (lIntRankQuantity))
+            int lInttotal = GetTotal();
+            if (lInttotal + lIntRankQuantity <= mIntHeadsInCertificate)
             {
-                mIntCertHeadsCounter -= lIntRankQuantity;
-                mIntEarrings += lIntRankQuantity;
-                valid = true;
-                mObjtxtTotal.Value = mIntEarrings.ToString();
+                lBolValid = true;
+                mObjtxtTotal.Value = (lInttotal + lIntRankQuantity).ToString();
             }
             else
             {
                 Application.SBO_Application.StatusBar.SetText("Supera el numero de cabezas por certificado"
                     , SAPbouiCOM.BoMessageTime.bmt_Long, SAPbouiCOM.BoStatusBarMessageType.smt_Error);
-                valid = false;
+                lBolValid = false;
             }
 
-            return valid;
+            return lBolValid;
         }
 
-        private bool CheckGridValues(int lIntFrom, int lIntTo, string pStrPref)
+        private bool CheckGridValues(int lIntFrom, int lIntTo, string pStrPref, bool pBolIsGrid, int pIntRow)
         {
-            bool Valid = false;
+            bool lBolValid = false;
+
             try
             {
                 if (mObjRanksGrid.DataTable.Rows.Count >= 1)
                 {
-                    for (int i = 0; i < mObjRanksGrid.Rows.Count; i++)
+                    for (int i = 0; i < mObjRanksGrid.DataTable.Rows.Count; i++)
                     {
-
-
-                        string lStrDesde = mObjRanksGrid.DataTable.Columns.Item("Desde").Cells.Item(i).Value.ToString().Substring(4);
-                        string lStrHasta = string.Empty;
-                        if (!string.IsNullOrEmpty(mObjRanksGrid.DataTable.Columns.Item("Hasta").Cells.Item(i).Value.ToString()))
+                        if (i != pIntRow || !pBolIsGrid)
                         {
-                            lStrHasta = mObjRanksGrid.DataTable.Columns.Item("Hasta").Cells.Item(i).Value.ToString().Substring(4);
-                        }
-                        else
-                        {
-                            lStrHasta = lStrDesde;
-                        }
-                        string lStrPrefi = mObjRanksGrid.DataTable.Columns.Item("Desde").Cells.Item(i).Value.ToString().Substring(3).Substring(0, 1);
-
-                        if ((Convert.ToInt32(lStrDesde) > lIntFrom
-                            || Convert.ToInt32(lStrHasta) < lIntFrom) || lStrPrefi != pStrPref)
-                        {
-                            if ((Convert.ToInt32(lStrDesde) > lIntTo
-                                || Convert.ToInt32(lStrHasta) < lIntTo) || lStrPrefi != pStrPref)
+                            string lStrDesde = mObjRanksGrid.DataTable.Columns.Item("Desde").Cells.Item(i).Value.ToString().Substring(4);
+                            string lStrHasta = string.Empty;
+                            if (!string.IsNullOrEmpty(mObjRanksGrid.DataTable.Columns.Item("Hasta").Cells.Item(i).Value.ToString()))
                             {
-                                Valid = true;
+                                lStrHasta = mObjRanksGrid.DataTable.Columns.Item("Hasta").Cells.Item(i).Value.ToString().Substring(4);
                             }
                             else
                             {
-                                Valid = false;
+                                lStrHasta = lStrDesde;
+                            }
+                            string lStrPrefi = mObjRanksGrid.DataTable.Columns.Item("Desde").Cells.Item(i).Value.ToString().Substring(3).Substring(0, 1);
+
+                            if ((Convert.ToInt32(lStrDesde) > lIntFrom
+                                || Convert.ToInt32(lStrHasta) < lIntFrom) || lStrPrefi != pStrPref)
+                            {
+                                if ((Convert.ToInt32(lStrDesde) > lIntTo
+                                    || Convert.ToInt32(lStrHasta) < lIntTo) || lStrPrefi != pStrPref)
+                                {
+                                    lBolValid = true;
+                                }
+                                else
+                                {
+                                    lBolValid = false;
+                                }
+                            }
+                            else
+                            {
+                                lBolValid = false;
+                                break;
                             }
                         }
                         else
                         {
-                            Valid = false;
-                            break;
+                            lBolValid = true;
                         }
                     }
                 }
                 else
                 {
-                    Valid = true;
+                    lBolValid = true;
                 }
             }
             catch (Exception ex)
@@ -687,7 +690,7 @@ namespace UGRS.AddOn.Permissions
                 LogService.WriteError(ex.Message);
                 LogService.WriteError(ex);
             }
-            return Valid;
+            return lBolValid;
         }
         #endregion
 

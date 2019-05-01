@@ -7,6 +7,8 @@ namespace UGRS.AddOn.Permissions.Tables
      [Table(Name = "UG_PE_ERNK", Description = "PE Rangos de Aretes", Type = BoUTBTableType.bott_NoObjectAutoIncrement)]
     public class EarringRanksT : Table
     {
+         public virtual int Row { get; set; }
+
          [Field(Description = "Documento", Size = 50)]
          public string BaseEntry { get; set; }
 
@@ -21,7 +23,5 @@ namespace UGRS.AddOn.Permissions.Tables
 
          [Field(Description = "Cancelado", Size = 10)]
          public string Cancelled { get; set; }
-
-
     }
 }
