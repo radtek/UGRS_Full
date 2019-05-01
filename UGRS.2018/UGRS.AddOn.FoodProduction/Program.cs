@@ -69,7 +69,7 @@ namespace UGRS_AddOn.FoodProduction
 
 
                    UIApplication.ShowSuccess(string.Format("Addon Iniciado correctamente"));
-                   LogService.WriteSuccess("[AddOn FoodProduction 1.2.54 STARTED]");
+                   LogService.WriteSuccess("[AddOn FoodProduction 1.2.55 STARTED]");
                    //Ticket instance = (Ticket)Activator.CreateInstance(typeof(Ticket));
 
                    //Init application

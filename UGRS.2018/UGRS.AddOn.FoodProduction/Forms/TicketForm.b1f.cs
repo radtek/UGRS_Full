@@ -1550,8 +1550,8 @@ namespace UGRS.AddOn.FoodProduction.Forms
 
             if ((pObjTicket.Status == (int)TicketEnum.TicketStatus.Pending || pObjTicket.Status == (int)TicketEnum.TicketStatus.Close))
             {
-                DateTime lDtmDateOutput = mObjTicketServices.GetDateTime(pObjTicket.OutputDate, pLstTicketDetail[pLstTicketDetail.Count - 1].OutputTime.ToString());
-                lLstLine.Add("Fecha cierre: " + lDtmDateEntry.ToString("dd/MM/yyyy HH:mm"));
+                DateTime lDtmDateOutput = mObjTicketServices.GetDateTime(pLstTicketDetail[pLstTicketDetail.Count - 1].OutputDate, pLstTicketDetail[pLstTicketDetail.Count - 1].OutputTime.ToString());
+                lLstLine.Add("Fecha cierre: " + lDtmDateOutput.ToString("dd/MM/yyyy HH:mm"));
             }
             //if (!string.IsNullOrEmpty(lObjTicket.OutputWT.ToString()) && lObjTicket.OutputWT > 0)
             //{
