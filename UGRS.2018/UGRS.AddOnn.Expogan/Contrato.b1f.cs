@@ -455,8 +455,8 @@ namespace UGRS.AddOnn.Expogan
             DtMatrixLocales.SetValue("Nivel", i, cboNivel.Value);
             string location_name = cboLocal.Selected.Description; // mObjExpoganService.GetLocationService().GetLocationName(cboLocal.Value).ToString();
             DtMatrixLocales.SetValue("Local", i, location_name);
-            double total = mObjExpoganService.GetLocationService().GetCost(cboLocal.Value);
-            DtMatrixLocales.SetValue("Importe", i, total);
+            double lDblTotal = mObjExpoganService.GetLocationService().GetCost(cboLocal.Value);
+            DtMatrixLocales.SetValue("Importe", i, lDblTotal);
             DtMatrixLocales.SetValue("LocalId", i, cboLocal.Selected.Value);
         }
 
@@ -517,6 +517,7 @@ namespace UGRS.AddOnn.Expogan
                 lObjLocations.LocalID = DtMatrixLocales.GetValue("LocalId", i).ToString();
                 lObjLocations.Status = 0;
                 lObjLocations.RowName = DtMatrixLocales.GetValue("Importe", i).ToString();
+                lObjLocations.Price = Convert.ToDouble(DtMatrixLocales.GetValue("Importe", i).ToString());
 
                 lLstLocations.Add(lObjLocations);
             }

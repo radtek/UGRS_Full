@@ -20,5 +20,7 @@ namespace UGRS.Core.SDK.DI.Expogan.Tables
         [Field(Description = "Status", Size = 64)]
         public int Status { get; set; }
 
+        [Field(Description = "Price", Type = BoFieldTypes.db_Float, SubType = BoFldSubTypes.st_Price)]
+        public double Price { get; set; }
     }
 }
