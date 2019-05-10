@@ -1045,7 +1045,7 @@ namespace UGRS.AddOn.Transports.Forms
             int lIntYear = Convert.ToInt16(lObjCommission.Folio.Substring(3, 2));
             lObjCommission.Year = lIntYear;
             lObjCommission.Week = lIntWeek;
-            lObjCommission.PagoLimpieza = chkAdd.Checked ? true : false;
+            lObjCommission.PaymClean = chkAdd.Checked ? true : false;
 
             return lObjCommission;
         }
