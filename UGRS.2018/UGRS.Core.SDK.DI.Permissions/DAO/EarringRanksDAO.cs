@@ -320,5 +320,13 @@ namespace UGRS.Core.SDK.DI.Permissions.DAO
             return lStrPrefix;
         }
 
+        public EarringRanksT GetEarringRank(string lStrRowCode)
+        {
+            EarringRanksT lObjEarring = new EarringRanksT();
+            lObjEarring = mObjQueryManager.GetObjectsList<EarringRanksT>("Code", lStrRowCode, "[@UG_PE_ERNK]").FirstOrDefault();
+
+            return lObjEarring;
+
+        }
     }
 }

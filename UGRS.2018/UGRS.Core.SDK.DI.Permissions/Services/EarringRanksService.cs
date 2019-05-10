@@ -39,5 +39,7 @@ namespace UGRS.AddOn.Permissions.Services
            int lIntResult = mObjEarringRanksDAO.Remove(pStrCode);
            return lIntResult;
        }
+
+
     }
 }

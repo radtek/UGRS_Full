@@ -150,7 +150,7 @@ namespace UGRS.AddOn.Permissions
                 }
                 else
                 {
-                    ////initGrid();
+                    initGrid();
                    mObjtxtTotal.Value = GetTotal().ToString();
                 }
                 mObjRanksGrid.AutoResizeColumns();
@@ -171,6 +171,7 @@ namespace UGRS.AddOn.Permissions
             int lIntCount = 0;
             for (int i = 0; i < mObjRanksGrid.DataTable.Rows.Count; i++)
             {
+                
                 string lStrDesde = mObjRanksGrid.DataTable.Columns.Item("Desde").Cells.Item(i).Value.ToString().Substring(4);
 
 
@@ -233,6 +234,7 @@ namespace UGRS.AddOn.Permissions
                 lastrow = mObjDtRanks.Rows.Count - 1;
                 mObjDtRanks.Columns.Item("Desde").Cells.Item(lastrow).Value = lStrFrom;
                 mObjDtRanks.Columns.Item("Hasta").Cells.Item(lastrow).Value = lStrTo;
+              
 
                 mObjEarringRanksT.EarringFrom = mObjtxtFrom.Value;
                 mObjEarringRanksT.EarringTo = mObjtxtTo.Value;
@@ -393,8 +395,6 @@ namespace UGRS.AddOn.Permissions
             if (mObjRanksForm.DataSources.DataTables.Item("DtRanks").Rows.Count >= 1)
             {
                 string y = mObjRanksForm.DataSources.DataTables.Item("DtRanks").Columns.Item("Desde").Cells.Item(0).Value.ToString();
-
-
                 if (y == "")
                 {
                     mObjDtRanks.Rows.Remove(0);
@@ -507,14 +507,27 @@ namespace UGRS.AddOn.Permissions
             {
                 string lStrFrom = mObjDtRanks.GetValue("Desde", pIntRow).ToString();
                 string lStrTo = mObjDtRanks.GetValue("Hasta", pIntRow).ToString();
+                string lStrRowCode = mObjDtRanks.GetValue("Code", pIntRow).ToString();
 
                 string ss = lStrFrom.Substring(4, lStrFrom.Count() - 4);
                 if (ValidFields(lStrFrom.Substring(3, lStrFrom.Count() - 3), lStrTo.Substring(3, lStrTo.Count() - 3), true, pIntRow))
                 {
                     EarringRanksT lObjEarringRanks = mLstEarRnksT.Where(x => x.Row == pIntRow).FirstOrDefault();
+                    if (lObjEarringRanks != null)
+                    {
+                        lObjEarringRanks.EarringFrom = lStrFrom.Substring(3, lStrFrom.Count() - 3);
+                        lObjEarringRanks.EarringTo = lStrTo.Substring(3, lStrTo.Count() - 3); 
+                    }
 
-                    lObjEarringRanks.EarringFrom = lStrFrom;
-                    lObjEarringRanks.EarringTo = lStrTo;
+                }
+
+                if (lStrRowCode != "0")
+                {
+                    EarringRanksT lObjUptadeRank = mObjPermissionFactory.GetPermissionsService().GetEarring(lStrRowCode);
+                    lObjUptadeRank.EarringFrom = lStrFrom.Substring(3, lStrFrom.Count() - 3);
+                    lObjUptadeRank.EarringTo = lStrTo.Substring(3, lStrTo.Count() - 3);
+                    mObjPermissionFactory.GetEarringRanksService().UpdateRanks(lObjUptadeRank);
+                               
                 }
             }
 
@@ -616,10 +629,10 @@ namespace UGRS.AddOn.Permissions
 
             int lIntRankQuantity = (lIntTo - lIntFrom) + 1;
             int lInttotal = GetTotal();
-            if (lInttotal + lIntRankQuantity <= mIntHeadsInCertificate)
+            if (lInttotal <= mIntHeadsInCertificate)
             {
                 lBolValid = true;
-                mObjtxtTotal.Value = (lInttotal + lIntRankQuantity).ToString();
+                mObjtxtTotal.Value = (lInttotal).ToString();
             }
             else
             {

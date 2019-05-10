@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UGRS.AddOn.Permissions.Tables;
 using UGRS.Core.SDK.DI.Permissions.DAO;
 using UGRS.Core.SDK.DI.Permissions.DTO;
 
@@ -55,6 +56,11 @@ namespace UGRS.Core.SDK.DI.Permissions.Services
         public string GetPrefix()
         {
             return lObjEarringRankDAO.GetPrefix();
+        }
+
+        public EarringRanksT GetEarring(string pStrCode)
+        {
+            return lObjEarringRankDAO.GetEarringRank(pStrCode);
         }
     }
 }
