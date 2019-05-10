@@ -19,12 +19,12 @@ namespace UGRS.Core.SDK.DI.CyC.Services
             return lObjCyCDAO.GetAuctions(pStrCostCenter, pStrUserId);
         }
 
-        public List<AuctionDTO> GetAuctionByCustomer(string pStrFolio, string pStrArea)
+        public List<AuctionDTO> GetAuctionByCustomer(string pStrFolio,string pStrCostingCode,char pCharCYC)
         {
-            return lObjCyCDAO.GetAuctionDTO(pStrFolio, pStrArea);
+            return lObjCyCDAO.GetAuctionDTO(pStrFolio,pStrCostingCode,pCharCYC);
         }
 
-        public List<InvoiceDTO> GetInvoices(string pStrCardCode, string pStrOcrCode, string pStrType)
+        public List<InvoiceDTO> GetInvoices(string pStrCardCode, string pStrOcrCode, char pStrType)
         {
             return lObjCyCDAO.GetInvoices(pStrCardCode, pStrOcrCode, pStrType);
         }
@@ -39,16 +39,10 @@ namespace UGRS.Core.SDK.DI.CyC.Services
             return lObjCyCDAO.GetUser(pStrUserCode);
         }
 
-        public List<Coments> GetComents(string pStrFolio, string pStrCostCenter, string pStrCardcode)
+        public List<Coments> GetComents(string pStrFolio, char pCharCyC,string pStrCostingCode, string pStrCardcode)
         {
-            return lObjCyCDAO.GetComents(pStrFolio, pStrCostCenter,pStrCardcode);
+            return lObjCyCDAO.GetComents(pStrFolio, pCharCyC, pStrCostingCode ,pStrCardcode);
         }
-
-        public List<Coments> GetJournalEntryComents(string pStrFolio, string pStrCardcode)
-        {
-            return lObjCyCDAO.GetJournalEntryComents(pStrFolio, pStrCardcode);
-        }
-
 
         public bool GetUserCyC(string pStrUserCode)
         {
@@ -63,6 +57,11 @@ namespace UGRS.Core.SDK.DI.CyC.Services
         public List<MessageDTO> GetMessageDTO(string pStrFolio)
         {
             return lObjCyCDAO.GetMessagesCyC(pStrFolio);
+        }
+
+        public int GetPaymentDraft(string pStrCardCode,string pStrFolio)
+        {
+            return lObjCyCDAO.GetPaymentsDraftKey(pStrCardCode,pStrFolio);
         }
     }
 }

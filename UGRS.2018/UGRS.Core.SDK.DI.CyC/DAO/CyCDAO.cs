@@ -37,7 +37,7 @@ namespace UGRS.Core.SDK.DI.CyC.DAO
                 {
                     for (int i = 0; i < lObjRecordset.RecordCount; i++)
                     {
-                        
+
                         string lStrFolio = lObjRecordset.Fields.Item("U_Folio").Value.ToString();
                         lLstAuctions.Add(lStrFolio);
                         lObjRecordset.MoveNext();
@@ -214,7 +214,7 @@ namespace UGRS.Core.SDK.DI.CyC.DAO
                     lObjUser.Department = lObjRecordset.Fields.Item("Department").Value.ToString();
                     lObjUser.DepartmentName = lObjRecordset.Fields.Item("Name").Value.ToString();
                     lObjUser.CostigCode = lObjRecordset.Fields.Item("U_GLO_CostCenter").Value.ToString();
-                    lObjUser.CYC = Convert.ToChar(lObjRecordset.Fields.Item("CYC").Value); 
+                    lObjUser.CYC = Convert.ToChar(lObjRecordset.Fields.Item("CYC").Value);
                 }
             }
             catch (Exception ex)
@@ -230,14 +230,14 @@ namespace UGRS.Core.SDK.DI.CyC.DAO
             return lObjUser;
         }
 
-        public List<Coments> GetComents(string pStrFolio, char pCharCyC,string pStrCostingCode, string pStrCardCode)
+        public List<Coments> GetComents(string pStrFolio, char pCharCyC, string pStrCostingCode, string pStrCardCode)
         {
             QueryManager mObjQueryManager = new QueryManager();
             List<Coments> lLstComents = new List<Coments>();
             try
             {
                 List<Coments> lVarResult = new List<Coments>();
-                if (pCharCyC != 'Y' )
+                if (pCharCyC != 'Y')
                 {
                     lVarResult = mObjQueryManager.GetObjectsList<Coments>("U_Folio", pStrFolio, "[@UG_CC_CobroSub]").Where(x => x.CostCenter == pStrCostingCode && x.Cardcocde == pStrCardCode).ToList();
                 }
@@ -274,9 +274,9 @@ namespace UGRS.Core.SDK.DI.CyC.DAO
 
                 if (lObjRecordset.RecordCount > 0)
                 {
-                   return true;
+                    return true;
                 }
-                else 
+                else
                 {
                     return false;
                 }
@@ -349,5 +349,43 @@ namespace UGRS.Core.SDK.DI.CyC.DAO
             return lLstMessages;
         }
 
+
+        public int GetPaymentsDraftKey(string pStrCardCode, string pStrFolio)
+        {
+            SAPbobsCOM.Recordset lObjRecordSet = null;
+            try
+            {
+                Dictionary<string, string> lLstStrParameters = new Dictionary<string, string>();
+                lLstStrParameters.Add("CardCode", pStrCardCode);
+                lLstStrParameters.Add("AuctionFolio", pStrFolio);
+
+
+                lObjRecordSet = (SAPbobsCOM.Recordset)DIApplication.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.BoRecordset);
+
+                string lStrQuery = this.GetSQL("GetPaymentDraftKey").Inject(lLstStrParameters);
+
+                lObjRecordSet.DoQuery(lStrQuery);
+
+                if (lObjRecordSet.RecordCount > 0)
+                {
+                    return (int)lObjRecordSet.Fields.Item("DocEntry").Value;
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                UIApplication.ShowError(string.Format("GetPaymentDraftKey: {0}", ex.Message));
+                LogService.WriteError("PaymentDAO (ExistConfiguration): " + ex.Message);
+                LogService.WriteError(ex);
+                return 0;
+            }
+            finally
+            {
+                MemoryUtility.ReleaseComObject(lObjRecordSet);
+            }
+        }
     }
 }

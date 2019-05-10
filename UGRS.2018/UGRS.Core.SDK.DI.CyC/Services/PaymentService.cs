@@ -16,14 +16,26 @@ namespace UGRS.Core.SDK.DI.CyC.Services
             try
             {
                 SAPbobsCOM.Payments lObjPayment = (SAPbobsCOM.Payments)DIApplication.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oIncomingPayments);
+
                 lObjPayment.CardCode = pObjAuctionDTO.CardCode;
                 lObjPayment.DocObjectCode = SAPbobsCOM.BoPaymentsObjectType.bopot_IncomingPayments;
                 lObjPayment.DocDate = DateTime.Now;
                 lObjPayment.DocType = SAPbobsCOM.BoRcptTypes.rCustomer;
+                lObjPayment.UserFields.Fields.Item("U_GLO_PaymentType").Value = "GLPGO";
+                lObjPayment.UserFields.Fields.Item("U_FZ_AuxiliarType").Value = "1";
+                lObjPayment.UserFields.Fields.Item("U_FZ_Auxiliar").Value = pObjAuctionDTO.CardCode;
+                lObjPayment.UserFields.Fields.Item("U_FZ_FolioAuction").Value = pObjAuctionDTO.AuctionID;
+                lObjPayment.UserFields.Fields.Item("U_GLO_CostCenter").Value = pObjAuctionDTO.LocationId;
+                lObjPayment.UserFields.Fields.Item("U_FechaPago").Value = DateTime.Now.ToString("dd-MM-yyyy");
+                lObjPayment.UserFields.Fields.Item("U_HoraPago").Value = DateTime.Now.ToString("HH:mm");
+                lObjPayment.UserFields.Fields.Item("U_B1SYS_PmntMethod").Value = "17";
+                
                 
                 lObjPayment.CashSum = Convert.ToDouble(pObjAuctionDTO.TotalSell);
 
                 lObjPayment.CashAccount = pObjAuctionDTO.AccountD;// lObjPurchasesDAO.GetAccountRefund(pObjPurchase.Area);
+
+                
 
                 foreach (InvoiceDTO lObjInvoice in pLstObjInvoice)
                 {
@@ -33,11 +45,6 @@ namespace UGRS.Core.SDK.DI.CyC.Services
                     lObjPayment.Invoices.Add();
                 }
 
-                lObjPayment.UserFields.Fields.Item("U_GLO_PaymentType").Value = "GLPGO";
-                lObjPayment.UserFields.Fields.Item("U_FZ_AuxiliarType").Value = "2";
-                lObjPayment.UserFields.Fields.Item("U_FZ_Auxiliar").Value = pObjAuctionDTO.CardCode;
-                lObjPayment.UserFields.Fields.Item("U_FZ_FolioAuction").Value = pObjAuctionDTO.AuctionID;
-                lObjPayment.UserFields.Fields.Item("U_GLO_CostCenter").Value = pObjAuctionDTO.LocationId;
 
                 if (lObjPayment.Add() != 0)
                 {
@@ -58,5 +65,6 @@ namespace UGRS.Core.SDK.DI.CyC.Services
             }
             return lBolIsSuccess;
         }
+
     }
 }

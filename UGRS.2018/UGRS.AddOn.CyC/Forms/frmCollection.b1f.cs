@@ -22,6 +22,7 @@ namespace UGRS.AddOn.CyC
         string mStrSelectCardCode = string.Empty;
         Auction mObjAuction = new Auction();
         UserDTO mObjUserDTO = new UserDTO();
+        SAPbouiCOM.Form lObjFormDraft = null;
         #endregion
 
         #region Constructor
@@ -40,8 +41,9 @@ namespace UGRS.AddOn.CyC
             this.cboFolio = ((SAPbouiCOM.ComboBox)(this.GetItem("CboFolio").Specific));
             this.cboFolio.ComboSelectAfter += new SAPbouiCOM._IComboBoxEvents_ComboSelectAfterEventHandler(this.cboFolio_ComboSelectAfter);
             this.mtxAuction = ((SAPbouiCOM.Matrix)(this.GetItem("MtxAuction").Specific));
-            this.mtxAuction.DoubleClickAfter += new SAPbouiCOM._IMatrixEvents_DoubleClickAfterEventHandler(this.mtxAuction_DoubleClickAfter);
+            //    this.mtxAuction.DoubleClickAfter += new SAPbouiCOM._IMatrixEvents_DoubleClickAfterEventHandler(this.mtxAuction_DoubleClickAfter);
             this.mtxAuction.ClickBefore += new SAPbouiCOM._IMatrixEvents_ClickBeforeEventHandler(this.mtxAuction_ClickBefore);
+            this.mtxAuction.ClickAfter += new SAPbouiCOM._IMatrixEvents_ClickAfterEventHandler(this.mtxAuction_ClickAfter);
             this.lblComent = ((SAPbouiCOM.StaticText)(this.GetItem("lblComent").Specific));
             this.txtComent = ((SAPbouiCOM.EditText)(this.GetItem("txtComent").Specific));
             this.btnAdd = ((SAPbouiCOM.Button)(this.GetItem("btnAdd").Specific));
@@ -51,6 +53,7 @@ namespace UGRS.AddOn.CyC
             this.mtxComent = ((SAPbouiCOM.Matrix)(this.GetItem("MtxComent").Specific));
             this.mtxComent.ClickBefore += new SAPbouiCOM._IMatrixEvents_ClickBeforeEventHandler(this.mtxComent_ClickBefore);
             this.mtxInv = ((SAPbouiCOM.Matrix)(this.GetItem("mtxInv").Specific));
+            this.mtxInv.DoubleClickBefore += new SAPbouiCOM._IMatrixEvents_DoubleClickBeforeEventHandler(this.mtxInv_DoubleClickBefore);
             this.mtxInv.ClickBefore += new SAPbouiCOM._IMatrixEvents_ClickBeforeEventHandler(this.mtxInv_ClickBefore);
             this.mtxInv.ValidateBefore += new SAPbouiCOM._IMatrixEvents_ValidateBeforeEventHandler(this.mtxInv_ValidateBefore);
             this.mtxInv.ValidateAfter += new SAPbouiCOM._IMatrixEvents_ValidateAfterEventHandler(this.mtxInv_ValidateAfter);
@@ -68,6 +71,8 @@ namespace UGRS.AddOn.CyC
             this.btnEnd.ClickBefore += new SAPbouiCOM._IButtonEvents_ClickBeforeEventHandler(this.btnEnd_ClickBefore);
             this.btnDelete = ((SAPbouiCOM.Button)(this.GetItem("btnDelete").Specific));
             this.btnDelete.ClickBefore += new SAPbouiCOM._IButtonEvents_ClickBeforeEventHandler(this.btnDelete_ClickBefore);
+            this.lObjBtnOpAct = ((SAPbouiCOM.Button)(this.GetItem("btnOpAct").Specific));
+            this.lObjBtnOpAct.ClickBefore += new SAPbouiCOM._IButtonEvents_ClickBeforeEventHandler(this.lObjBtnOpAct_ClickBefore);
             this.OnCustomInitialize();
 
         }
@@ -86,8 +91,14 @@ namespace UGRS.AddOn.CyC
             string lStrUserID = UIApplication.GetCompany().UserName;
             mObjUserDTO = mObjCyCServiceFactory.GetCyCServices().GetUser(lStrUserID);
 
+
+            //mObjUserDTO.CostigCode = "OG_CRYCO";
+            //mObjUserDTO.UserCode = "auxcyc";
+            //mObjUserDTO.CYC = 'Y';
+
             LoadCboAuctions();
-            if (!mObjCyCServiceFactory.GetCyCServices().GetUserCyC(UIApplication.GetCompany().UserName))
+            //if (!mObjCyCServiceFactory.GetCyCServices().GetUserCyC(UIApplication.GetCompany().UserName))
+            if (mObjUserDTO.CYC != 'Y')
             {
                 mtxAuction.Columns.Item("C_ImpSub").Visible = false;
                 mtxAuction.Columns.Item("C_ImpDeud").Visible = false;
@@ -99,6 +110,21 @@ namespace UGRS.AddOn.CyC
                 mtxCollect.Item.Visible = false;
                 lblBalance.Item.Visible = false;
                 lblAmount.Item.Visible = false;
+                lObjBtnOpAct.Item.Visible = false;
+                lObjBtnOpAct.Item.Enabled = false;
+            }
+            else
+            {
+                btnAdd.Item.Visible = false;
+                btnFinish.Item.Visible = false;
+                btnDelete.Item.Visible = false;
+                lObjBtnOpAct.Item.Visible = false;
+                cboFolio.Item.Click();
+                txtComent.Item.Enabled = false;
+                lObjBtnOpAct.Item.Visible = true;
+                lObjBtnOpAct.Item.Enabled = false;
+                btnEnd.Item.Enabled = false;
+                btnCollect.Item.Enabled = false;
             }
         }
         #endregion
@@ -131,8 +157,9 @@ namespace UGRS.AddOn.CyC
                 lblBalance.Item.Left = mtxInv.Item.Left;
                 txtBalance.Item.Left = lblBalance.Item.Left + lblBalance.Item.Width + 10;
                 btnCollect.Item.Left = txtBalance.Item.Left + txtBalance.Item.Width + 10;
-                btnEnd.Item.Left = UIAPIRawForm.Width - btnEnd.Item.Width - 50;
+                btnEnd.Item.Left = UIAPIRawForm.Width - btnEnd.Item.Width - 60;
                 btnDelete.Item.Left = mtxComent.Item.Left + mtxComent.Item.Width - 50;
+                lObjBtnOpAct.Item.Left = UIAPIRawForm.Width - lObjBtnOpAct.Item.Width - 190;
 
                 //Top
                 btnDelete.Item.Top = mtxComent.Item.Top + mtxComent.Item.Height;
@@ -146,6 +173,7 @@ namespace UGRS.AddOn.CyC
 
                 mtxCollect.Item.Top = btnCollect.Item.Top + btnCollect.Item.Height + 20;
                 btnEnd.Item.Top = mtxCollect.Item.Top + mtxCollect.Item.Height + 20;
+                lObjBtnOpAct.Item.Top = mtxCollect.Item.Top + mtxCollect.Item.Height + 20;
 
                 //Autoresize
                 mtxAuction.AutoResizeColumns();
@@ -166,7 +194,7 @@ namespace UGRS.AddOn.CyC
             }
 
         }
-       
+
         private void cboFolio_ComboSelectAfter(object sboObject, SBOItemEventArg pVal)
         {
             try
@@ -176,19 +204,21 @@ namespace UGRS.AddOn.CyC
                 if (mtxAuction.RowCount > 0)
                 {
                     LoadMatrixPayment();
+                    btnEnd.Item.Enabled = true;
+                    lObjBtnOpAct.Item.Enabled = true;
                 }
                 else
                 {
-                    SAPbouiCOM.DataTable DtMatrixPayment = this.UIAPIRawForm.DataSources.DataTables.Item("DtCollect");
-                    DtMatrixPayment.Rows.Clear();
-                    BindMatrixPayment();
+                    ClearMatrixes();
+
                 }
 
                 mObjAuction = mObjCyCServiceFactory.GetCyCServices().GetAuction(cboFolio.Value);
                 if (mObjAuction.AutCyC)
                 {
                     btnEnd.Caption = "Abrir cobro";
-                   
+                    btnEnd.Item.Enabled = true;
+                    lObjBtnOpAct.Item.Enabled = true;
                 }
             }
             catch (Exception ex)
@@ -203,7 +233,21 @@ namespace UGRS.AddOn.CyC
             }
         }
 
-        private void mtxAuction_DoubleClickAfter(object sboObject, SBOItemEventArg pVal)
+        private void ClearMatrixes()
+        {
+            SAPbouiCOM.DataTable DtMatrixPayment = this.UIAPIRawForm.DataSources.DataTables.Item("DtCollect");
+            DtMatrixPayment.Rows.Clear();
+            BindMatrixPayment();
+            SAPbouiCOM.DataTable DtMatrixInvoice = this.UIAPIRawForm.DataSources.DataTables.Item("DtInv");
+            DtMatrixInvoice.Rows.Clear();
+            BindMatrixInvoice();
+            SAPbouiCOM.DataTable DtMatrixComent = this.UIAPIRawForm.DataSources.DataTables.Item("DtComent");
+            DtMatrixComent.Rows.Clear();
+            BindMatrixComents();
+        }
+
+
+        private void mtxAuction_ClickAfter(object sboObject, SBOItemEventArg pVal)
         {
             try
             {
@@ -215,17 +259,42 @@ namespace UGRS.AddOn.CyC
                     LoadMatrixInvoice(mStrSelectCardCode);
                     LoadMatrixComents();
                     txtAmount.Value = string.Empty;
+                    btnCollect.Item.Enabled = true;
                 }
             }
             catch (Exception ex)
             {
 
-                UIApplication.ShowError("Double clic " + ex.Message);
-                LogService.WriteError("Double clic " + ex.Message);
+                UIApplication.ShowError("Clic " + ex.Message);
+                LogService.WriteError("Clic " + ex.Message);
                 LogService.WriteError(ex);
             }
         }
-    
+
+
+        //private void mtxAuction_DoubleClickAfter(object sboObject, SBOItemEventArg pVal)
+        //{
+        //    try
+        //    {
+        //        if (mIntSelectedRowAuction > 0)
+        //        {
+        //            SAPbouiCOM.DataTable DtAuctions = this.UIAPIRawForm.DataSources.DataTables.Item("DtAuction");
+        //            mStrSelectCardCode = DtAuctions.GetValue("C_Sell", pVal.Row - 1).ToString();
+        //            txtBalance.Value = Convert.ToDecimal((mtxAuction.Columns.Item("C_ImpSub").Cells.Item(pVal.Row).Specific as EditText).Value.Trim()).ToString();
+        //            LoadMatrixInvoice(mStrSelectCardCode);
+        //            LoadMatrixComents();
+        //            txtAmount.Value = string.Empty;
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+
+        //        UIApplication.ShowError("Double clic " + ex.Message);
+        //        LogService.WriteError("Double clic " + ex.Message);
+        //        LogService.WriteError(ex);
+        //    }
+        //}
+
         private void mtxInv_LinkPressedAfter(object sboObject, SBOItemEventArg pVal)
         {
             if (pVal.ColUID == "C_DocNum")
@@ -267,6 +336,7 @@ namespace UGRS.AddOn.CyC
                         }
                         else
                         {
+
                             BubbleEvent = false;
                             UIApplication.ShowError("Favor de ingresar una cantidad menor al de la factura");
                         }
@@ -283,7 +353,7 @@ namespace UGRS.AddOn.CyC
 
         private void mtxInv_ValidateAfter(object sboObject, SBOItemEventArg pVal)
         {
-          
+
 
         }
 
@@ -291,13 +361,20 @@ namespace UGRS.AddOn.CyC
         {
             try
             {
-                if (btnEnd.Caption != "Abrir cobro")
+                if (btnCollect.Item.Enabled)
                 {
-                    CreatePayment();
+                    if (btnCollect.Caption != "Abrir cobro")
+                    {
+                        CreatePayment();
+                    }
+                    else
+                    {
+                        UIApplication.ShowMessageBox("No es posible crear el pago debido a que ya ha terminado el proceso");
+                    }
                 }
                 else
                 {
-                    UIApplication.ShowMessageBox("No es posible crear el pago debido a que ya ha terminado el proceso");
+
                 }
             }
             catch (Exception ex)
@@ -315,41 +392,47 @@ namespace UGRS.AddOn.CyC
             mObjAuction = mObjCyCServiceFactory.GetCyCServices().GetAuction(cboFolio.Value);
             try
             {
-                if (!string.IsNullOrEmpty(txtComent.Value.Trim()))
+                if (!string.IsNullOrEmpty(mStrSelectCardCode))
                 {
-                    switch (mObjUserDTO.CostigCode)
+                    if (!string.IsNullOrEmpty(txtComent.Value.Trim()))
                     {
-                        case "CR_CORRA":
-                            if (!mObjAuction.AutCorral)
-                            {
-                                AddComent();
-                            }
-                            else
-                            {
-                                UIApplication.ShowMessageBox("No es posible agregar un comentario, el proceso de corrales ya ha finalizado");
-                            }
-                            break;
+                        switch (mObjUserDTO.CostigCode)
+                        {
+                            case "CR_CORRA":
+                                if (!mObjAuction.AutCorral)
+                                {
+                                    AddComent();
+                                }
+                                else
+                                {
+                                    UIApplication.ShowMessageBox("No es posible agregar un comentario, el proceso de corrales ya ha finalizado");
+                                }
+                                break;
 
-                        case "TR_TRANS":
-                            if (!mObjAuction.AutTransp)
-                            {
+                            case "TR_TRANS":
+                                if (!mObjAuction.AutTransp)
+                                {
+                                    AddComent();
+                                }
+                                else
+                                {
+                                    UIApplication.ShowMessageBox("No es posible agregar un comentario, el proceso de transporte ya ha finalizado");
+                                }
+                                break;
+                            case "OG_CRYCO":
                                 AddComent();
-                            }
-                            else
-                            {
-                                UIApplication.ShowMessageBox("No es posible agregar un comentario, el proceso de transporte ya ha finalizado");
-                            }
-                            break;
-                        case "OG_CRYCO":
-                            AddComent();
-                            break;
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        UIApplication.ShowMessageBox("Favor de agregar un comentario");
                     }
                 }
                 else
                 {
-                    UIApplication.ShowMessageBox("Favor de agregar un comentario");
+                    UIApplication.ShowMessageBox("Debe seleccionar un vendedor");
                 }
-                
             }
             catch (Exception ex)
             {
@@ -365,7 +448,7 @@ namespace UGRS.AddOn.CyC
             mObjAuction = mObjCyCServiceFactory.GetCyCServices().GetAuction(cboFolio.Value);
             try
             {
-                if (mIntSelectedRowComent >0)
+                if (mIntSelectedRowComent > 0)
                 {
 
                     switch (mObjUserDTO.CostigCode)
@@ -408,7 +491,7 @@ namespace UGRS.AddOn.CyC
                 LogService.WriteError("frm (Add coment) " + ex.Message);
                 LogService.WriteError(ex);
             }
-           
+
 
         }
 
@@ -424,23 +507,15 @@ namespace UGRS.AddOn.CyC
                     if (mIntSelectedRowComent > 0)
                     {
                         string lStrComentCode = DtMatrixComent.GetValue("C_Code", mIntSelectedRowComent - 1).ToString();
-                        if (!string.IsNullOrEmpty(lStrComentCode))
+                        if (mObjCyCServiceFactory.GetComentService().Remove(lStrComentCode) == 0)
                         {
-                            if (mObjCyCServiceFactory.GetComentService().Remove(lStrComentCode) == 0)
-                            {
-                                UIApplication.ShowMessageBox("Comentario borrado correctamente");
-                                LoadMatrixComents();
-                            }
-                            else
-                            {
-                                UIApplication.ShowError("Error al eliminar un comentario");
-                                LogService.WriteError("Error al eliminar un comentario");
-                            }
+                            UIApplication.ShowMessageBox("Comentario borrado correctamente");
+                            LoadMatrixComents();
                         }
                         else
                         {
-                            UIApplication.ShowError("No es posible eliminar este comentario");
-                            LogService.WriteError("No es posible eliminar este comentario");
+                            UIApplication.ShowError("Error al eliminar un comentario");
+                            LogService.WriteError("Error al eliminar un comentario");
                         }
                     }
                     else
@@ -467,7 +542,7 @@ namespace UGRS.AddOn.CyC
 
             try
             {
-                if (!string.IsNullOrEmpty(cboFolio.Value))
+                if (!string.IsNullOrEmpty(cboFolio.Value) && btnEnd.Item.Enabled)
                 {
                     if (btnEnd.Caption == "Abrir cobro")
                     {
@@ -478,7 +553,7 @@ namespace UGRS.AddOn.CyC
                     }
                     else
                     {
-                        if (UIApplication.ShowOptionBox("¿Desea terminar el cobro? ") == 1)
+                        if (UIApplication.ShowOptionBox("¿Desea terminar? ") == 1)
                         {
                             EndPayment();
                         }
@@ -540,7 +615,7 @@ namespace UGRS.AddOn.CyC
                             UIApplication.ShowMessageBox("El proceso de transporte ya ha sido finalizado");
                         }
                     }
-                   
+
 
                     if (lObjAuction.AutCorral && lObjAuction.AutTransp && lObjAuction.AutAuction)
                     {
@@ -562,6 +637,8 @@ namespace UGRS.AddOn.CyC
                     {
                         UIApplication.ShowMessage("Alerta no enviada, faltan procesos por autorizar");
                     }
+
+                    CloseForm();
                 }
             }
             else
@@ -572,7 +649,43 @@ namespace UGRS.AddOn.CyC
 
         }
 
-    
+        private void lObjBtnOpAct_ClickBefore(object sboObject, SBOItemEventArg pVal, out bool BubbleEvent)
+        {
+            BubbleEvent = true;
+            try
+            {
+                if (!string.IsNullOrEmpty(cboFolio.Value) && lObjBtnOpAct.Item.Enabled)
+                {
+
+                    if (UIApplication.ShowOptionBox("¿Desea abrir el cobro para subasta? ") == 1)
+                    {
+                        OpenPayment();
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                UIApplication.ShowError("EndPayment " + ex.Message);
+                LogService.WriteError("EndPayment " + ex.Message);
+                LogService.WriteError(ex);
+            }
+
+        }
+
+
+        private void CloseForm()
+        {
+            this.UIAPIRawForm.Close();
+        }
+
+        //private void ClearForm()
+        //{
+        //    mtxAuction.Clear();
+        //    mtxComent.
+        //}
+
+
 
 
         #region SelectRow
@@ -585,6 +698,10 @@ namespace UGRS.AddOn.CyC
                 {
                     mtxAuction.SelectRow(pVal.Row, true, false);
                     mIntSelectedRowAuction = pVal.Row;
+                }
+                else
+                {
+                    mIntSelectedRowAuction = 0;
                 }
             }
             catch (Exception ex)
@@ -654,6 +771,13 @@ namespace UGRS.AddOn.CyC
             }
 
         }
+
+        private void mtxInv_DoubleClickBefore(object sboObject, SBOItemEventArg pVal, out bool BubbleEvent)
+        {
+            BubbleEvent = true;
+            SetTotalAmount(pVal.Row);
+        }
+
         #endregion
 
         #endregion
@@ -664,11 +788,13 @@ namespace UGRS.AddOn.CyC
             try
             {
                 List<string> lLstAuctions = mObjCyCServiceFactory.GetCyCServices().GetAuctions(mObjUserDTO.CostigCode, mObjUserDTO.UserCode);
+
                 foreach (string lStrFolio in lLstAuctions)
                 {
                     cboFolio.ValidValues.Add(lStrFolio, "");
                     cboFolio.Item.DisplayDesc = false;
                 }
+
                 //cboFolio.ValidValues.Add("S-HMO-180031", "Prueba");
             }
             catch (Exception ex)
@@ -685,17 +811,17 @@ namespace UGRS.AddOn.CyC
         {
             try
             {
-                 List<AuctionDTO> lLstAuctionDTO = SearchAuction();
-                 SetDataTableValuesAuction(lLstAuctionDTO);
-                 BindMatrixAuction();
+                List<AuctionDTO> lLstAuctionDTO = SearchAuction();
+                SetDataTableValuesAuction(lLstAuctionDTO);
+                BindMatrixAuction();
 
             }
             catch (Exception ex)
             {
-                 UIApplication.ShowError("frmCollection (LoadMatrixAuction) " + ex.Message);
+                UIApplication.ShowError("frmCollection (LoadMatrixAuction) " + ex.Message);
                 LogService.WriteError("frmCollection (LoadMatrixAuction) " + ex.Message);
                 LogService.WriteError(ex);
-             
+
             }
         }
 
@@ -704,7 +830,7 @@ namespace UGRS.AddOn.CyC
         {
             if (!string.IsNullOrEmpty(cboFolio.Value))
             {
-                return mObjCyCServiceFactory.GetCyCServices().GetAuctionByCustomer(cboFolio.Value, mObjUserDTO.CostigCode);
+                return mObjCyCServiceFactory.GetCyCServices().GetAuctionByCustomer(cboFolio.Value, mObjUserDTO.CostigCode, mObjUserDTO.CYC);
             }
             else
             {
@@ -724,8 +850,8 @@ namespace UGRS.AddOn.CyC
                 {
                     DtMatrixAuction.Rows.Add();
                     DtMatrixAuction.SetValue("#", i, i + 1);
-                    DtMatrixAuction.SetValue("C_ImpSub", i,  lObjAuctionDTO.TotalSell);
-                    DtMatrixAuction.SetValue("C_ImpDeud", i,  lObjAuctionDTO.TotalBuy);
+                    DtMatrixAuction.SetValue("C_ImpSub", i, lObjAuctionDTO.TotalSell);
+                    DtMatrixAuction.SetValue("C_ImpDeud", i, lObjAuctionDTO.TotalBuy);
                     DtMatrixAuction.SetValue("C_Sell", i, lObjAuctionDTO.CardCode);
                     DtMatrixAuction.SetValue("C_AccountD", i, lObjAuctionDTO.AccountD);
                     DtMatrixAuction.SetValue("C_SellName", i, lObjAuctionDTO.CardName);
@@ -739,19 +865,19 @@ namespace UGRS.AddOn.CyC
                 LogService.WriteError(ex);
             }
         }
-        
+
         //BindMatrix
         private void BindMatrixAuction()
         {
             try
             {
                 this.UIAPIRawForm.Freeze(true);
-               
+
                 mtxAuction.Columns.Item("#").DataBind.Bind("DtAuction", "#");
                 mtxAuction.Columns.Item("C_ImpSub").DataBind.Bind("DtAuction", "C_ImpSub");
                 mtxAuction.Columns.Item("C_ImpDeud").DataBind.Bind("DtAuction", "C_ImpDeud");
                 mtxAuction.Columns.Item("C_Sell").DataBind.Bind("DtAuction", "C_SellName");
-               
+
                 mtxAuction.LoadFromDataSource();
                 mtxAuction.AutoResizeColumns();
             }
@@ -763,7 +889,7 @@ namespace UGRS.AddOn.CyC
             }
             finally
             {
-                 this.UIAPIRawForm.Freeze(false);
+                this.UIAPIRawForm.Freeze(false);
             }
         }
         #endregion
@@ -780,7 +906,7 @@ namespace UGRS.AddOn.CyC
             }
             catch (Exception)
             {
-                
+
                 throw;
             }
         }
@@ -790,15 +916,17 @@ namespace UGRS.AddOn.CyC
         {
             if (!string.IsNullOrEmpty(pStrCardCode))
             {
-                if (!mObjCyCServiceFactory.GetCyCServices().GetUserCyC(UIApplication.GetCompany().UserName))
-                {
-                    
-                    return mObjCyCServiceFactory.GetCyCServices().GetInvoices(pStrCardCode, mObjUserDTO.CostigCode, "GetInvoicesByCC");
-                }
-                else
-                {
-                    return mObjCyCServiceFactory.GetCyCServices().GetInvoices(pStrCardCode, "", "GetInvoices");
-                }
+                return mObjCyCServiceFactory.GetCyCServices().GetInvoices(pStrCardCode, mObjUserDTO.CostigCode, mObjUserDTO.CYC);
+
+                //if (mObjUserDTO.CYC == 'Y')
+                //{
+
+                //    return mObjCyCServiceFactory.GetCyCServices().GetInvoices(pStrCardCode, mObjUserDTO.CostigCode, "1");
+                //}
+                //else
+                //{
+                //    return mObjCyCServiceFactory.GetCyCServices().GetInvoices(pStrCardCode, "", "2");
+                //}
             }
             else
             {
@@ -863,6 +991,22 @@ namespace UGRS.AddOn.CyC
                 this.UIAPIRawForm.Freeze(false);
             }
         }
+
+        //Set 0 or total amount per line
+        private void SetTotalAmount(int pIntRow)
+        {
+            decimal lDbTot = Convert.ToDecimal((mtxInv.Columns.Item("C_Amount").Cells.Item(pIntRow).Specific as EditText).Value.Trim());
+            if(lDbTot>0)
+            {
+                (mtxInv.Columns.Item("C_Amount").Cells.Item(pIntRow).Specific as EditText).Value = "0";
+            }
+            else
+            {
+                (mtxInv.Columns.Item("C_Amount").Cells.Item(pIntRow).Specific as EditText).Value =
+                (mtxInv.Columns.Item("C_Balance").Cells.Item(pIntRow).Specific as EditText).Value;
+            }
+
+        }
         #endregion
 
         #region MatrixPayment
@@ -875,11 +1019,11 @@ namespace UGRS.AddOn.CyC
                 lLstPaymentDTO = SearchPayments();
                 SetDataTableValuesPayments(lLstPaymentDTO);
                 BindMatrixPayment();
-                
+
             }
-            catch ( Exception ex)
+            catch (Exception ex)
             {
-                 UIApplication.ShowError("frmCollection (LoadMatrixPayment) " + ex.Message);
+                UIApplication.ShowError("frmCollection (LoadMatrixPayment) " + ex.Message);
                 LogService.WriteError("frmCollection (LoadMatrixPayment) " + ex.Message);
                 LogService.WriteError(ex);
             }
@@ -941,7 +1085,7 @@ namespace UGRS.AddOn.CyC
             }
             catch (Exception ex)
             {
-                 UIApplication.ShowError("frm (BindMatrixPayment) " + ex.Message);
+                UIApplication.ShowError("frm (BindMatrixPayment) " + ex.Message);
                 LogService.WriteError("frm (BindMatrixPayment) " + ex.Message);
                 LogService.WriteError(ex);
             }
@@ -977,10 +1121,7 @@ namespace UGRS.AddOn.CyC
         {
             if (!string.IsNullOrEmpty(cboFolio.Value))
             {
-                List<Coments>lLstComents = mObjCyCServiceFactory.GetCyCServices().GetComents(cboFolio.Value, mObjUserDTO.CostigCode, mStrSelectCardCode);
-                List<Coments> ListJoutnalEntryComents = mObjCyCServiceFactory.GetCyCServices().GetJournalEntryComents(cboFolio.Value, mStrSelectCardCode);
-                lLstComents.AddRange(ListJoutnalEntryComents);
-                return lLstComents;
+                return mObjCyCServiceFactory.GetCyCServices().GetComents(cboFolio.Value, mObjUserDTO.CYC, mObjUserDTO.CostigCode, mStrSelectCardCode);
             }
             else
             {
@@ -993,20 +1134,20 @@ namespace UGRS.AddOn.CyC
         {
             try
             {
-                 SAPbouiCOM.DataTable DtMatrixComent = this.UIAPIRawForm.DataSources.DataTables.Item("DtComent");
-                 DtMatrixComent.Rows.Clear();
-                 int i = 0;
-                 foreach (Coments lObjComents in pLstComents)
-                 {
-                     DtMatrixComent.Rows.Add();
-                     DtMatrixComent.SetValue("#", i, i + 1);
-                     DtMatrixComent.SetValue("C_Dep", i, lObjComents.Department);
-                     DtMatrixComent.SetValue("C_DepName", i, lObjComents.DepartmentName);
-                     DtMatrixComent.SetValue("C_User", i, lObjComents.User);
-                     DtMatrixComent.SetValue("C_Coment", i, lObjComents.Coment);
-                     DtMatrixComent.SetValue("C_Code", i, lObjComents.RowCode);
-                     i++;
-                 }
+                SAPbouiCOM.DataTable DtMatrixComent = this.UIAPIRawForm.DataSources.DataTables.Item("DtComent");
+                DtMatrixComent.Rows.Clear();
+                int i = 0;
+                foreach (Coments lObjComents in pLstComents)
+                {
+                    DtMatrixComent.Rows.Add();
+                    DtMatrixComent.SetValue("#", i, i + 1);
+                    DtMatrixComent.SetValue("C_Dep", i, lObjComents.Department);
+                    DtMatrixComent.SetValue("C_DepName", i, lObjComents.DepartmentName);
+                    DtMatrixComent.SetValue("C_User", i, lObjComents.User);
+                    DtMatrixComent.SetValue("C_Coment", i, lObjComents.Coment);
+                    DtMatrixComent.SetValue("C_Code", i, lObjComents.RowCode);
+                    i++;
+                }
             }
             catch (Exception ex)
             {
@@ -1034,7 +1175,7 @@ namespace UGRS.AddOn.CyC
                 UIApplication.ShowError("frm (BindMatrixComent) " + ex.Message);
                 LogService.WriteError("frm (BindMatrixcoment) " + ex.Message);
                 LogService.WriteError(ex);
-                
+
             }
             finally
             {
@@ -1049,7 +1190,7 @@ namespace UGRS.AddOn.CyC
         {
             double lDblTotal = 0;
             SAPbouiCOM.DataTable DtMatrixInvoice = this.UIAPIRawForm.DataSources.DataTables.Item("DtInv");
-              SAPbouiCOM.DataTable DtMatrixAuction = this.UIAPIRawForm.DataSources.DataTables.Item("DtAuction");
+            SAPbouiCOM.DataTable DtMatrixAuction = this.UIAPIRawForm.DataSources.DataTables.Item("DtAuction");
             for (int i = 0; i < DtMatrixInvoice.Rows.Count; i++)
             {
                 lDblTotal += Convert.ToDouble(DtMatrixInvoice.GetValue("C_Amount", i));
@@ -1058,10 +1199,12 @@ namespace UGRS.AddOn.CyC
 
             txtAmount.Value = mDblPayment.ToString();
             txtBalance.Value = (Convert.ToDouble(DtMatrixAuction.GetValue("C_ImpSub", mIntSelectedRowAuction - 1)) - mDblPayment).ToString();
+
         }
 
         private void CreatePayment()
         {
+            
             AuctionDTO lObjAuctionDTO = new AuctionDTO();
             List<InvoiceDTO> lLstObjInvoice = new List<InvoiceDTO>();
             SAPbouiCOM.DataTable DtMatrixInvoice = this.UIAPIRawForm.DataSources.DataTables.Item("DtInv");
@@ -1083,16 +1226,53 @@ namespace UGRS.AddOn.CyC
                     lLstObjInvoice.Add(lObjInvoiceDTO);
                 }
             }
+
             if (mObjCyCServiceFactory.GetPaymentService().CreatePayment(lObjAuctionDTO, lLstObjInvoice))
             {
                 UIApplication.ShowMessageBox("Pago generado correctamente");
+
+                //OpenPaymentDraft(mStrSelectCardCode, cboFolio.Value);
+
                 LoadMatrixAuction();
                 LoadMatrixInvoice(mStrSelectCardCode);
                 LoadMatrixPayment();
-                mtxAuction.SelectRow(mIntSelectedRowAuction, true, false);
-                SumTotalPayment();
-                txtBalance.Value =DtMatrixAuction.GetValue("C_ImpSub", mIntSelectedRowAuction-1).ToString();
+                if (mtxAuction.RowCount > 0 && CheckCurrentSeller())
+                {
+                    mtxAuction.SelectRow(mIntSelectedRowAuction, true, false);
+                    SumTotalPayment();
+                    txtBalance.Value = DtMatrixAuction.GetValue("C_ImpSub", mIntSelectedRowAuction - 1).ToString();
+                }
             }
+        }
+
+        private void OpenPaymentDraft(string pStrCardCode, string pStrAuctionFolio)
+        {
+            int lIntKeyD = mObjCyCServiceFactory.GetCyCServices().GetPaymentDraft(mStrSelectCardCode, cboFolio.Value);
+            if (lIntKeyD != 0)
+            {
+                //UIApplication.GetApplication().OpenForm((SAPbouiCOM.BoFormObjectEnum)140, "", DocEntry);
+
+                lObjFormDraft = UIApplication.GetApplication().OpenForm((SAPbouiCOM.BoFormObjectEnum)140, "", lIntKeyD.ToString());
+            }
+        }
+
+        private bool CheckCurrentSeller()
+        {
+            SAPbouiCOM.DataTable DtAuctions = this.UIAPIRawForm.DataSources.DataTables.Item("DtAuction");
+
+
+            for (int i = 0; i < DtAuctions.Rows.Count; i++)
+            {
+                string lStrSeller = DtAuctions.GetValue("C_Sell", i).ToString();
+                if (lStrSeller == mStrSelectCardCode)
+                {
+                    mIntSelectedRowAuction = i + 1;
+                    return true;
+                }
+            }
+
+
+            return false;
         }
 
         private void AddComent()
@@ -1100,7 +1280,7 @@ namespace UGRS.AddOn.CyC
             if (!string.IsNullOrEmpty(cboFolio.Value))
             {
                 Coments lObjComents = new Coments();
-                
+
 
                 lObjComents.Coment = txtComent.Value;
                 lObjComents.Folio = cboFolio.Value;
@@ -1144,17 +1324,20 @@ namespace UGRS.AddOn.CyC
                         bool lBolMsgOk = false;
                         foreach (MessageDTO lObjMessage in lLstMessagesDTO)
                         {
-                            if (mObjCyCServiceFactory.GetAlertService().SaveAlert(lObjMessage))
-                            {
-                                lBolMsgOk = true;
+                            if (lObjMessage.UserCode == "TESORERIA4" || lObjMessage.UserCode == "TESORERIA3" || lObjMessage.UserCode == "SUBHE" || lObjMessage.UserCode == "SUBHE3") 
+                            { 
+                                if (mObjCyCServiceFactory.GetAlertService().SaveAlert(lObjMessage))
+                                {
+                                    lBolMsgOk = true;
+                                }
                             }
                         }
                         if (lBolMsgOk)
                         {
                             UIApplication.ShowMessageBox("Proceso terminado \n Se envió una alerta al departamento de subasta");
                         }
-                        btnEnd.Caption = "Abrir cobro";
-                        
+                        //btnEnd.Caption = "Abrir cobro";
+                        CloseForm();
                     }
                 }
                 else
@@ -1221,7 +1404,13 @@ namespace UGRS.AddOn.CyC
         private SAPbouiCOM.Button btnCollect;
         private SAPbouiCOM.Button btnEnd;
         private Button btnDelete;
+        private Button lObjBtnOpAct;
         #endregion
+
+
+
+
+
 
     }
 }

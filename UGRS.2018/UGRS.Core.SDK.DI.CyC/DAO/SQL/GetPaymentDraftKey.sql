@@ -1,0 +1,1 @@
+SELECT DocEntry FROM OPDF WHERE CardCode = '{CardCode}' AND U_FZ_FolioAuction = '{AuctionFolio}'
