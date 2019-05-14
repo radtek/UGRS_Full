@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UGRS.Core.SDK.DI.Transports.DAO;
-using UGRS.Core.SDK.UI;
 using UGRS.Core.Services;
 using UGRS.Core.Utility;
 

@@ -95,12 +95,13 @@
     <Compile Include="Services\SetupService.cs" />
     <Compile Include="Services\VehiclesService.cs" />
     <Compile Include="Tables\CommissionsRows.cs" />
+    <Compile Include="Tables\Routes.cs" />
     <Compile Include="Tables\StartDay.cs" />
     <Compile Include="Tables\CommissionLine.cs" />
     <Compile Include="Tables\Commissions.cs" />
     <Compile Include="Tables\InternalFreight.cs" />
     <Compile Include="Tables\ItemRelation.cs" />
-    <Compile Include="Tables\Routes.cs" />
+    <Compile Include="Tables\Town.cs" />
     <Compile Include="TransportServiceFactory.cs" />
     <Compile Include="Utility\Utils.cs" />
   </ItemGroup>

@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using SAPbouiCOM.Framework;
-using UGRS.Core.Utility;
 using UGRS.Core.SDK.DI.Transports.DTO;
 using UGRS.AddOn.Transports.Forms;
 

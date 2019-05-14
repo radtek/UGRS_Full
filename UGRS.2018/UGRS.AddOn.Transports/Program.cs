@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using SAPbouiCOM.Framework;
 using UGRS.Core.SDK.DI;
 using UGRS.Core.SDK.UI;

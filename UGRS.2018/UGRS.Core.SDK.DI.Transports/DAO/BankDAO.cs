@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UGRS.Core.SDK.DI.Transports.DTO;
 using UGRS.Core.Utility;
 using UGRS.Core.Extension;

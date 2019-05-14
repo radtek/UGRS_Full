@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using UGRS.Core.SDK.DI.Transports.DTO;
 
 namespace UGRS.Core.SDK.DI.Transports.Services

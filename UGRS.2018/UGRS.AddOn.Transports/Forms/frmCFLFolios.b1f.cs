@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using SAPbouiCOM.Framework;
 using UGRS.Core.Utility;
-using UGRS.Core.Extension;
-using UGRS.Core.SDK.DI.Extension;
 using UGRS.Core.SDK.DI.Transports;
 
 namespace UGRS.AddOn.Transports.Forms

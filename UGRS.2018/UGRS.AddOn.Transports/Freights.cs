@@ -1,11 +1,6 @@
 ﻿using SAPbouiCOM;
-using SAPbouiCOM.Framework;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using UGRS.Core.SDK.DI;
 using UGRS.Core.SDK.DI.Transports;
 using UGRS.Core.SDK.DI.Transports.DTO;
