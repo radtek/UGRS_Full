@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using SAPbouiCOM.Framework;
 using UGRS.Core.Extension.Enum;
 using UGRS.Core.SDK.UI;
@@ -1025,6 +1024,8 @@ namespace UGRS.AddOn.Transports.Forms
                     Bags = mStrType == "A" ? txtVarios.Value : "",
                     Heads = mStrType == "G" ? txtVarios.Value : "",
                     TotKg = txtKg.Value,
+                    Route = mIntActualRoute,
+                    TotKm = txtTotKm.Value,
                 });
             }
             return lLstSalesOrderLines;
@@ -1600,7 +1601,7 @@ namespace UGRS.AddOn.Transports.Forms
                 lLstmssingFields.Add("Agregue municipio de origen");
             }
 
-            if (string.IsNullOrEmpty(txtDestination.Value))
+            if (string.IsNullOrEmpty(txtMDest.Value))
             {
                 lLstmssingFields.Add("Agregue municipio destino");
             }
