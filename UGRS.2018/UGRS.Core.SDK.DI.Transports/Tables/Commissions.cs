@@ -2,7 +2,7 @@
 using UGRS.Core.SDK.Attributes;
 using SAPbobsCOM;
 using System.Collections.Generic;
-using UGRS.Core.SDK.DI.Transports.Enums;
+using System;
 
 namespace UGRS.Core.SDK.DI.Transports.Tables
 {
@@ -44,6 +44,13 @@ namespace UGRS.Core.SDK.DI.Transports.Tables
 
         [Field(Description = "PagoLimpieza", Size = 1)]
         public bool PaymClean { get; set; }
+
+
+        [Field(Description = "Fecha Inicio", Type = BoFieldTypes.db_Date)]
+        public DateTime StartDate { get; set; }
+
+        [Field(Description = "Fecha Fin", Type = BoFieldTypes.db_Date)]
+        public DateTime EndDate { get; set; }
 
         public List<CommissionLine> LstCommissionLine;
 

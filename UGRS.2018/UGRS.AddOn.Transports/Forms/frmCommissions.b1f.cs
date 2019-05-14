@@ -1046,7 +1046,8 @@ namespace UGRS.AddOn.Transports.Forms
             lObjCommission.Year = lIntYear;
             lObjCommission.Week = lIntWeek;
             lObjCommission.PaymClean = chkAdd.Checked ? true : false;
-
+            lObjCommission.StartDate = mDtmFirstDay;
+            lObjCommission.EndDate = mDtmLastDay;
             return lObjCommission;
         }
 
