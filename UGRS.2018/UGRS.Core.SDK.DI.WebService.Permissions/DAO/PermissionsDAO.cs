@@ -473,18 +473,30 @@ namespace UGRS.Core.SDK.DI.WebServicePermissions.DAO {
             pObjSaleOrder.UserFields.Fields.Item("U_PE_Departure").Value = Truncate(lObjPermissionRequest.Departure, pObjSaleOrder.UserFields.Fields.Item("U_PE_Departure").Size);
 
             string lStrEntry = Truncate(lObjPermissionRequest.Entry, pObjSaleOrder.UserFields.Fields.Item("U_PE_Entry").Size);
-            string lSTrDeparture = Truncate(lObjPermissionRequest.Departure, pObjSaleOrder.UserFields.Fields.Item("U_PE_Departure").Size);
+            string lStrDeparture = Truncate(lObjPermissionRequest.Departure, pObjSaleOrder.UserFields.Fields.Item("U_PE_Departure").Size);
             string lStrEntry2 = Truncate(lObjPermissionRequest.Entry2, pObjSaleOrder.UserFields.Fields.Item("U_PE_Entry2").Size);
             string lStrDeaperture2 = Truncate(lObjPermissionRequest.Departure2, pObjSaleOrder.UserFields.Fields.Item("U_PE_Deaperture2").Size);
 
             pObjSaleOrder.UserFields.Fields.Item("U_PE_Entry2").Value = lStrEntry == lStrEntry2? "" : Truncate(lObjPermissionRequest.Entry2, pObjSaleOrder.UserFields.Fields.Item("U_PE_Entry2").Size);
-            pObjSaleOrder.UserFields.Fields.Item("U_PE_Deaperture2").Value = lSTrDeparture == lStrDeaperture2 ? "" :  Truncate(lObjPermissionRequest.Departure2, pObjSaleOrder.UserFields.Fields.Item("U_PE_Deaperture2").Size);
+            pObjSaleOrder.UserFields.Fields.Item("U_PE_Deaperture2").Value = lStrDeparture == lStrDeaperture2 ? "" :  Truncate(lObjPermissionRequest.Departure2, pObjSaleOrder.UserFields.Fields.Item("U_PE_Deaperture2").Size);
             pObjSaleOrder.UserFields.Fields.Item("U_PE_Transport").Value = Truncate(lObjPermissionRequest.TransportId.ToString(), pObjSaleOrder.UserFields.Fields.Item("U_PE_Transport").Size); //Campo enlazado al catalogo de transportes
             pObjSaleOrder.UserFields.Fields.Item("U_PE_Origin").Value = Truncate(lObjPermissionRequest.Origin, pObjSaleOrder.UserFields.Fields.Item("U_PE_Origin").Size);
             pObjSaleOrder.UserFields.Fields.Item("U_PE_Customs1").Value = Truncate(lObjPermissionRequest.Customs1 != 0 ? lObjPermissionRequest.Customs1.ToString() : "", pObjSaleOrder.UserFields.Fields.Item("U_PE_Customs1").Size); //Campo enlazado al catalogo de aduanas
-            pObjSaleOrder.UserFields.Fields.Item("U_PE_Customs2").Value = Truncate(lObjPermissionRequest.Customs2 != 0 ? lObjPermissionRequest.Customs2.ToString() : "", pObjSaleOrder.UserFields.Fields.Item("U_PE_Customs2").Size); //Campo enlazado al catalogo de aduanas
+            //pObjSaleOrder.UserFields.Fields.Item("U_PE_Customs2").Value = Truncate(lObjPermissionRequest.Customs2 != 0 ? lObjPermissionRequest.Customs2.ToString() : "", pObjSaleOrder.UserFields.Fields.Item("U_PE_Customs2").Size); //Campo enlazado al catalogo de aduanas
             pObjSaleOrder.UserFields.Fields.Item("U_PE_Destination").Value = Truncate(lObjPermissionRequest.Destination, pObjSaleOrder.UserFields.Fields.Item("U_PE_Destination").Size);
             pObjSaleOrder.UserFields.Fields.Item("U_PE_Location").Value = Truncate(lObjPermissionRequest.CustomerLocation, pObjSaleOrder.UserFields.Fields.Item("U_PE_Location").Size);
+
+
+            LogService.WriteInfo("-------------Info Orden de compra--------------");
+            LogService.WriteInfo(string.Format("U_PE_IdPermitType: {0}", lObjPermissionRequest.MobilizationTypeId));
+            LogService.WriteInfo(string.Format("U_PE_RequestCodeUGRS: {0}", lObjPermissionRequest.UgrsRequest));
+            LogService.WriteInfo(string.Format("U_PE_FolioUGRS: {0}", lObjPermissionRequest.UgrsFolio));
+            LogService.WriteInfo(string.Format("Aduana: {0}", lObjPermissionRequest.Customs1));
+            LogService.WriteInfo(string.Format("Entrada 1: {0}", lStrEntry));
+            LogService.WriteInfo(string.Format("Entrada 2: {0}", lStrEntry2));
+            LogService.WriteInfo(string.Format("Salida 1: {0}", lStrDeparture));
+            LogService.WriteInfo(string.Format("Salida 2: {0}", lStrDeaperture2));
+
 
 
             //pObjSaleOrder.UserFields.Fields.Item("U_PE_IdPermitType").Value = lObjPermissionRequest.MobilizationTypeId.ToString(); //Campo enlazado al catalogo de tipos de movilizaciones

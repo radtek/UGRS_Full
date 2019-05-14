@@ -24,7 +24,7 @@ namespace UGRS.WebService.Permissions
         protected void Application_Start(object pObjSender, EventArgs pObjEventsArgs)
         {
             LogService.Filename("Permissions");
-            LogService.WriteInfo("Application start 1.0.14");
+            LogService.WriteInfo("Application start 1.0.16");
             PermissionsServicesFactory lObjPermissionService = null;
 
             try
