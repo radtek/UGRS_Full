@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UGRS.Core.SDK.DI.Transports.DAO;
 using UGRS.Core.SDK.UI;
 using UGRS.Core.SDK.DI.DAO;
 using UGRS.Core.Services;
@@ -76,7 +72,7 @@ namespace UGRS.Core.SDK.DI.Transports.DAO
             {
                 lObjParameters.Add("Town", string.Empty);
                 lObjParameters.Add("Search", pStrSearch);
-
+                string ss = this.GetSQL("GetTowns").Inject(lObjParameters);
                 return this.GetSQL("GetTowns").Inject(lObjParameters);
             }
             catch (Exception ex)

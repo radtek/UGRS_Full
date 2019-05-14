@@ -1,10 +1,5 @@
 ﻿using SAPbouiCOM.Framework;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UGRS.Core.SDK.DI;
 using UGRS.Core.SDK.DI.Transports;
 using UGRS.Core.SDK.DI.Transports.DTO;
 using UGRS.Core.SDK.DI.Transports.Utility;
@@ -307,16 +302,16 @@ namespace UGRS.AddOn.Transports.ModalForms
                 //Add columns
                 pObjMtxCFL.Columns.Add("cName", SAPbouiCOM.BoFormItemTypes.it_EDIT);
                 pObjMtxCFL.Columns.Add("cState", SAPbouiCOM.BoFormItemTypes.it_EDIT);
-                pObjMtxCFL.Columns.Add("cCom", SAPbouiCOM.BoFormItemTypes.it_EDIT);
+               // pObjMtxCFL.Columns.Add("cCom", SAPbouiCOM.BoFormItemTypes.it_EDIT);
 
                 //Setup clumns
                 pObjMtxCFL.Columns.Item("cName").TitleObject.Caption = "Nombre";
                 pObjMtxCFL.Columns.Item("cState").TitleObject.Caption = "Estado";
-                pObjMtxCFL.Columns.Item("cCom").TitleObject.Caption = "Comite";
+                //pObjMtxCFL.Columns.Item("cCom").TitleObject.Caption = "Comite";
 
                 pObjMtxCFL.Columns.Item("cName").Editable = false;
                 pObjMtxCFL.Columns.Item("cState").Editable = false;
-                pObjMtxCFL.Columns.Item("cCom").Editable = false;
+               // pObjMtxCFL.Columns.Item("cCom").Editable = false;
 
                 pObjMtxCFL.SelectionMode = SAPbouiCOM.BoMatrixSelect.ms_Single;
             }
@@ -324,7 +319,7 @@ namespace UGRS.AddOn.Transports.ModalForms
             //Bind
             pObjMtxCFL.Columns.Item("cName").DataBind.Bind("DsItems", "Name");
             pObjMtxCFL.Columns.Item("cState").DataBind.Bind("DsItems", "U_State");
-            pObjMtxCFL.Columns.Item("cCom").DataBind.Bind("DsItems", "U_Commite");
+            //pObjMtxCFL.Columns.Item("cCom").DataBind.Bind("DsItems", "U_Commite");
 
             pObjMtxCFL.LoadFromDataSource();
             pObjMtxCFL.AutoResizeColumns();
