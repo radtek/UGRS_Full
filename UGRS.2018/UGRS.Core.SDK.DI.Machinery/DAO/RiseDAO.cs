@@ -138,6 +138,38 @@ namespace UGRS.Core.SDK.DI.Machinery.DAO
             return lStrQuery;
         }
 
+        public int GetVoucherStatus(string pStrRise)
+        {
+            string lStrQuery = string.Empty;
+            int lIntStatus = 0;
+            Recordset lObjRecordset = null;
+
+            try
+            {
+                lObjRecordset = (Recordset)DIApplication.Company.GetBusinessObject(BoObjectTypes.BoRecordset);
+
+                lStrQuery = this.GetSQL("GetVoucherStatusByRiseId").InjectSingleValue("FolioRise", pStrRise);
+
+                lObjRecordset.DoQuery(lStrQuery);
+
+                if (lObjRecordset.RecordCount > 0)
+                {
+                    lIntStatus = int.Parse(lObjRecordset.Fields.Item("U_Status").Value.ToString());
+                }
+            }
+            catch (Exception lObjException)
+            {
+                LogService.WriteError(string.Format("[RiseDAO - GetVoucherStatus: {0}]", lObjException.Message));
+                throw new DAOException(lObjException.Message, lObjException);
+            }
+            finally
+            {
+                MemoryUtility.ReleaseComObject(lObjRecordset);
+            }
+
+            return lIntStatus;
+        }
+
         public bool ExistsRiseByFolio(int pIntFolio)
         {
             bool lBolResult = false;

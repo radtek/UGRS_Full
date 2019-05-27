@@ -112,6 +112,9 @@ namespace UGRS.AddOn.Machinery.Forms
                                     if (string.IsNullOrEmpty(mObjFrmFolios.mStrFolio))
                                         return;
 
+                                    //Validar si la comprobación esta autorizada
+                                    int lIntStatus = mObjMachineryServiceFactory.GetRiseService().GetVoucherStatus(mObjFrmFolios.mStrFolio);
+
                                     txtFolioRise.Value = mObjFrmFolios.mStrFolio;
 
                                     GetRiseDetails(txtFolioRise.Value.Trim());

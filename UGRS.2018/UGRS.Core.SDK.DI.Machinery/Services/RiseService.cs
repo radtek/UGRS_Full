@@ -172,6 +172,11 @@ namespace UGRS.Core.SDK.DI.Machinery.Services
             return mObjRiseDAO.GetNoStockTransferRisesQuery();
         }
 
+        public int GetVoucherStatus(string pStrRise)
+        {
+            return mObjRiseDAO.GetVoucherStatus(pStrRise);
+        }
+
         public bool ExistsRise(int pIntFolio)
         {
             return mObjRiseDAO.ExistsRiseByFolio(pIntFolio);
