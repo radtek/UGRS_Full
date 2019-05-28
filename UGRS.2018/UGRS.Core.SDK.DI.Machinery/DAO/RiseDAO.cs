@@ -154,7 +154,7 @@ namespace UGRS.Core.SDK.DI.Machinery.DAO
 
                 if (lObjRecordset.RecordCount > 0)
                 {
-                    lIntStatus = int.Parse(lObjRecordset.Fields.Item("U_Status").Value.ToString());
+                    lIntStatus = int.Parse(lObjRecordset.Fields.Item("Status").Value.ToString());
                 }
             }
             catch (Exception lObjException)

@@ -1,4 +1,5 @@
-SELECT T1.CodeMov, T1.FolioOri, T2.U_Status FROM
+SELECT T1.CodeMov, T1.FolioOri, ISNULL(T2.U_Status, 0) Status 
+FROM
 (
 	SELECT MAX(U_GLO_CodeMov) CodeMov, MAX(U_GLO_FolioOri) FolioOri 
 	FROM OVPM with (nolock) 
@@ -6,5 +7,5 @@ SELECT T1.CodeMov, T1.FolioOri, T2.U_Status FROM
 ) T1
 INNER JOIN
 (
-	SELECT U_CodeMov, U_Status FROM [@UG_GLO_VOUC] with (nolock)  WHERE U_CodeMov = 'CV_MQ_MAQUI_7'
+	SELECT U_CodeMov, U_Status FROM [@UG_GLO_VOUC] with (nolock) 
 ) T2 ON T2.U_CodeMov = T1.CodeMov
