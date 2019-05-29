@@ -379,8 +379,8 @@ namespace UGRS.AddOn.FoodProduction.UI.Matriz
                                 }
                                 else
                                 {
-                                    lObjTicketDetail.EntryDate = Convert.ToDateTime(lLstTicketUpdate[2]);
-                                    lObjTicketDetail.EntryTime = Convert.ToInt32(lLstTicketUpdate[3]);
+                                    lObjTicketDetail.OutputDate = Convert.ToDateTime(lLstTicketUpdate[2]);
+                                    lObjTicketDetail.OutputTime = Convert.ToInt32(lLstTicketUpdate[3]);
                                 }
                             }
                         }
