@@ -13,7 +13,7 @@ namespace UGRS.Core.Utility
     public class LogUtility
     {
         private static bool mBolFullLog = false;
-            private static string mStrFileName;
+        private static string mStrFileName;
         static LogUtility()
         {
             mBolFullLog = ConfigurationManager.AppSettings.AllKeys.Contains("FullLog") && (
@@ -27,7 +27,7 @@ namespace UGRS.Core.Utility
         }
 
 
-          public static string FileNameLog
+        public static string FileNameLog
         {
             get { return mStrFileName; }
         }
@@ -37,30 +37,28 @@ namespace UGRS.Core.Utility
             get { return mBolFullLog; }
         }
 
-        /// <summary> Writes. </summary>
-        /// <remarks> Ranaya, 24/05/2017. </remarks>
-        /// <param name="pStrMessage"> The String message to write. </param>
-
         public static void Write(string pStrMessage)
         {
             string lStrDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss ");
-            
+
             string lStrFilename = "Servicio.log";
             string lStrLogPath;
             try
             {
                 if (!string.IsNullOrEmpty(FileNameLog))
                 {
-                    lStrFilename = FileNameLog + "_" + DateTime.Now.ToString("yyyy-MM-dd") +".log";
-                   
+                    lStrFilename = FileNameLog + "_" + DateTime.Now.ToString("yyyy-MM-dd") + ".log";
+
                 }
                 else
                 {
                     lStrFilename = "Service_" + DateTime.Now.ToString("yyyy-MM-dd") + ".log";
                     mStrFileName = "LogService";
                 }
-
-                lStrLogPath = Path.Combine(CreateFolder(@"c:\Qualisys\Log\" + mStrFileName), lStrFilename);
+                //Guardado en documentos
+                //lStrLogPath = Path.Combine(CreateFolder(@"c:\Qualisys\Log\" + mStrFileName), lStrFilename);
+                lStrLogPath = Path.Combine(CreateFolder(PathUtilities.GetDocuments() + @"\Qualisys\Log" + mStrFileName), lStrFilename); ;
+                //lStrLogPath = Path.Combine(CreateFolder(lStrLogPath), lStrFilename);
                 using (StreamWriter lObjWriter = new StreamWriter(lStrLogPath, true))
                 {
                     lObjWriter.WriteLine(string.Concat(lStrDate, pStrMessage));
@@ -71,8 +69,9 @@ namespace UGRS.Core.Utility
             {
                 try
                 {
-                    string lStrApplicationPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().GetName().CodeBase).Replace("file:\\", "") + "\\Log";
-                    lStrLogPath = Path.Combine(CreateFolder(lStrApplicationPath), lStrFilename);
+                    //Guardado en C
+                    lStrLogPath = Path.Combine(CreateFolder(@"c:\Qualisys\Log\" + mStrFileName), lStrFilename);
+                    lStrLogPath = Path.Combine(CreateFolder(lStrLogPath), lStrFilename);
                     using (StreamWriter lObjWriter = new StreamWriter(lStrLogPath, true))
                     {
                         lObjWriter.WriteLine(string.Concat(lStrDate, pStrMessage));
@@ -82,9 +81,11 @@ namespace UGRS.Core.Utility
                 {
                     try
                     {
-                        lStrLogPath = PathUtilities.GetDocuments() + @"\Qualisys\Log";
-                        lStrLogPath = Path.Combine(CreateFolder(lStrLogPath), lStrFilename);
-                        using (StreamWriter lObjWriter = new StreamWriter(lStrLogPath, true))
+                        //Guardado en directorio de la aplicacion
+                        //lStrLogPath = PathUtilities.GetDocuments() + @"\Qualisys\Log";
+                        //lStrLogPath = Path.Combine(CreateFolder(lStrLogPath), lStrFilename);
+                        string lStrApplicationPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().GetName().CodeBase).Replace("file:\\", "") + "\\Log";
+                        using (StreamWriter lObjWriter = new StreamWriter(lStrApplicationPath, true))
                         {
                             lObjWriter.WriteLine(string.Concat(lStrDate, pStrMessage));
                         }
@@ -97,7 +98,7 @@ namespace UGRS.Core.Utility
             }
         }
 
-     private static string CreateFolder(string pStrPath)
+        private static string CreateFolder(string pStrPath)
         {
             try
             {
@@ -109,18 +110,18 @@ namespace UGRS.Core.Utility
 
                 // Try to create the directory.
                 DirectoryInfo di = Directory.CreateDirectory(pStrPath);
-                
+
 
             }
             catch (Exception)
             {
 
             }
-            finally {  }
+            finally { }
             return pStrPath;
         }
 
-       
+
 
         public static void WriteInfo(string pStrMessage)
         {
