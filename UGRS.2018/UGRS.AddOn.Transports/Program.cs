@@ -38,9 +38,9 @@ namespace UGRS.AddOn.Transports
                 UIApplication.ShowSuccess(string.Format("Inicializar las tablas"));
                 TransportServiceFactory mObjServiceFactory = new TransportServiceFactory();
                 mObjServiceFactory.GetSetUpService().InitializeTables();
-                UIApplication.ShowSuccess(string.Format("Addon de transportes iniciado correctamente"));
+                UIApplication.ShowSuccess(string.Format("Addon de transportes 1.0.15 iniciado correctamente"));
 
-                LogService.WriteSuccess("Addon de transportes iniciado correctamente");
+                LogService.WriteSuccess("Addon de transportes 1.0.15 iniciado correctamente");
 
                 oApp.Run();
             }
