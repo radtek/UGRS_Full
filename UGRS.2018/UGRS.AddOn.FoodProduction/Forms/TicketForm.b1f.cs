@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Runtime.Remoting.Channels.Http;
 using System.Security.Principal;
 using System.ServiceProcess;
 using System.Threading;
@@ -76,6 +75,7 @@ namespace UGRS.AddOn.FoodProduction.Forms
 		string mStrDataReceived;
 		DateTime mDblTime;
         private bool mBolStarted = false;
+        int mIntLastPrintLines = 0;
 
 		bool mBolLoadingT = false;///////
   
@@ -1299,6 +1299,9 @@ namespace UGRS.AddOn.FoodProduction.Forms
 
                     bool lBolUpdate = false;
                     int lIntPrintedLine = 0;
+
+                    mIntLastPrintLines = lObjTicket.PrintLine;
+                
                     if (lLstLines.Count != lObjTicket.PrintLine)
                     {
                         lBolUpdate = true;
@@ -1307,9 +1310,28 @@ namespace UGRS.AddOn.FoodProduction.Forms
                             lIntPrintedLine = lObjTicket.PrintLine;
                         }
                     }
-                    if (Print(lLstLines, lIntPrintedLine, lBolUpdate))
+                    else
                     {
+                        if (SAPbouiCOM.Framework.Application.SBO_Application.MessageBox("¿Desea reimprimir TODO el ticket?", 2, "Anterior", "TODO", "") == 1)
+                        {
+                            LogService.WriteInfo("Impresión anterior");
+                            lBolUpdate = true;
+                            lIntPrintedLine = Convert.ToInt16(lObjTicket.RowName);
+                        }
+                        else
+                        {
+                            LogService.WriteInfo("Imprimiendo TODO el ticket");
+                        }
+                    }
+
+                    if (Print(lLstLines, lIntPrintedLine, lBolUpdate))
+                    { 
+                        if (lLstLines.Count != lObjTicket.PrintLine)
+                        {
+                            lObjTicket.RowName = lObjTicket.PrintLine.ToString();
+                        }
                         lObjTicket.PrintLine = lLstLines.Count();
+                       
                         mObjTicketServices.SaveTicket(lObjTicket, true);
                     }
 				}
@@ -1405,11 +1427,11 @@ namespace UGRS.AddOn.FoodProduction.Forms
 							
 
 							lIntPrintedLines = mObjTicket.PrintLine;
-							
-							if (mObjTicketServices.SaveTicket(mObjTicket, mBolIsUpdate)
-								&& mObjTicketServices.SaveTicketDetail(lLstTicketDetail, mBolIsUpdate)
-								&& mObjTicketServices.RemoveTicketDetail(lLstTicketDetail))
-							{
+
+                            if (mObjTicketServices.SaveTicket(mObjTicket, mBolIsUpdate)
+                                && mObjTicketServices.SaveTicketDetail(lLstTicketDetail, mBolIsUpdate)
+                                && mObjTicketServices.RemoveTicketDetail(lLstTicketDetail))
+                            {
                                 //Validacion para generar entregas en caso de ser venta de pesaje por medio de facturas de reserva
                                 if (WithoutInvoice() != string.Empty && !lBoolNoDelivery)
                                 {
@@ -1425,21 +1447,19 @@ namespace UGRS.AddOn.FoodProduction.Forms
                                 List<string> lLstLines = GetListToPrint(mObjTicket, lLstTicketDetail);
                                 if (Print(lLstLines, lIntPrintedLines, mBolIsUpdate))
                                 {
+                                    mObjTicket.RowName = mObjTicket.PrintLine.ToString();
                                     mObjTicket.PrintLine = lLstLines.Count();
+
                                     mObjTicketServices.SaveTicket(mObjTicket, true);
                                     mBolIsUpdate = true;
                                     //ClearControls();
                                     this.UIAPIRawForm.Freeze(false);
                                     UIApplication.ShowMessageBox("Ticket guardado correctamente!");
-                                }
-                                else
-                                {
-                                    btnPrint.Item.Visible = true;
+
                                 }
 
-
-								
-							}
+                                btnPrint.Item.Visible = true;
+                            }
 						}
 
 						mBolLoadingT = false;
@@ -1517,11 +1537,12 @@ namespace UGRS.AddOn.FoodProduction.Forms
             foreach (TicketDetail lObjTicketDetail in pLstTicketDetail)
             {
                 i++;
-                if ((!string.IsNullOrEmpty(lObjTicketDetail.FirstWT.ToString()) && lObjTicketDetail.FirstWT > 0) || (!string.IsNullOrEmpty(lObjTicketDetail.netWeight.ToString()) && lObjTicketDetail.netWeight > 0) || lObjTicketDetail.WeighingM == 1)
-                {
-                    //lLstLine.Add("Cod. Prod: " + lObjTicketDetail.Item);
+                //if ((!string.IsNullOrEmpty(lObjTicketDetail.FirstWT.ToString()) && lObjTicketDetail.FirstWT > 0) || 
+                //    (!string.IsNullOrEmpty(lObjTicketDetail.netWeight.ToString()) && lObjTicketDetail.netWeight > 0) || lObjTicketDetail.WeighingM == 1)
+                //{
+                  //  //lLstLine.Add("Cod. Prod: " + lObjTicketDetail.Item);
                     lLstLine.Add(i.ToString("00") + " Prod: " + mObjTicketServices.SearchItemName(lObjTicketDetail.Item));
-                }
+                //}
 
             }
 
@@ -1581,9 +1602,10 @@ namespace UGRS.AddOn.FoodProduction.Forms
 
 		private void PrintUpdate(List<string> pLstLine, int pIntPrintedLine)
 		{
+
 			LogService.WriteSuccess("********* Impresion de actualizacion **********");
 			List<string> lLstLineToPrint = new List<string>();
-			for (int i = 0; i <= pLstLine.Count; i++)
+			for (int i = 1; i <= pLstLine.Count; i++)
 			{
 				if (i > pIntPrintedLine)
 				{
@@ -1677,6 +1699,7 @@ namespace UGRS.AddOn.FoodProduction.Forms
                 if (!string.IsNullOrEmpty(txtSim.Value))
                 {
                     lStrSim = txtSim.Value;
+                    LogService.WriteInfo(string.Format("Peso asignado por el usuario:{0}", lStrSim));
                     if (lStrSim.Length < 9 && Convert.ToDecimal(lStrSim) > 0)
                     {
                         mStrWeight = lStrSim;
