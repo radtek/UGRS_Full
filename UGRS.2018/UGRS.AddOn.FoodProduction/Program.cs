@@ -24,7 +24,7 @@ namespace UGRS_AddOn.FoodProduction
                try
                {
                    LogService.Filename("FoodProduction");
-                   LogService.WriteInfo("Inicio del addon");
+                   LogService.WriteInfo("Inicio del addon 1.2.56");
 
                    Application lObjApplication = null;
 

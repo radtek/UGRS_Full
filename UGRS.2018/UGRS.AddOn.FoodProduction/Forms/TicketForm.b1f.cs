@@ -1312,7 +1312,7 @@ namespace UGRS.AddOn.FoodProduction.Forms
                     }
                     else
                     {
-                        if (SAPbouiCOM.Framework.Application.SBO_Application.MessageBox("¿Desea reimprimir TODO el ticket?", 2, "Anterior", "TODO", "") == 1)
+                        if (SAPbouiCOM.Framework.Application.SBO_Application.MessageBox("¿Desea imprimir el ticket completo o la impresion anterior?", 1, "Anterior", "Completo", "") == 1)
                         {
                             LogService.WriteInfo("Impresión anterior");
                             lBolUpdate = true;
