@@ -1610,6 +1610,11 @@ namespace UGRS.AddOn.FoodProduction
                         else
                         {
                             lObjStockTrasnfer.Lines.WarehouseCode = mObjTicketDAO.GetWhsTransfer(lLstTicketDetail[i].Item);
+                            if (string.IsNullOrEmpty(lObjStockTrasnfer.Lines.WarehouseCode))
+                            {
+                                LogService.WriteInfo("No se encontraron almacenes de transferencia disponibles");
+                                UIApplication.ShowMessageBox("No se encontraron almacenes de transferencia disponibles");
+                            }
                             lObjStockTrasnfer.Lines.FromWarehouseCode = lLstTicketDetail[i].WhsCode;
                         }
                       
