@@ -1406,7 +1406,7 @@ namespace UGRS.AddOn.Transports.Forms
                 lLstJurnalEntryLine = GetJournalLines();
             }
 
-            return mObjTransportsFactory.GetJournalService().CreateNewJournal(lLstJurnalEntryLine, txtInternal.Value, "TR/F", "Flete interno" + DateTime.Now.ToShortDateString());
+            return mObjTransportsFactory.GetJournalService().CreateNewJournal(lLstJurnalEntryLine, txtInternal.Value, "TR/F", "Flete interno" + DateTime.Now.ToShortDateString(), DateTime.Now);
         }
 
 

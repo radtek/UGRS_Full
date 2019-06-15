@@ -81,7 +81,7 @@ namespace UGRS.AddOn.Transports.Forms
             this.lblAuOp = ((SAPbouiCOM.StaticText)(this.GetItem("lblAuOp").Specific));
             this.lblAuFz = ((SAPbouiCOM.StaticText)(this.GetItem("lblAuFz").Specific));
             this.txtAuFz = ((SAPbouiCOM.EditText)(this.GetItem("txtAuFz").Specific));
-            //       this.EditText2 = ((SAPbouiCOM.EditText)(this.GetItem("Item_4").Specific));
+            //         this.EditText2 = ((SAPbouiCOM.EditText)(this.GetItem("Item_4").Specific));
             this.mObjBtnReject = ((SAPbouiCOM.Button)(this.GetItem("BtnRej").Specific));
             this.mObjBtnReject.ClickAfter += new SAPbouiCOM._IButtonEvents_ClickAfterEventHandler(this.mObjBtnReject_ClickAfter);
             this.cboWeek = ((SAPbouiCOM.ComboBox)(this.GetItem("cboWeek").Specific));
@@ -89,6 +89,8 @@ namespace UGRS.AddOn.Transports.Forms
             this.lblYear = ((SAPbouiCOM.StaticText)(this.GetItem("lblYear").Specific));
             this.cboYear = ((SAPbouiCOM.ComboBox)(this.GetItem("cboYear").Specific));
             this.chkAdd = ((SAPbouiCOM.CheckBox)(this.GetItem("chkAdd").Specific));
+            this.txtDate = ((SAPbouiCOM.EditText)(this.GetItem("txtDate").Specific));
+            this.lblDate = ((SAPbouiCOM.StaticText)(this.GetItem("Item_1").Specific));
             this.OnCustomInitialize();
 
         }
@@ -118,8 +120,8 @@ namespace UGRS.AddOn.Transports.Forms
                 
                 //Obtiene el tipo permiso
                 GetUserPermissionAuth();
-
               
+                this.UIAPIRawForm.DataSources.UserDataSources.Item("UD_Date").Value = DateTime.Now.ToString("yyyyMMdd");
                
             }
             catch (Exception ex)
@@ -266,9 +268,22 @@ namespace UGRS.AddOn.Transports.Forms
                 {
                     try
                     {
-                        DIApplication.Company.StartTransaction();
-                        this.UIAPIRawForm.Freeze(true);
-                        lBolSuccess = SaveCommission();
+                        string lStrLastFolio = GetLastFolio(mObjTxtFolio.Value, 1);
+                        Commissions lLstComm = GetCommisionHeader(lStrLastFolio);
+                        bool lBolOk = true;
+                        if (lLstComm.Status != (int)StatusEnum.CLOSED)
+                        {
+                            lBolOk = 
+                                SAPbouiCOM.Framework.Application.SBO_Application.MessageBox(
+                                "La comisión anterior no esta cerrada y no tomara encuenta el adeudo anterior ¿Desea continuar?", 2, "Si", "No", "") == 1 ? true :false;
+                           
+                        }
+                        if (lBolOk)
+                        {
+                            DIApplication.Company.StartTransaction();
+                            this.UIAPIRawForm.Freeze(true);
+                            lBolSuccess = SaveCommission();
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -1012,7 +1027,15 @@ namespace UGRS.AddOn.Transports.Forms
 
                 mObjProgressBar.NextPosition();
             }
-            lBolSuccess = mObjTransportsFactory.GetJournalService().CreateNewJournal(lLstJournalLine, mObjTxtFolio.Value, "TRCM", mObjTxtCmnt.Value);
+
+            string lStrDate = this.UIAPIRawForm.DataSources.UserDataSources.Item("UD_Date").Value.ToString();
+            DateTime DtmDate = DateTime.Now;
+            if (!string.IsNullOrEmpty(lStrDate))
+            {
+                DtmDate = Convert.ToDateTime(lStrDate);
+            }
+
+            lBolSuccess = mObjTransportsFactory.GetJournalService().CreateNewJournal(lLstJournalLine, mObjTxtFolio.Value, "TRCM", mObjTxtCmnt.Value, DtmDate);
             mObjProgressBar.NextPosition();
             mObjProgressBar.Dispose();
             return lBolSuccess;
@@ -1827,8 +1850,11 @@ namespace UGRS.AddOn.Transports.Forms
         private StaticText lblYear;
         private ComboBox cboYear;
         private CheckBox chkAdd;
+        private EditText txtDate;
+        private StaticText lblDate;
         private UGRS.Core.SDK.UI.ProgressBar.ProgressBarManager mObjProgressBar = null;
         #endregion
+      
        
 
       

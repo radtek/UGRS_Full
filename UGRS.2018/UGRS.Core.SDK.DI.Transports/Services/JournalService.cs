@@ -14,7 +14,7 @@ namespace UGRS.Core.SDK.DI.Transports.Services
         private RouteListDAO mObjRouteListDAO = new RouteListDAO();
 
 
-        public bool CreateNewJournal(List<DTO.JournalLineDTO> pLstJournalLines, string pStrInternal, string pStrTransactionCode, string pStrMemo)
+        public bool CreateNewJournal(List<DTO.JournalLineDTO> pLstJournalLines, string pStrInternal, string pStrTransactionCode, string pStrMemo, DateTime pDtmDate)
         {
             SAPbobsCOM.JournalEntries lObjJournalEntry = null;
             int lIntResult;
@@ -22,8 +22,9 @@ namespace UGRS.Core.SDK.DI.Transports.Services
             {
                 //Pupulate header
                 lObjJournalEntry = (SAPbobsCOM.JournalEntries)DIApplication.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oJournalEntries);
-                lObjJournalEntry.DueDate = DateTime.Today;
-                lObjJournalEntry.TaxDate = DateTime.Today;
+                lObjJournalEntry.DueDate = pDtmDate;
+                lObjJournalEntry.TaxDate = pDtmDate;
+                lObjJournalEntry.ReferenceDate = pDtmDate;
                 lObjJournalEntry.AutoVAT = SAPbobsCOM.BoYesNoEnum.tYES;
                 lObjJournalEntry.TransactionCode = pStrTransactionCode; //"TR/F";
                 lObjJournalEntry.Reference = pStrInternal;
