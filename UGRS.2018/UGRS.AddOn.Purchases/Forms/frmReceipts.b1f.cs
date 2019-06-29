@@ -807,10 +807,10 @@ namespace UGRS.AddOn.Purchases.Forms {
                     break;
 
                     case PermissionsEnum.Permission.AuthorizePurchase:
-                    btnAuthor.Item.Visible = false;
+                    btnAuthor.Item.Visible = true;
                     btnNotify.Item.Visible = false;
-                    btnReject.Item.Visible = false;
-                    btnSave.Item.Visible = false;
+                    btnReject.Item.Visible = true;
+                    btnSave.Item.Visible = true;
                     btnCFDI.Item.Visible = false;
                     btnNotes.Item.Visible = false;
                     btnCancel.Item.Visible = false;
@@ -1463,7 +1463,15 @@ namespace UGRS.AddOn.Purchases.Forms {
                         {
                             //string lStrMessageDTO = mObjPurchasesDAO.GetMessage("CO_COMP_1").ToList()[0].Message; //CO_COMP_1 Operaciones //CO_COMP_2 
                             List<MessageDTO> lLstMessageDTO = new List<MessageDTO>();
-                            lLstMessageDTO = mObjPurchasesServiceFactory.GetPurchaseMessageService().GetMessage("CO_COMP_3").ToList();// mObjPurchasesDAO.GetUsersMessage(lStrMessageDTO, lObjVoucher.Area).ToList();
+                            if (lObjVoucher.Area == "MQ_MAQUI")
+                            {
+                                lLstMessageDTO = mObjPurchasesServiceFactory.GetPurchaseMessageService().GetMessage("CO_MAQUI_1").ToList();
+                            }
+                            else
+                            {
+                                lLstMessageDTO = mObjPurchasesServiceFactory.GetPurchaseMessageService().GetMessage("CO_COMP_3").ToList();// mObjPurchasesDAO.GetUsersMessage(lStrMessageDTO, lObjVoucher.Area).ToList();
+                            }
+                         
                             foreach (MessageDTO lObjMessage in lLstMessageDTO)
                             {
                                 CreateAlert lObjAlert = new CreateAlert();

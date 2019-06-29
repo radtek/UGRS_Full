@@ -19,7 +19,7 @@ namespace UGRS.Core.SDK.DI.Purchases.DAO
             lObjPermissionEnum = PermissionsEnum.Permission.None;
             string lStrUserCode = UIApplication.GetCompany().UserName;
 
-            if (Permission_Purchases(lStrUserCode, "Permission_Authorizes_Operations", "", pStrType))
+            if (Permission_Purchases(lStrUserCode, "Permission_Authorizes_Operations", "", pStrType) || (lStrUserCode == "MAQUINARIA" && pStrCostCenter == "MQ_MAQUI"))
             {
                 lObjPermissionEnum = PermissionsEnum.Permission.AuthorizeOperations;
             }
