@@ -60,6 +60,25 @@ namespace UGRS.Core.SDK.DI.Purchases.Services
                 lObjDocument.UserFields.Fields.Item("U_MQ_OrigenFol_Det").Value = pObjPurchase.RowLine;
                    
 				bool lbolWithholdingTax = true;
+
+                /*Base = y.First().Base,
+                    Tax = y.First().Tax,
+                    TypeFactor = y.First().TypeFactor,
+                    Rate = y.First().Rate,
+                    Amount = y.Sum(c => float.Parse(c.Amount)).ToString()*/
+
+               pObjPurchase.WithholdingTax= pObjPurchase.WithholdingTax.GroupBy(x => x.Rate).Select(y => new TaxesXMLDTO
+                {
+                    Base = y.First().Base,
+                    Tax = y.First().Tax,
+                    TypeFactor = y.First().TypeFactor,
+                    Rate = y.First().Rate,
+                    Amount = y.Sum(c => float.Parse(c.Amount)).ToString()
+
+                }).ToList();
+              
+                
+
 				foreach (TaxesXMLDTO lObjTax in pObjPurchase.WithholdingTax)
 				{
 					lObjDocument.WithholdingTaxData.WTCode = mObjPurchaseServiceFactory.GetPurchaseInvoiceService().GetWithholdingTaxCodeBP(Convert.ToDouble(lObjTax.Rate) * 100, lObjDocument.CardCode);

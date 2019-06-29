@@ -44,8 +44,14 @@ namespace UGRS.Core.SDK.DI.Purchases.DAO
                     lLstStrParameters.Add("Status", pStrStatus);
                     lStrQuery += " and U_Status = '{Status}'";
                 }
+                else
+                {
+                    lLstStrParameters.Add("Status", ((int)StatusEnum.Closed).ToString());
+                    lStrQuery += " and U_Status != '{Status}'";
+                }
 
-                lStrQuery += " group by T0.U_GLO_CodeMov, /*DocEntry, DocNum, */U_FZ_Auxiliar, CardName, U_GLO_CostCenter,  DocTotal, isnull(A1.GLFSV,0) + isnull(B1.GLFSV,0), A2.GLSSV, A3.U_Total, A3.U_Status, MQ1.Debit, MQ1.Credit";
+                lStrQuery += " group by T0.DocEntry, T0.U_GLO_CodeMov, /*DocEntry, DocNum, */U_FZ_Auxiliar, CardName, U_GLO_CostCenter,  DocTotal, isnull(A1.GLFSV,0) + isnull(B1.GLFSV,0), A2.GLSSV, A3.U_Total, A3.U_Status, MQ1.Debit, MQ1.Credit";
+                lStrQuery += " order by T0.DocEntry desc";
 
                 lObjRecordset = (SAPbobsCOM.Recordset)DIApplication.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.BoRecordset);
                 lStrQuery = lStrQuery.Inject(lLstStrParameters);

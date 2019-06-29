@@ -11,7 +11,6 @@ using UGRS.Core.Extension;
 using UGRS.Core.Utility;
 using UGRS.Core.SDK.DI.Purchases.Enums;
 using SAPbobsCOM;
-using UGRS.Core.Extension;
 
 namespace UGRS.Core.SDK.DI.Purchases.DAO
 {

@@ -410,7 +410,7 @@ namespace UGRS.AddOn.Purchases.Forms
             }
         }
 
-        //Tarda bastate tiempo :(
+        ////Tarda bastate tiempo :(
         //private bool UpdateStatus(List<PaymentDTO> pLstPaymentDTO)
         //{
         //    bool lBolUpdateStatus = false;
