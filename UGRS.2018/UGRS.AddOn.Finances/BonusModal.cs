@@ -121,7 +121,7 @@ namespace UGRS.AddOn.Finances
         {
             mCmbType.Item.DisplayDesc = true;
             mCmbType.ValidValues.Add("NCB", "NC Bonificación");
-            mCmbType.ValidValues.Add("NCD", "NC Devolución");
+            //mCmbType.ValidValues.Add("NCD", "NC Devolución");
             mCmbType.ValidValues.Add("NC", "Nota de crédito");
             mCmbType.ComboSelectAfter += new SAPbouiCOM._IComboBoxEvents_ComboSelectAfterEventHandler(this.mCmbType_ComboSelectAfter);
             mEdtAmount.ValidateBefore += mEdtAmount_ValidateBefore;
@@ -165,14 +165,16 @@ namespace UGRS.AddOn.Finances
                 SAPbobsCOM.Documents lOriginal = (SAPbobsCOM.Documents)DIApplication.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oInvoices);
                 lOriginal.GetByKey(Convert.ToInt32(lStrDocEntry));
 
+                string lStrAmountVencido = (mFrmInvoice.Items.Item("33").Specific as SAPbouiCOM.EditText).Value;
+
                 // Document has to be Open if it's a bonus invoice
-                if (lOriginal.DocumentStatus != SAPbobsCOM.BoStatus.bost_Open && mCmbType.Value == "NCB")
+                if (string.IsNullOrEmpty(lStrAmountVencido) && mCmbType.Value == "NCB") //lOriginal.DocumentStatus != SAPbobsCOM.BoStatus.bost_Open
                 {
-                    UIApplication.ShowMessageBox("El documento debe estar abierto para crear una bonificación.");
+                    UIApplication.ShowMessageBox("El documento debe tener saldo vencido para crear una bonificación.");
                     return;
                 }
 
-                if (lOriginal.DocumentStatus != SAPbobsCOM.BoStatus.bost_Close && mCmbType.Value == "NC")
+                if (!string.IsNullOrEmpty(lStrAmountVencido) && mCmbType.Value == "NC") //lOriginal.DocumentStatus != SAPbobsCOM.BoStatus.bost_Close
                 {
                     UIApplication.ShowMessageBox("El documento debe estar cerrado para crear una nota de crédito.");
                     return;
@@ -229,6 +231,7 @@ namespace UGRS.AddOn.Finances
                 lDraft.CardCode = pOriginal.CardCode;
                 lDraft.GroupNumber = -1;
                 lDraft.PaymentMethod = pOriginal.PaymentMethod;
+                lDraft.DocCurrency = pOriginal.DocCurrency;
                 lDraft.UserFields.Fields.Item("U_B1SYS_MainUsage").Value = pOriginal.UserFields.Fields.Item("U_B1SYS_MainUsage").Value;
                 if (pCreditNote)
                 {
@@ -242,7 +245,8 @@ namespace UGRS.AddOn.Finances
                 foreach (InvoiceRowDTO lObjInvoiceRow in mLstObjInvoiceRows)
                 {
                     double lDblTaxRate = double.Parse(new QueryManager().GetValue("Rate", "Code", lObjInvoiceRow.TaxCode, "OSTA")) / 100;
-                    double lDblUnitPrice = (lObjInvoiceRow.LineTotal / (pOriginal.DocTotal - pOriginal.VatSum) * pAmount) / (1 + lDblTaxRate);
+                    double lDblUnitPrice = pOriginal.DocCurrency == "MXP" ? ((lObjInvoiceRow.LineTotal / (pOriginal.DocTotal - pOriginal.VatSum) * pAmount) / (1 + lDblTaxRate))
+                        : ((lObjInvoiceRow.LineTotal / (pOriginal.DocTotalFc - pOriginal.VatSumFc) * pAmount) / (1 + lDblTaxRate));
 
                     lDraft.Lines.ItemCode = mStrBonusCode;
                     lDraft.Lines.Quantity = 1;
