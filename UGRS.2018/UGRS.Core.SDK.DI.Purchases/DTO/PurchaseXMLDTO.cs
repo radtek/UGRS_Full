@@ -38,6 +38,7 @@ namespace UGRS.Core.SDK.DI.Purchases.DTO
         public string XMLTotal { get; set; }
         public List<TaxesXMLDTO> WithholdingTax { get; set; }
         public DateTime TaxDate { get; set; }
+        public DateTime DocDate { get; set; }
         public List<TaxesXMLDTO> LstLocalTax { get; set; }
         public string Type { get; set; }
         public string RowLine { get; set; }

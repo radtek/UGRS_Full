@@ -25,7 +25,7 @@ namespace UGRS.Core.SDK.DI.Purchases.Services
                 SAPbobsCOM.JournalEntries lObjJournalEntryes = (SAPbobsCOM.JournalEntries)DIApplication.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oJournalEntries); //SAPbobsCOM.BoObjectTypes.oInvoices);
                 lObjJournalEntryes.TransactionCode = "S/CF";
                 lObjJournalEntryes.Memo = "CND" + " " + pObjVoucher.Area;
-               
+                lObjJournalEntryes.ReferenceDate = pObjVoucher.Date;
                 if (pNoteType == TypeEnum.Type.Refund)
                 {
                     lObjJournalEntryes.Reference = pObjVoucher.Folio;

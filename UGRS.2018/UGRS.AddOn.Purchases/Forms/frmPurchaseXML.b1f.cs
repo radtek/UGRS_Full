@@ -33,6 +33,7 @@ namespace UGRS.AddOn.Purchases.Forms {
         bool mFlagSaveItem = false;
         bool mFlagPurshaseAddon = false;
         string mStrType = String.Empty;
+        DateTime mDtmDate = DateTime.Now;
         Vouchers mObjVoucher = new Vouchers();
 
 
@@ -44,8 +45,10 @@ namespace UGRS.AddOn.Purchases.Forms {
         /// <summary>
         /// Inicia la ventana
         /// </summary>
-        public frmPurchaseXML(string pStrCodeVoucher, string pStrArea, string pStrEmployee, string Folio, string pStrAccount, Vouchers pObjVoucher, bool pBolCopyComent) {
-            try {
+        public frmPurchaseXML(string pStrCodeVoucher, string pStrArea, string pStrEmployee, string Folio, string pStrAccount, Vouchers pObjVoucher, bool pBolCopyComent, DateTime pDtmDate)
+        {
+            try
+            {
 
                 mFlagPurshaseAddon = true;
                 mtxXML.AutoResizeColumns();
@@ -56,16 +59,19 @@ namespace UGRS.AddOn.Purchases.Forms {
                 txtFolio.Value = Folio;
                 mStrAccount = pStrAccount;
                 mObjVoucher = pObjVoucher;
+                mDtmDate = pDtmDate;
 
                 mStrType = String.IsNullOrEmpty(pObjVoucher.CodeMov) ? "CG" : "CV";
 
-                if(pBolCopyComent) {
+                if (pBolCopyComent)
+                {
                     txtObs.Value = pObjVoucher.Coments;
                 }
 
 
             }
-            catch(Exception ex) {
+            catch (Exception ex)
+            {
                 LogService.WriteError("(frmPurchaseXML): " + ex.Message);
                 LogService.WriteError(ex);
             }
@@ -98,7 +104,7 @@ namespace UGRS.AddOn.Purchases.Forms {
 
                 txtCantD.Value = "1";
                 AddComboboxMQ();
-                txtDate.Value = DateTime.Now.ToString("yyyyMMdd");
+                txtDate.Value = mDtmDate.ToString("yyyyMMdd");
             }
             catch(Exception ex) {
                 LogService.WriteError("(OnCustomInitialize): " + ex.Message);
@@ -1901,6 +1907,7 @@ namespace UGRS.AddOn.Purchases.Forms {
                 mObjPurchaseXMLDTO.RowLine = (mObjPurchaseServiceFactory.GetPurchaseVouchersService().GetVouchesDetail(mStrCodeVoucher).Count() + 1).ToString();
                 mObjPurchaseXMLDTO.TaxDate = string.IsNullOrEmpty(txtDate.Value) ? DateTime.Now :
                                 DateTime.ParseExact(txtDate.Value, "yyyyMMdd", CultureInfo.InvariantCulture, DateTimeStyles.None);
+                mObjPurchaseXMLDTO.DocDate = mDtmDate;
 
                 List<ConceptsXMLDTO> lLstObjConceptsXML = new List<ConceptsXMLDTO>();
                 for(int i = 0; i < DtMatrix.Rows.Count; i++) {

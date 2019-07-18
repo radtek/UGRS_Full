@@ -7,6 +7,7 @@ using UGRS.Core.Utility;
 using System.Linq;
 using System.Collections.Generic;
 using UGRS.Core.Services;
+using System.IO;
 
 namespace UGRS.Core.SDK.DI.Purchases.Services
 {
@@ -24,60 +25,69 @@ namespace UGRS.Core.SDK.DI.Purchases.Services
 			 string lStrAttachPDF = string.Empty;
 
 			//SAPbobsCOM.Documents lObjDocument = (SAPbobsCOM.Documents)DIApplication.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oPurchaseInvoices);
-            SAPbobsCOM.Documents lObjDocument = (SAPbobsCOM.Documents)DIApplication.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oDrafts);
+			SAPbobsCOM.Documents lObjDocument = (SAPbobsCOM.Documents)DIApplication.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oDrafts);
 			try
 			{
-                //Draft Type Document
-                lObjDocument.DocObjectCode = BoObjectTypes.oPurchaseInvoices;
+				//Draft Type Document
+				lObjDocument.DocObjectCode = BoObjectTypes.oPurchaseInvoices;
 
-                /*double ldbl = Convert.ToDouble(pObjPurchase.Total);
-                lObjDocument.DocTotal = ldbl;*/
+				/*double ldbl = Convert.ToDouble(pObjPurchase.Total);
+				lObjDocument.DocTotal = ldbl;*/
 				string lStrCostCenter = mObjPurchaseServiceFactory.GetPurchaseInvoiceService().GetCostCenter();
 
 				lObjDocument.CardCode = pObjPurchase.CardCode;
 				lObjDocument.EDocNum = pObjPurchase.FolioFiscal;
 				lObjDocument.TaxDate = pObjPurchase.TaxDate;
+				lObjDocument.DocDate = pObjPurchase.DocDate;
 				lObjDocument.Comments = pObjPurchase.Obs;
-                lObjDocument.NumAtCard = pObjPurchase.ReferenceFolio;
-                lObjDocument.DocDueDate = pObjPurchase.TaxDate.AddMonths(1);
+				lObjDocument.NumAtCard = pObjPurchase.ReferenceFolio;
+				lObjDocument.DocDueDate = pObjPurchase.TaxDate.AddMonths(1);
 				lObjDocument.UserFields.Fields.Item("U_UDF_UUID").Value = pObjPurchase.FolioFiscal;
 				//lObjDocument.UserFields.Fields.Item("U_GLO_DocEUG").Value = String.IsNullOrEmpty(pObjPurchase.CodeMov) ? "" : pObjPurchase.CodeMov;
 				lObjDocument.UserFields.Fields.Item("U_GLO_ObjTUG").Value = "frmReceipts";
 				lObjDocument.UserFields.Fields.Item("U_FolioFiscal").Value = pObjPurchase.FolioFiscal;
-				lObjDocument.UserFields.Fields.Item("U_ArchivoXML").Value = AttatchFile(pObjPurchase.XMLFile);
-				lObjDocument.UserFields.Fields.Item("U_ArchivoPDF").Value = AttatchFile(pObjPurchase.PDFFile);
-              
+
+				string lStrFile = AttatchFile(pObjPurchase.XMLFile);
+				if (!string.IsNullOrEmpty(lStrFile))
+				{
+					lObjDocument.UserFields.Fields.Item("U_ArchivoXML").Value = AttatchFile(pObjPurchase.XMLFile);
+					lObjDocument.UserFields.Fields.Item("U_ArchivoPDF").Value = AttatchFile(pObjPurchase.PDFFile);
+				}
+				else
+				{
+					return false;
+				}
 			   
 				lObjDocument.UserFields.Fields.Item("U_MQ_Rise").Value = pObjPurchase.MQRise;
-                // lObjDocument.WithholdingTaxData
+				// lObjDocument.WithholdingTaxData
 
-                //adding reference
-                lObjDocument.UserFields.Fields.Item("U_MQ_OrigenFol").Value = pObjPurchase.Folio;/* (String.IsNullOrEmpty(pObjPurchase.CodeMov)) ?
-                    String.Format("{0}_{1}_{2}", pObjPurchase.Type, pObjPurchase.Area, pObjPurchase.Folio) :
-                    String.Format(pObjPurchase.Type +"_"+ pObjPurchase.CodeMov);*/
+				//adding reference
+				lObjDocument.UserFields.Fields.Item("U_MQ_OrigenFol").Value = pObjPurchase.Folio;/* (String.IsNullOrEmpty(pObjPurchase.CodeMov)) ?
+					String.Format("{0}_{1}_{2}", pObjPurchase.Type, pObjPurchase.Area, pObjPurchase.Folio) :
+					String.Format(pObjPurchase.Type +"_"+ pObjPurchase.CodeMov);*/
 
 
-                lObjDocument.UserFields.Fields.Item("U_MQ_OrigenFol_Det").Value = pObjPurchase.RowLine;
-                   
+				lObjDocument.UserFields.Fields.Item("U_MQ_OrigenFol_Det").Value = pObjPurchase.RowLine;
+				   
 				bool lbolWithholdingTax = true;
 
-                /*Base = y.First().Base,
-                    Tax = y.First().Tax,
-                    TypeFactor = y.First().TypeFactor,
-                    Rate = y.First().Rate,
-                    Amount = y.Sum(c => float.Parse(c.Amount)).ToString()*/
+				/*Base = y.First().Base,
+					Tax = y.First().Tax,
+					TypeFactor = y.First().TypeFactor,
+					Rate = y.First().Rate,
+					Amount = y.Sum(c => float.Parse(c.Amount)).ToString()*/
 
-               pObjPurchase.WithholdingTax= pObjPurchase.WithholdingTax.GroupBy(x => x.Rate).Select(y => new TaxesXMLDTO
-                {
-                    Base = y.First().Base,
-                    Tax = y.First().Tax,
-                    TypeFactor = y.First().TypeFactor,
-                    Rate = y.First().Rate,
-                    Amount = y.Sum(c => float.Parse(c.Amount)).ToString()
+			   pObjPurchase.WithholdingTax= pObjPurchase.WithholdingTax.GroupBy(x => x.Rate).Select(y => new TaxesXMLDTO
+				{
+					Base = y.First().Base,
+					Tax = y.First().Tax,
+					TypeFactor = y.First().TypeFactor,
+					Rate = y.First().Rate,
+					Amount = y.Sum(c => float.Parse(c.Amount)).ToString()
 
-                }).ToList();
-              
-                
+				}).ToList();
+			  
+				
 
 				foreach (TaxesXMLDTO lObjTax in pObjPurchase.WithholdingTax)
 				{
@@ -112,10 +122,10 @@ namespace UGRS.Core.SDK.DI.Purchases.Services
 					lObjDocument.Lines.COGSCostingCode2 = lObjConcept.AF;
 					lObjDocument.Lines.ProjectCode = lObjConcept.Project;
 					lObjDocument.Lines.CostingCode3 = lObjConcept.AGL;
-                   
+				   
 					//lObjDocument.Lines.
 					lObjDocument.Lines.TaxCode = lObjConcept.TaxCode;
-                    //lObjDocument.Lines.TaxTotal = lObjConcept.LstTaxes;
+					//lObjDocument.Lines.TaxTotal = lObjConcept.LstTaxes;
 					if (!string.IsNullOrEmpty(pObjPurchase.MQRise))
 					{
 						string lStrWhsMQ = mObjPurchaseServiceFactory.GetPurchaseInvoiceService().GetMQWhs(lObjConcept.CodeItmProd);
@@ -165,7 +175,7 @@ namespace UGRS.Core.SDK.DI.Purchases.Services
 
 				if (lbolWithholdingTax)
 				{
-                    
+					
 					if (lObjDocument.Add() != 0)
 					{
 						string lStrError = DIApplication.Company.GetLastErrorDescription();
@@ -176,26 +186,26 @@ namespace UGRS.Core.SDK.DI.Purchases.Services
 					{
 
 						lBolIsSuccess = true;
-                        
+						
 						string lStrDocEntry = DIApplication.Company.GetNewObjectKey().ToString();
 
-                      
+					  
 						pObjPurchase.DocEntry = Convert.ToInt32(lStrDocEntry);
 						PaymentDI lObjPaymentDI = new PaymentDI();
 
 						//SAPbobsCOM.Documents lObjDocInvoice = (SAPbobsCOM.Documents)DIApplication.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oPurchaseInvoices);
-                        SAPbobsCOM.Documents lObjDocInvoice = (SAPbobsCOM.Documents)DIApplication.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oDrafts);
+						SAPbobsCOM.Documents lObjDocInvoice = (SAPbobsCOM.Documents)DIApplication.Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oDrafts);
 						lObjDocInvoice.GetByKey(Convert.ToInt32(lStrDocEntry));
 
 						pObjPurchase.Total = lObjDocInvoice.DocTotal.ToString();
 
 						if (lBolCreatePayment)
 						{
-                           
+						   
 							//lBolIsSuccess = lObjPaymentDI.CreatePayment(pObjPurchase);
 							//AddVoucherDetail(pObjPurchase, pObjVoucher);
 						}
-                         
+						 
 						if (lBolIsSuccess)
 						{
 							LogService.WriteSuccess("Documento realizado correctamente: " + lStrDocEntry);
@@ -224,28 +234,26 @@ namespace UGRS.Core.SDK.DI.Purchases.Services
 			int lIntAttachement = 0;
 			string lStrAttach = string.Empty;
 			string lStrAttachPath = mObjPurchaseServiceFactory.GetPurchaseService().GetAttachPath();
-			if (!string.IsNullOrEmpty(pStrFile))
+			if (Directory.Exists(lStrAttach))
 			{
-				AttachmentDI lObjAttachmentDI = new AttachmentDI();
-                lIntAttachement =  lObjAttachmentDI.AttachFile(pStrFile);
-				if (lIntAttachement > 0)
+				if (!string.IsNullOrEmpty(pStrFile))
 				{
-					lStrAttach = lStrAttachPath + System.IO.Path.GetFileName(pStrFile);
-				}
-				else
-				{
-					LogService.WriteError("InvoiceDI (AttachDocument) " + DIApplication.Company.GetLastErrorDescription());
-					UIApplication.ShowError(string.Format("InvoiceDI (AttachDocument) : {0}", DIApplication.Company.GetLastErrorDescription()));
-					if (System.IO.File.Exists(pStrFile))
+					AttachmentDI lObjAttachmentDI = new AttachmentDI();
+					lIntAttachement = lObjAttachmentDI.AttachFile(pStrFile);
+					if (lIntAttachement > 0)
 					{
-						lStrAttach = pStrFile;
+						lStrAttach = lStrAttachPath + System.IO.Path.GetFileName(pStrFile);
 					}
 					else
 					{
-						LogService.WriteError("InvoiceDI (AttachDocument) Archivo \n"+ pStrFile +" no encontrado");
-						UIApplication.ShowError("InvoiceDI (AttachDocument) Archivo  \n" + pStrFile + " no encontrado");
+						LogService.WriteError("InvoiceDI (AttachDocument) " + DIApplication.Company.GetLastErrorDescription());
+						UIApplication.ShowError(string.Format("InvoiceDI (AttachDocument) : {0}", DIApplication.Company.GetLastErrorDescription()));
 					}
 				}
+			}
+			else
+			{
+				UIApplication.ShowMessageBox("Carpeta no accesible: "+ lStrAttachPath);
 			}
 			return lStrAttach;
 		}
