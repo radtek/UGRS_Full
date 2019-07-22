@@ -180,12 +180,14 @@ namespace UGRS.AddOn.Purchases.Services {
                                                         decimal lDecBase = Convert.ToDecimal(lObjTaxes.Base);
 
                                                         //if(lObjTaxes.Tax == "002" && (lDecAmount != lDecBase && lDecAmount1 != lDecBase && lDecAmount01 != lDecBase)) {
-                                           
-                                                             if(lObjTaxes.Tax == "002" && !((lDecAmount1 > lDecBase && lDecAmount< lDecBase) || (lDecAmount01 < lDecBase && lDecAmount01 > lDecBase))) {
-                                                            if(Convert.ToDouble(lObjTaxes.Amount) > 0) {
+
+                                                        if (lObjTaxes.Tax == "002" && !((lDecAmount1 >= lDecBase && lDecAmount <= lDecBase) || (lDecAmount01 <= lDecBase && lDecAmount01 >= lDecBase)))
+                                                        {
+                                                            if (Convert.ToDouble(lObjTaxes.Amount) > 0)
+                                                            {
                                                                 lObjConcepts.Amount = (Convert.ToDecimal(lObjTaxes.Base) + Convert.ToDecimal(lObjConcepts.Discount)).ToString();
                                                                 //lObjConcepts.Amount = lObjTaxes.Base;
-                                                                lObjConcepts.UnitPrice = Convert.ToDecimal((((Convert.ToDouble(lObjTaxes.Base)+ Convert.ToDouble(lObjConcepts.Discount)) / Convert.ToDouble(lObjConcepts.Quantity)))).ToString();
+                                                                lObjConcepts.UnitPrice = Convert.ToDecimal((((Convert.ToDouble(lObjTaxes.Base) + Convert.ToDouble(lObjConcepts.Discount)) / Convert.ToDouble(lObjConcepts.Quantity)))).ToString();
                                                                 lLstTaxes.Add(AddIeps(lDecAmount, Convert.ToDouble(lObjTaxes.Base)));
                                                             }
                                                         }
