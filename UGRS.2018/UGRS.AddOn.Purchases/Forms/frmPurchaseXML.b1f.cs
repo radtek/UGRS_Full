@@ -60,7 +60,7 @@ namespace UGRS.AddOn.Purchases.Forms {
                 mStrAccount = pStrAccount;
                 mObjVoucher = pObjVoucher;
                 mDtmDate = pDtmDate;
-
+                txtDate.Value = mDtmDate.ToString("yyyyMMdd");
                 mStrType = String.IsNullOrEmpty(pObjVoucher.CodeMov) ? "CG" : "CV";
 
                 if (pBolCopyComent)
@@ -104,7 +104,7 @@ namespace UGRS.AddOn.Purchases.Forms {
 
                 txtCantD.Value = "1";
                 AddComboboxMQ();
-                txtDate.Value = mDtmDate.ToString("yyyyMMdd");
+              
             }
             catch(Exception ex) {
                 LogService.WriteError("(OnCustomInitialize): " + ex.Message);

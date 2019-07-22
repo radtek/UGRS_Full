@@ -46,7 +46,7 @@ namespace UGRS.Core.SDK.DI.Purchases.Services
 				//lObjDocument.UserFields.Fields.Item("U_GLO_DocEUG").Value = String.IsNullOrEmpty(pObjPurchase.CodeMov) ? "" : pObjPurchase.CodeMov;
 				lObjDocument.UserFields.Fields.Item("U_GLO_ObjTUG").Value = "frmReceipts";
 				lObjDocument.UserFields.Fields.Item("U_FolioFiscal").Value = pObjPurchase.FolioFiscal;
-
+                lObjDocument.UserFields.Fields.Item("U_GLO_Memo").Value = pObjPurchase.Obs;
 				string lStrFile = AttatchFile(pObjPurchase.XMLFile);
 				if (!string.IsNullOrEmpty(lStrFile))
 				{
@@ -234,27 +234,29 @@ namespace UGRS.Core.SDK.DI.Purchases.Services
 			int lIntAttachement = 0;
 			string lStrAttach = string.Empty;
 			string lStrAttachPath = mObjPurchaseServiceFactory.GetPurchaseService().GetAttachPath();
-			if (Directory.Exists(lStrAttach))
-			{
-				if (!string.IsNullOrEmpty(pStrFile))
-				{
-					AttachmentDI lObjAttachmentDI = new AttachmentDI();
-					lIntAttachement = lObjAttachmentDI.AttachFile(pStrFile);
-					if (lIntAttachement > 0)
-					{
-						lStrAttach = lStrAttachPath + System.IO.Path.GetFileName(pStrFile);
-					}
-					else
-					{
-						LogService.WriteError("InvoiceDI (AttachDocument) " + DIApplication.Company.GetLastErrorDescription());
-						UIApplication.ShowError(string.Format("InvoiceDI (AttachDocument) : {0}", DIApplication.Company.GetLastErrorDescription()));
-					}
-				}
-			}
-			else
-			{
-				UIApplication.ShowMessageBox("Carpeta no accesible: "+ lStrAttachPath);
-			}
+            if (!string.IsNullOrEmpty(pStrFile))
+            {
+
+                if (!Directory.Exists(lStrAttachPath))
+                {
+                    if (SAPbouiCOM.Framework.Application.SBO_Application.MessageBox(string.Format("Carpeta {0} \n no accesible es posible que no pueda adjuntar el xml ¿Desea continuar?", lStrAttachPath), 2, "Si", "No", "") == 2)
+                    {
+                        return "";
+                    }
+                }
+
+            }
+            AttachmentDI lObjAttachmentDI = new AttachmentDI();
+            lIntAttachement = lObjAttachmentDI.AttachFile(pStrFile);
+            if (lIntAttachement > 0)
+            {
+                lStrAttach = lStrAttachPath + System.IO.Path.GetFileName(pStrFile);
+            }
+            else
+            {
+                LogService.WriteError("InvoiceDI (AttachDocument) " + DIApplication.Company.GetLastErrorDescription());
+                UIApplication.ShowError(string.Format("InvoiceDI (AttachDocument) : {0}", DIApplication.Company.GetLastErrorDescription()));
+            }
 			return lStrAttach;
 		}
 

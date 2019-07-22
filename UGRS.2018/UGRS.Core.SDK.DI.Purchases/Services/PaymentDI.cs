@@ -21,7 +21,9 @@ namespace UGRS.Core.SDK.DI.Purchases.Services
                 lObjPayment.CardCode = pObjPurchase.CardCode;
 
                 lObjPayment.DocObjectCode = SAPbobsCOM.BoPaymentsObjectType.bopot_OutgoingPayments;
-                lObjPayment.DocDate = DateTime.Now;
+                //lObjPayment.DocDate = pObjPurchase.DocDate;
+                lObjPayment.TaxDate = pObjPurchase.TaxDate;
+                lObjPayment.DocDate = pObjPurchase.DocDate;
                 lObjPayment.DocType = SAPbobsCOM.BoRcptTypes.rSupplier;
 
                 lObjPayment.CashSum = Convert.ToDouble(pObjPurchase.Total);

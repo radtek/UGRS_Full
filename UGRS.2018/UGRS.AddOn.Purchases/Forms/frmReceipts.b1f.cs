@@ -1852,7 +1852,7 @@ namespace UGRS.AddOn.Purchases.Forms
                     List<VouchersDetailDTO> lLstVouchersDetail = mObjPurchasesServiceFactory.GetPurchaseVouchersService().GetInvoiceVouchesDetail(txtArea.Value, txtFolio.Value);
 
 
-                    mObjProgressBar = new ProgressBarManager(UIApplication.GetApplication(), "Cargando comisiones", lLstVouchersDetail.Count + 2);
+                    mObjProgressBar = new ProgressBarManager(UIApplication.GetApplication(), "Cargando facturas", lLstVouchersDetail.Count + 2);
                     if (lLstVouchersDetail.Count() > 0)
                     {
 
@@ -1866,7 +1866,14 @@ namespace UGRS.AddOn.Purchases.Forms
                     }
                     int i = 0;
 
-
+                    if (lLstVouchersDetail.Where(y => y.Status != "Cancelado").ToList().Count > 0)
+                    {
+                        txtDate.Item.Enabled = false;
+                    }
+                    else
+                    {
+                        txtDate.Item.Enabled = true;
+                    }
 
                     foreach (VouchersDetailDTO lObjVoucherDetailDTO in lLstVouchersDetail)
                     {
@@ -2000,7 +2007,8 @@ namespace UGRS.AddOn.Purchases.Forms
                         lObjPayment.DocEntry = DtMatrix.GetValue("C_DocEntrF", i).ToString() == "" ?
                             int.Parse(DtMatrix.GetValue("C_DocEntrJ", i).ToString())
                           : int.Parse(DtMatrix.GetValue("C_DocEntrF", i).ToString());
-
+                        lObjPayment.DocDate =  Convert.ToDateTime(this.UIAPIRawForm.DataSources.UserDataSources.Item("UD_Date").Value);
+                        lObjPayment.TaxDate = Convert.ToDateTime(this.UIAPIRawForm.DataSources.UserDataSources.Item("UD_Date").Value);
                         lObjPayment.Account = account;
                         lObjPayment.Employee = mStrEmployeId;
                         lObjPayment.Area = lStrArea;
@@ -2059,7 +2067,6 @@ namespace UGRS.AddOn.Purchases.Forms
             {
                 CommitTransaction(lBolIsSuccess);
                 FillMatrixInvoice();
-                UIApplication.ShowMessageBox("Proceso de pagos realizado con exito");
             }
 
 
@@ -2229,7 +2236,6 @@ namespace UGRS.AddOn.Purchases.Forms
                 LogService.WriteError("printUDO " + ex.Message);
                 LogService.WriteError(ex);
             }
-
         }
     }
 }
