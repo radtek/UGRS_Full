@@ -18,11 +18,11 @@ namespace UGRS.AddOn.CreditNote.Forms
         /// </summary>
         public override void OnInitializeComponent()
         {
-            this.EditText0 = ((SAPbouiCOM.EditText)(this.GetItem("Item_1").Specific));
-            this.Button0 = ((SAPbouiCOM.Button)(this.GetItem("btnNC").Specific));
-            this.Button1 = ((SAPbouiCOM.Button)(this.GetItem("btnReport").Specific));
-            this.Matrix0 = ((SAPbouiCOM.Matrix)(this.GetItem("mtxInv").Specific));
-            this.StaticText0 = ((SAPbouiCOM.StaticText)(this.GetItem("Item_5").Specific));
+            this.txtDate = ((SAPbouiCOM.EditText)(this.GetItem("txtDate").Specific));
+            this.btnNC = ((SAPbouiCOM.Button)(this.GetItem("btnNC").Specific));
+            this.btnReport = ((SAPbouiCOM.Button)(this.GetItem("btnReport").Specific));
+            this.mtxInv = ((SAPbouiCOM.Matrix)(this.GetItem("mtxInv").Specific));
+            this.lblDate = ((SAPbouiCOM.StaticText)(this.GetItem("lblDate").Specific));
             this.OnCustomInitialize();
 
         }
@@ -39,10 +39,10 @@ namespace UGRS.AddOn.CreditNote.Forms
 
         }
 
-        private SAPbouiCOM.EditText EditText0;
-        private SAPbouiCOM.Button Button0;
-        private SAPbouiCOM.Button Button1;
-        private SAPbouiCOM.Matrix Matrix0;
-        private SAPbouiCOM.StaticText StaticText0;
+        private SAPbouiCOM.EditText txtDate;
+        private SAPbouiCOM.Button btnNC;
+        private SAPbouiCOM.Button btnReport;
+        private SAPbouiCOM.Matrix mtxInv;
+        private SAPbouiCOM.StaticText lblDate;
     }
 }

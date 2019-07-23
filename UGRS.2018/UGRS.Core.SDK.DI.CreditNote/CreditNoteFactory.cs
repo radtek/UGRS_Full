@@ -1,12 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using UGRS.Core.SDK.DI.CreditNote.Services;
 
 namespace UGRS.Core.SDK.DI.CreditNote
 {
-    class CreditNoteFactory
+    public class CreditNoteFactory
     {
+        public CreditNoteService GetCreditNoteService()
+        {
+            return new CreditNoteService();
+        }
+
+        public SetupService GetSetupService()
+        {
+            return new SetupService();
+        }
     }
 }

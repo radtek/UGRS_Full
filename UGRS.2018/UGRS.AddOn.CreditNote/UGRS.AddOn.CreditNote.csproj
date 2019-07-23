@@ -56,6 +56,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\UGRS.Core.SDK.DI.CreditNote\UGRS.Core.SDK.DI.CreditNote.csproj">
+      <Project>{2936da64-c6ce-4499-af54-cdacc0944ee8}</Project>
+      <Name>UGRS.Core.SDK.DI.CreditNote</Name>
+    </ProjectReference>
     <ProjectReference Include="..\UGRS.Core.SDK.DI\UGRS.Core.SDK.DI.csproj">
       <Project>{909b9975-2b24-41ef-abb0-d90b904d75dd}</Project>
       <Name>UGRS.Core.SDK.DI</Name>
